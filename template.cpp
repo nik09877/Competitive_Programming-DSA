@@ -1,15 +1,20 @@
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+// template <class T>
+// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+// template <class K, class V>
+// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+
 #include <bits/stdc++.h>
 #include <stdio.h>
-// #include <ext/pb_ds/assoc_container.hpp>(for gp_hash_table)
-// using namespace __gnu_pbds;
-// int cnt = __builtin_popcount(num);
 #define rep(i, n) for (int i = 0; i < n; i++)
-#define rrep(i, a) for (int i = a; i >= 0; i--)
+#define rrep(i, a, b) for (int i = a; i >= b; i--)
 #define rep1(i, n) for (int i = 1; i <= n; i++)
 #define fo(i, a, n) for (int i = a; i <= n; i++)
 #define repll(i, a, n) for (lli i = a; i <= n; i++)
 #define mkp make_pair
-#define pb push_back
+#define pb emplace_back
 #define ff first
 #define ss second
 #define ll long long
@@ -31,16 +36,77 @@
 #define asort(v) sort(v.begin(), v.end())
 #define uniq(v) v.erase(unique(v.begin(), v.end()), v.end())
 #define all(v) v.begin(), v.end()
-#define ceil(numerator, denominator) return (numerator + denominator - 1) / denominator;
 #define umap unordered_map
 #define uset unordered_set
+#define sz(x) ((int)(x).size())
+#define yes cout << "YES\n"
+#define no cout << "NO\n"
+#define pr(x) cout << x
+#define prsp(x) cout << x << sp
+#define prln(x) cout << x << endl
 #define fastio ios_base::sync_with_stdio(0), cout.tie(0), cin.tie(0)
-#define read(a)       \
-    for (auto &i : a) \
-        cin >> i;
+#define re(a, n)   \
+    rep(i, n)      \
+            cin >> \
+        a[i];
 using namespace std;
-const int mod = 1000000007;
-const int INF = 1000000007;
+// DEBUG TEMPLATE STARTS HERE//
+void __print(int x) { cerr << x; }
+void __print(long x) { cerr << x; }
+void __print(long long x) { cerr << x; }
+void __print(unsigned x) { cerr << x; }
+void __print(unsigned long x) { cerr << x; }
+void __print(unsigned long long x) { cerr << x; }
+void __print(float x) { cerr << x; }
+void __print(double x) { cerr << x; }
+void __print(long double x) { cerr << x; }
+void __print(char x) { cerr << '\'' << x << '\''; }
+void __print(const char *x) { cerr << '\"' << x << '\"'; }
+void __print(const string &x) { cerr << '\"' << x << '\"'; }
+void __print(bool x) { cerr << (x ? "true" : "false"); }
+template <typename T, typename V>
+void __print(const pair<T, V> &x)
+{
+    cerr << '{';
+    __print(x.first);
+    cerr << ',';
+    __print(x.second);
+    cerr << '}';
+}
+template <typename T>
+void __print(const T &x)
+{
+    int f = 0;
+    cerr << '{';
+    for (auto &i : x)
+        cerr << (f++ ? "," : ""), __print(i);
+    cerr << "}";
+}
+void _print() { cerr << "]\n"; }
+template <typename T, typename... V>
+void _print(T t, V... v)
+{
+    __print(t);
+    if (sizeof...(v))
+        cerr << ", ";
+    _print(v...);
+}
+#ifndef ONLINE_JUDGE
+#define debug(x...)               \
+    cerr << "[" << #x << "] = ["; \
+    _print(x)
+#else
+#define debug(x...)
+#endif
+//DEBUG TEMPLATE ENDS HERE
+
+#define ar array
+#define ll long long
+
+const int MAX_N = 1e5 + 1;
+const ll MOD = 1e9 + 7;
+const ll INF = 1e9;
+
 void compress(vi &a)
 {
     //for fenwick tree
@@ -255,6 +321,7 @@ void solve()
     // cin >> n;
     vector<string> v = {"january", "february", "march", " april ", " may ", " june ", " july ", " august ", "september", "october", "november", "december"};
     sort(all(v));
+    // ordered_set<array<int, 2>> s;
     for (auto s : v)
     {
         cout << s << endl;
