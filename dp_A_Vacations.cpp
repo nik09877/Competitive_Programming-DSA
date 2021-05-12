@@ -148,7 +148,7 @@ int getAns(int idx, int prev_gym, int prev_contest)
 
     //take rest, a[idx]==0
     int x = INF;
-    if (a[idx] == 0 || (prev_gym == 1 && a[idx] == 2) || (prev_contest == 1 && a[idx] == 1))
+    if (a[idx] == 0 || (prev_gym == 1 && a[idx] == 2) || (prev_contest == 1 && a[idx] == 1) || (prev_gym == 1 and prev_contest == 1 and a[idx] == 3))
         x = 1 + getAns(idx + 1, 0, 0);
 
     //go to gym
