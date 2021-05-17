@@ -42,35 +42,41 @@
             cin >> \
         a[i];
 using namespace std;
+const int mod = 1000000007;
+#define int long long
+vi occupied,Free;
+int k,n,m;
+int dp[2505][5005];
 
-void go(string s, int l, int r)
-{
-    if (l == r)
-    {
-        cout << s << sp;
-        return;
-    }
-    for (int i = l; i <= r; i++)
-    {
-        swap(s[i], s[l]);
-        go(s, l + 1, r);
-        swap(s[i], s[l]);
-    }
-}
-void solve()
-{
-    string s, ans = "";
-    cin >> s;
-    go(s, 0, sz(s) - 1);
-    return;
+int getAns(int i,int j){
+    if(i==n+1)return 0;
+    if(j==m+1)return 1e10;
+
+    int &ans=dp[i][j];
+    if(ans!=-1)return ans;
+
+    ans=getAns(i,j+1);
+    ans=min(ans,abs(occupied[i-1]-Free[j-1])+getAns(i+1,j+1));
+
+    return ans;
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
+    cin >> k;
+    rep1(i,k){
+        int x;
+        cin>>x;
+        if(x)occupied.pb(i);
+        else Free.pb(i);
     }
+    n=sz(occupied);
+    m=sz(Free);
+    rep(i,n+1){
+        rep(j,m+1){
+            dp[i][j]=-1;
+        }
+    }
+    int ans=getAns(1,1);
+    pr(ans);
 }
