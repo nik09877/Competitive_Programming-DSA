@@ -74,7 +74,8 @@
     "typeindex": "cpp",
     "typeinfo": "cpp",
     "valarray": "cpp",
-    "variant": "cpp"
+    "variant": "cpp",
+    "strstream": "cpp"
   },
   "git.ignoreLimitWarning": true,
   "editor.defaultFormatter": "ms-vscode.cpptools",
