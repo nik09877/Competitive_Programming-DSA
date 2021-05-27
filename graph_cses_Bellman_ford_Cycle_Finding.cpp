@@ -50,36 +50,27 @@ void solve()
     vector<ll> dist(n + 1, INF);
     dist[1] = 0;
 
-    for (int i = 0; i < n - 1; i++)
+    //Go on relaxing for n times if during nth time distance of a node changes there is a negative weight cycle
+    int cycle = 0;
+    for (int i = 1; i <= n; i++)
     {
+        cycle = 0;
         for (int u = 1; u <= n; u++)
         {
             for (auto e : adj[u])
             {
-                ll w = e.ss;
                 ll v = e.ff;
+                ll w = e.ss;
                 if (dist[u] + w < dist[v])
                 {
                     par[v] = u;
                     dist[v] = dist[u] + w;
+                    cycle = v;
                 }
             }
         }
     }
-    int cycle = 0;
-    for (int u = 1; u <= n; u++)
-    {
-        for (auto e : adj[u])
-        {
-            ll w = e.ss;
-            ll v = e.ff;
-            if (dist[u] + w < dist[v])
-            {
-                cycle = v;
-                break;
-            }
-        }
-    }
+
     if (!cycle)
     {
         cout << "NO\n";
