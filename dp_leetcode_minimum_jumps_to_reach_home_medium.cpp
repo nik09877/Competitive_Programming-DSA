@@ -44,55 +44,49 @@
 using namespace std;
 
 // ///---------------Functions---------------------///
-// template <class T>
-// T gcd(T a, T b)
+// int gcd(int a, int b)
 // {
 //     if (a == 0)
 //         return b;
 //     return gcd(b % a, a);
 // }
-// template <class T>
-// T lcm(T a, T b)
+// int lcm(int a, int b)
 // {
 //     return (a * b) / __gcd(a, b);
 // }
-// template <class T>
-// T max(T a, T b)
+// int max(int a, int b)
 // {
 //     if (a > b)
 //         return a;
 //     else
 //         return b;
 // }
-// T min(T a, T b)
+// int min(int a, int b)
 // {
 //     if (a < b)
 //         return a;
 //     else
 //         return b;
 // }
-// template <class T>
-// T ceil(T numerator, T denominator)
+// int ceil(int numerator, int denominator)
 // {
 //     return (numerator + denominator - 1) / denominator;
 // }
-// template <class T>
-// bool isPrime(T N)
+// bool isPrime(int N)
 // {
-//     for (T i = 2; i * i <= N; ++i)
+//     for (int i = 2; i * i <= N; ++i)
 //     {
 //         if (N % i == 0)
 //             return false;
 //     }
 //     return true;
 // }
-// template <class T>
-// T cbrt(T x) //cuberoot
+// int cbrt(int x) //cuberoot
 // {
-//     T lo = 1, hi = min(2000000ll, x);
+//     int lo = 1, hi = min(2000000ll, x);
 //     while (hi - lo > 1)
 //     {
-//         T mid = (lo + hi) / 2;
+//         int mid = (lo + hi) / 2;
 //         if (mid * mid * mid < x)
 //         {
 //             lo = mid;
@@ -105,13 +99,12 @@ using namespace std;
 //     else
 //         return lo;
 // }
-// template <class T>
-// T sqrt(T target)
+// lli sqrt(lli target)
 // {
-//     T l = 1, r = target;
+//     lli l = 1, r = target;
 //     while (r > l + 1)
 //     {
-//         T m = (l + r) / 2;
+//         lli m = (l + r) / 2;
 //         if (m * m <= target)
 //             l = m;
 //         else
@@ -122,7 +115,7 @@ using namespace std;
 // void compress(vi &a)
 // {
 //     //for fenwick tree
-//     int n = sz(a);
+//     int n = (int)a.size();
 //     map<ii> mpp, back;
 //     int idx = 1;
 //     rep(i, n)
@@ -164,49 +157,41 @@ using namespace std;
 // const int dy[4] = {0, 0, -1, 1};
 // int XX[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
-// const int mod = 1000000007;
+const int mod = 1000000007;
 
-vi g[100005];
-int dp[100005];
-int getAns(int node)
+//Minimum jumps to reach home
+unordered_map<int, int> mp;
+int dp[7005][2];
+int go(int i, int used, int a, int b, int x)
 {
-    if (dp[node] != -1)
-    {
-        return dp[node];
-    }
-    int ans = 0;
-    for (int child : g[node])
-    {
-        ans = max(ans, 1 + getAns(child));
-    }
-    return dp[node] = ans;
+    if (i == x)
+        return 0;
+    if (i < 0 || mp[i] || i > 6000)
+        return 1e9;
+    if (dp[i][used] != -1)
+        return dp[i][used];
+    int &mn = dp[i][used];
+    mn = 1 + go(i + a, 0, a, b, x);
+    if (!used)
+        mn = min(mn, 1 + go(i - b, 1, a, b, x));
+    return mn;
 }
-void solve()
+int minimumJumps(vector<int> &forbidden, int a, int b, int x)
 {
-    // dp[i]denotes maximum length starting from node i
     memset(dp, -1, sizeof(dp));
-    int n, m;
-    cin >> n >> m;
-    rep(i, m)
-    {
-        int a, b;
-        cin >> a >> b;
-        g[a].pb(b);
-    }
-    int ans = 0;
-    rep1(i, n)
-    {
-        ans = max(ans, getAns(i));
-    }
-    pr(ans);
-    return;
+    for (int x : forbidden)
+        mp[x]++;
+    int ans = go(0, 0, a, b, x);
+    return ans > 1e9 ? -1 : ans;
 }
 int32_t main()
 {
     fastio;
     int t = 1;
+    cin >> t;
     while (t--)
     {
-        solve();
+        int n;
+        cin >> n;
     }
 }
