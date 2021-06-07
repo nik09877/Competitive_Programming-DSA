@@ -214,6 +214,33 @@ public:
         int ans = getAns(0, 0, n, a);
         return ans;
     }
+
+    // Minimum Cost For Tickets
+    const int INF = INT_MAX;
+    int mincostTickets(vector<int> &a, vector<int> &costs)
+    {
+        int n = (int)a.size();
+
+        vector<vector<int>> dp(n + 2, vector<int>(3, INF));
+
+        dp[n][0] = dp[n][1] = dp[n][2] = 0;
+
+        for (int i = n - 1; i >= 0; i--)
+        {
+            dp[i][0] = costs[0] + min({dp[i + 1][0], dp[i + 1][1], dp[i + 1][2]});
+
+            int j = i;
+            while (j < n and a[j] < a[i] + 7)
+                j++;
+            dp[i][1] = costs[1] + min({dp[j][0], dp[j][1], dp[j][2]});
+
+            j = i;
+            while (j < n and a[j] < a[i] + 30)
+                j++;
+            dp[i][2] = costs[2] + min({dp[j][0], dp[j][1], dp[j][2]});
+        }
+        return min({dp[0][0], dp[0][1], dp[0][2]});
+    }
 };
 
 int32_t main()

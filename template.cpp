@@ -4,10 +4,20 @@ using namespace __gnu_pbds;
 #include <boost/dynamic_bitset.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
 using namespace boost::multiprecision;
+//ordered_set
 // template <class T>
 // using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 // template <class K, class V>
 // using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+
+//ordered_multiset
+// #include <ext/pb_ds/assoc_container.hpp>
+// using namespace __gnu_pbds;
+// typedef tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update> ordered_multiset;
+
+// NOTE
+// find_by_order and order_of_key work the same as for a set.
+// However for searching, lower_bound and upper_bound work oppositely. Also, let's say you want to erase x, use s.erase(s.upper_bound(x)) (as upper bound is considered as lower bound)
 
 #include <bits/stdc++.h>
 #include <stdio.h>
