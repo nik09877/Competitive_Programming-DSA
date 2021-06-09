@@ -107,7 +107,7 @@ public:
         }
         return dpBuy[0];
     }
-    // Best Time to Buy and Sell Stock with Cooldown (if u ssell on ith day u can't buy on the next day)
+    // Best Time to Buy and Sell Stock with Cooldown (if u sell on ith day u can't buy on the next day)
     int maxProfit(vector<int> &a)
     {
         int n = a.size();
