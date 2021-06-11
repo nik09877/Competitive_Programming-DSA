@@ -75,7 +75,10 @@
     "typeinfo": "cpp",
     "valarray": "cpp",
     "variant": "cpp",
-    "strstream": "cpp"
+    "strstream": "cpp",
+    "*.ipp": "cpp",
+    "queue": "cpp",
+    "*.rh": "cpp"
   },
   "git.ignoreLimitWarning": true,
   "editor.defaultFormatter": "ms-vscode.cpptools",
