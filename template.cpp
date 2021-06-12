@@ -119,45 +119,6 @@ void _print(T t, V... v)
 const int MAX_N = 1e5 + 1;
 const ll MOD = 1e9 + 7;
 const ll INF = 1e9;
-
-void compress(vi &a)
-{
-    //for fenwick tree
-    int n = (int)a.size();
-    map<ii> mpp, back;
-    int idx = 1;
-    rep(i, n)
-    {
-        if (mpp.find(a[i]) == mpp.end())
-        {
-            mpp.insert({a[i], idx});
-            back.insert({idx, a[i]}); //to get back original values
-            idx++;
-        }
-    }
-    rep(i, n)
-    {
-        a[i] = mpp[a[i]];
-    }
-}
-struct custom_hash
-{
-    static uint64_t splitmix64(uint64_t x)
-    {
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
-    }
-
-    size_t operator()(uint64_t x) const
-    {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-    // umap<lli, lli, custom_hash> mp;
-};
-
 class LOG
 {
 public:
@@ -330,15 +291,8 @@ void solve()
     //         freopen("input.txt", "r" ,stdin);
     //         freopen("output.txt", "w" ,stdout);
     //     #endif
-    // int n;
-    // cin >> n;
-    vector<string> v = {"january", "february", "march", " april ", " may ", " june ", " july ", " august ", "september", "october", "november", "december"};
-    sort(all(v));
+
     // ordered_set<array<int, 2>> s;
-    for (auto s : v)
-    {
-        cout << s << endl;
-    }
     return;
 }
 int32_t main()
@@ -541,77 +495,4 @@ int hld = find(a.begin(), a.end(), x) - a.begin();*/
 
 // Another one .. function to count numbers greater than or equal to x
 // int count_x = count_if(v.begin(), v.end(), [](int a) { return (a >= x); });
-typedef unsigned long long ull;
-typedef long double lld;
-void _print(ll t) { cerr << t; }
-void _print(int t) { cerr << t; }
-void _print(string t) { cerr << t; }
-void _print(char t) { cerr << t; }
-void _print(lld t) { cerr << t; }
-void _print(double t) { cerr << t; }
-void _print(ull t) { cerr << t; }
-
-template <class T, class V>
-void _print(pair<T, V> p);
-template <class T>
-void _print(vector<T> v);
-template <class T>
-void _print(set<T> v);
-template <class T, class V>
-void _print(map<T, V> v);
-template <class T>
-void _print(multiset<T> v);
-template <class T, class V>
-void _print(pair<T, V> p)
-{
-    cerr << "{";
-    _print(p.ff);
-    cerr << ",";
-    _print(p.ss);
-    cerr << "}";
-}
-template <class T>
-void _print(vector<T> v)
-{
-    cerr << "[ ";
-    for (T i : v)
-    {
-        _print(i);
-        cerr << " ";
-    }
-    cerr << "]";
-}
-template <class T>
-void _print(set<T> v)
-{
-    cerr << "[ ";
-    for (T i : v)
-    {
-        _print(i);
-        cerr << " ";
-    }
-    cerr << "]";
-}
-template <class T>
-void _print(multiset<T> v)
-{
-    cerr << "[ ";
-    for (T i : v)
-    {
-        _print(i);
-        cerr << " ";
-    }
-    cerr << "]";
-}
-template <class T, class V>
-void _print(map<T, V> v)
-{
-    cerr << "[ ";
-    for (auto i : v)
-    {
-        _print(i);
-        cerr << " ";
-    }
-    cerr << "]";
-}
 // void _print(pbds v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}

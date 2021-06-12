@@ -35,7 +35,6 @@ public:
         int max_ans = INT_MIN, min_ans = INT_MAX, curr_mx = 0, curr_mn = 0, sum = 0;
         for (int x : a)
         {
-
             sum += x;
 
             curr_mx += x;
@@ -47,7 +46,8 @@ public:
             curr_mn = min(curr_mn, 0);
         }
         if (min_ans == sum)
-            return max_ans; //if items are negative
+            return max_ans; //if all items are negative
+
         return max(max_ans, sum - min_ans);
     }
 };
@@ -62,6 +62,7 @@ int32_t main()
         cin >> x;
         v.pb(x);
     }
+    //KADANE'S ALGO
     lli sum = 0, ans = LONG_MIN;
     for (auto x : v)
     {

@@ -3,23 +3,16 @@
 #define rrep(i, a, b) for (int i = a; i >= b; i--)
 #define rep1(i, n) for (int i = 1; i <= n; i++)
 #define fo(i, a, n) for (int i = a; i <= n; i++)
-#define repll(i, a, n) for (lli i = a; i <= n; i++)
 #define mkp make_pair
 #define pb emplace_back
 #define ff first
 #define ss second
 #define ll long long
-#define lli long long int
 #define ii int, int
 #define pii pair<int, int>
-#define pll pair<long, long>
-#define plli pair<long long int, long long int>
 #define vi vector<int>
 #define vvi vector<vector<int>>
-#define vlli vector<long long int>
 #define vpii vector<pair<int, int>>
-#define vplli vector<pair<long long int, long long int>>
-#define vvlli vector<vector<long long int>>
 #define MAXLL 1e18
 #define endl '\n'
 #define sp ' '
@@ -35,7 +28,7 @@
 #define pr(x) cout << x
 #define prsp(x) cout << x << sp
 #define prln(x) cout << x << endl
-#define fastio ios_base::sync_with_stdio(0), cout.tie(0), cin.tie(0)
+#define fastio ios_base::sync_with_stdio(0), cin.tie(0)
 #define re(a, n)   \
     rep(i, n)      \
             cin >> \
@@ -45,7 +38,6 @@ using namespace std;
 typedef unsigned long long ull;
 typedef long double lld;
 // typedef tree<pair<int, int>, null_type, less<pair<int, int>>, rb_tree_tag, tree_order_statistics_node_update > pbds; // find_by_order, order_of_key
-void _print(ll t) { cerr << t; }
 void _print(int t) { cerr << t; }
 void _print(string t) { cerr << t; }
 void _print(char t) { cerr << t; }
@@ -120,7 +112,8 @@ void _print(map<T, V> v)
 #ifndef ONLINE_JUDGE
 #define debug(x...)               \
     cerr << "[" << #x << "] = ["; \
-    _print(x)
+    _print(x);                    \
+    cerr << "]" << endl;
 #else
 #define debug(x...)
 #endif
@@ -179,7 +172,7 @@ T gcd(T a, T b)
 {
     if (b == 0)
         return a;
-    return gcd(b % a, a);
+    return gcd(b, a % b);
 }
 template <class T>
 T lcm(T a, T b) { return (a * b) / __gcd(a, b); }
@@ -228,9 +221,9 @@ T sqrt(T target)
     }
     return l;
 }
-ll expo(ll a, ll b, ll mod)
+int bin_power(int a, int b, int mod)
 {
-    ll res = 1;
+    int res = 1;
     while (b > 0)
     {
         if (b & 1)
@@ -240,121 +233,66 @@ ll expo(ll a, ll b, ll mod)
     }
     return res;
 }
-ll mminvprime(ll a, ll b) { return expo(a, b - 2, b); }
-ll mod_add(ll a, ll b, ll m)
+int mod_inv(int a, int b) { return bin_power(a, b - 2, b); }
+int mod_add(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a + b) % m) + m) % m;
 }
-ll mod_mul(ll a, ll b, ll m)
+int mod_mul(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a * b) % m) + m) % m;
 }
-ll mod_sub(ll a, ll b, ll m)
+int mod_sub(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a - b) % m) + m) % m;
 }
-ll mod_div(ll a, ll b, ll m)
+int mod_div(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
-    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
+    return (mod_mul(a, mod_inv(b, m), m) + m) % m;
 }
-//------------------------------------------------------------------------------------------------//
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
 // int XX[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+// #define int long long int
 const int mod = 1000000007;
 
-class Solution
+bool comp(pii &a, pii &b)
 {
-public:
-    int maximalSquare(vector<vector<char>> &grid)
-    {
-        int n = (int)grid.size();
-        int m = (int)grid[0].size();
-        int mxlen = 0;
-        vector<vector<int>> dp(n, vector<int>(m, 0));
-        for (int i = 0; i < m; i++)
-        {
-            if (grid[0][i] == '1')
-                dp[0][i] = 1, mxlen = 1;
-        }
-        for (int i = 0; i < n; i++)
-        {
-            if (grid[i][0] == '1')
-                dp[i][0] = 1, mxlen = 1;
-        }
-        for (int i = 1; i < n; i++)
-        {
-            for (int j = 1; j < m; j++)
-            {
-                if (grid[i][j] == '1')
-                {
-                    dp[i][j] = min({dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]}) + 1;
-                    mxlen = max(mxlen, dp[i][j]);
-                }
-            }
-        }
-        return mxlen * mxlen;
-    }
-};
-
-int countSquares(vector<vector<int>> &a)
-{
-
-    int n = a.size(), ans = 0;
-    int m = a[0].size();
-    vector<vector<int>> dp(n, vector<int>(m, 0));
-
-    for (int i = 0; i < n; i++)
-    {
-        dp[i][0] = a[i][0];
-        if (dp[i][0])
-            ans++;
-    }
-
-    for (int i = 1; i < m; i++)
-    {
-        dp[0][i] = a[0][i];
-        if (dp[0][i])
-            ans++;
-    }
-
-    for (int i = 1; i < n; i++)
-    {
-        for (int j = 1; j < m; j++)
-        {
-            if (a[i][j] == 1)
-            {
-                dp[i][j] = 1 + min({dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]});
-                ans += dp[i][j];
-            }
-        }
-    }
-    return ans;
+    if (a.ss == b.ss)
+        return a.ff < b.ff;
+    return a.ss < b.ss;
 }
 void solve()
 {
     int n;
     cin >> n;
-
+    vpii a(n);
+    rep(i, n) cin >> a[i].ff >> a[i].ss;
+    sort(all(a), comp);
+    int ans = 0, prev = 0;
+    rep(i, n)
+    {
+        if (a[i].ff > prev)
+        {
+            ans++;
+            prev = a[i].ss;
+        }
+    }
+    prln(ans);
     return;
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
+    solve();
 }
