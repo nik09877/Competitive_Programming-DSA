@@ -3,23 +3,16 @@
 #define rrep(i, a, b) for (int i = a; i >= b; i--)
 #define rep1(i, n) for (int i = 1; i <= n; i++)
 #define fo(i, a, n) for (int i = a; i <= n; i++)
-#define repll(i, a, n) for (lli i = a; i <= n; i++)
 #define mkp make_pair
 #define pb emplace_back
 #define ff first
 #define ss second
 #define ll long long
-#define lli long long int
 #define ii int, int
 #define pii pair<int, int>
-#define pll pair<long, long>
-#define plli pair<long long int, long long int>
 #define vi vector<int>
 #define vvi vector<vector<int>>
-#define vlli vector<long long int>
 #define vpii vector<pair<int, int>>
-#define vplli vector<pair<long long int, long long int>>
-#define vvlli vector<vector<long long int>>
 #define MAXLL 1e18
 #define endl '\n'
 #define sp ' '
@@ -45,7 +38,6 @@ using namespace std;
 typedef unsigned long long ull;
 typedef long double lld;
 // typedef tree<pair<int, int>, null_type, less<pair<int, int>>, rb_tree_tag, tree_order_statistics_node_update > pbds; // find_by_order, order_of_key
-void _print(ll t) { cerr << t; }
 void _print(int t) { cerr << t; }
 void _print(string t) { cerr << t; }
 void _print(char t) { cerr << t; }
@@ -121,7 +113,7 @@ void _print(map<T, V> v)
 #define debug(x...)               \
     cerr << "[" << #x << "] = ["; \
     _print(x);                    \
-    cerr << "]"
+    cerr << "]" << endl;
 #else
 #define debug(x...)
 #endif
@@ -180,7 +172,7 @@ T gcd(T a, T b)
 {
     if (b == 0)
         return a;
-    return gcd(b % a, a);
+    return gcd(b, a % b);
 }
 template <class T>
 T lcm(T a, T b) { return (a * b) / __gcd(a, b); }
@@ -229,93 +221,195 @@ T sqrt(T target)
     }
     return l;
 }
-ll expo(ll a, ll b, ll mod)
+int bin_power(int a, int b, int mod)
 {
-    ll res = 1;
+    int res = 1;
     while (b > 0)
     {
         if (b & 1)
-            res = (res * a) % mod;
-        a = (a * a) % mod;
+            res = ((res % mod) * (a % mod)) % mod;
+        a = ((a % mod) * (a % mod)) % mod;
         b = b >> 1;
     }
     return res;
 }
-ll mminvprime(ll a, ll b) { return expo(a, b - 2, b); }
-ll mod_add(ll a, ll b, ll m)
+int mod_inv(int a, int b) { return bin_power(a, b - 2, b); }
+int mod_add(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a + b) % m) + m) % m;
 }
-ll mod_mul(ll a, ll b, ll m)
+int mod_mul(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a * b) % m) + m) % m;
 }
-ll mod_sub(ll a, ll b, ll m)
+int mod_sub(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a - b) % m) + m) % m;
 }
-ll mod_div(ll a, ll b, ll m)
+int mod_div(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
-    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
+    return (mod_mul(a, mod_inv(b, m), m) + m) % m;
 }
-//------------------------------------------------------------------------------------------------//
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
 // int XX[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+// If you do not sacrifice for what you want, What you want becomes sacrifice.
+
 const int mod = 1000000007;
+
+map<char, int> mp;
+const int siz = 2e5 + 7;
+string str;
+vector<bool> visited;
+vector<int> adj[siz];
+void dfs(int &node, int &count)
+{
+    visited[node] = true;
+    count += 1;
+    mp[str[node]]++;
+    for (int child : adj[node])
+    {
+        if (visited[child] == false)
+            dfs(child, count);
+    }
+}
 
 void solve()
 {
-    lli n, sum = 0, ss = 0, ans = 0;
-    cin >> n;
-    vlli a(n + 1);
-    rep1(i, n)
+    int n, k;
+    cin >> n >> k;
+    cin >> str;
+    visited.clear();
+    visited.resize(n + 5);
+    for (int i = 0; i < n - k; i++)
     {
-        cin >> a[i];
-        sum += a[i];
-    }
-    if (sum % 3 != 0)
-    {
-        pr(0);
-        return;
-    }
-    sum /= 3;
-    vlli cnt(n + 2, 0); //cnt[i]->no of suffix from i to n whose sum is target sum
-    for (lli i = n; i >= 1; i--)
-    {
-        ss += a[i];
-        if (ss == sum)
-            cnt[i] = 1;
-        cnt[i] += cnt[i + 1];
-    }
-    ss = 0;
-    for (lli i = 1; i + 2 <= n; i++)
-    {
-        ss += a[i];
-        if (ss == sum)
+        if (i != (k + i))
         {
-            ans += cnt[i + 2];
+            adj[i].pb(k + i);
+
+            adj[k + i].pb(i);
+        }
+        if (n - i - 1 != i)
+        {
+            adj[n - i - 1].pb(i);
+            adj[i].pb(n - i - 1);
         }
     }
-    pr(ans);
+    int ans = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (!visited[i])
+        {
+            mp.clear();
+            int count = 0;
+            dfs(i, count);
+            int maxa = 0;
+            for (auto it : mp)
+            {
+                maxa = max(maxa, it.ss);
+            }
+            ans += count - maxa;
+        }
+    }
+    mp.clear();
+    str.clear();
+    for (int i = 0; i < n; i++)
+        adj[i].clear();
+
+    cout << ans << endl;
     return;
 }
 int32_t main()
 {
     fastio;
     int t = 1;
+    cin >> t;
     while (t--)
     {
         solve();
     }
 }
+
+// DSU
+// #define MAX 200010
+
+// vi par, sz; vvi cnt;
+// string str;
+// int find_par(int v) {
+//     if (v == par[v]) {
+//         return v;
+//     }
+
+//     return par[v] = find_par(par[v]);
+// }
+// void merge(int u, int v) {
+//     int a = find_par(u);
+//     int b = find_par(v);
+//     if (a != b) {
+//         if (sz[a] < sz[b]) {
+//             swap(a, b);
+//         }
+//         par[b] = a;
+//         sz[a] += sz[b];
+//         REP(i, 0, 26) {
+//             cnt[a][i] += cnt[b][i];
+//         }
+//     }
+// }
+
+// int main() {
+//     ios_base::sync_with_stdio(false); cin.tie(NULL);
+//     int test = 1;
+//     cin >> test;
+//     while (test--) {
+//         int n, k; cin >> n >> k;
+//         cin >> str;
+
+//         cnt.assign(n, vi(26));
+//         par.assign(n, 0); sz.assign(n, 0);
+//         REP(i, 0, n) {
+//             par[i] = i;
+//             sz[i] = 1;
+//             cnt[i][str[i] - 'a']++;
+//         }
+//         REP(i, 0, n) {
+//             (i < n - i - 1 ? merge(i, n - i - 1) : void());
+//             if (i + k <= n - 1) {
+//                 merge(i, i + k);
+//             }
+//         }
+
+//         int ans = 0;
+//         /* REP(i, 0, n) {
+//              cout << i << "->>";
+//              REP(j, 0, 26) {
+//                  cout << cnt[i][j] << " ";
+//              }
+//              cout << endl;
+//          }*/
+
+//         REP(i, 0, n) {
+//             if (par[i] == i) {
+//                 int mx = -1;
+//                 REP(j, 0, 26) {
+//                     mx = max(mx, cnt[i][j]);
+//                 }
+//                 ans += sz[i] - mx;
+//             }
+//         }
+
+//         cout << ans << endl;
+
+//     }
+
+// }

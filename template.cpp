@@ -18,7 +18,6 @@ using namespace boost::multiprecision;
 // NOTE
 // find_by_order and order_of_key work the same as for a set.
 // However for searching, lower_bound and upper_bound work oppositely. Also, let's say you want to erase x, use s.erase(s.upper_bound(x)) (as upper bound is considered as lower bound)
-
 #include <bits/stdc++.h>
 #include <stdio.h>
 #define rep(i, n) for (int i = 0; i < n; i++)

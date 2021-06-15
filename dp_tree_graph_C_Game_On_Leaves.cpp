@@ -3,23 +3,16 @@
 #define rrep(i, a, b) for (int i = a; i >= b; i--)
 #define rep1(i, n) for (int i = 1; i <= n; i++)
 #define fo(i, a, n) for (int i = a; i <= n; i++)
-#define repll(i, a, n) for (lli i = a; i <= n; i++)
 #define mkp make_pair
 #define pb emplace_back
 #define ff first
 #define ss second
 #define ll long long
-#define lli long long int
 #define ii int, int
 #define pii pair<int, int>
-#define pll pair<long, long>
-#define plli pair<long long int, long long int>
 #define vi vector<int>
 #define vvi vector<vector<int>>
-#define vlli vector<long long int>
 #define vpii vector<pair<int, int>>
-#define vplli vector<pair<long long int, long long int>>
-#define vvlli vector<vector<long long int>>
 #define MAXLL 1e18
 #define endl '\n'
 #define sp ' '
@@ -45,7 +38,6 @@ using namespace std;
 typedef unsigned long long ull;
 typedef long double lld;
 // typedef tree<pair<int, int>, null_type, less<pair<int, int>>, rb_tree_tag, tree_order_statistics_node_update > pbds; // find_by_order, order_of_key
-void _print(ll t) { cerr << t; }
 void _print(int t) { cerr << t; }
 void _print(string t) { cerr << t; }
 void _print(char t) { cerr << t; }
@@ -121,7 +113,7 @@ void _print(map<T, V> v)
 #define debug(x...)               \
     cerr << "[" << #x << "] = ["; \
     _print(x);                    \
-    cerr << "]"
+    cerr << "]" << endl;
 #else
 #define debug(x...)
 #endif
@@ -180,7 +172,7 @@ T gcd(T a, T b)
 {
     if (b == 0)
         return a;
-    return gcd(b % a, a);
+    return gcd(b, a % b);
 }
 template <class T>
 T lcm(T a, T b) { return (a * b) / __gcd(a, b); }
@@ -229,91 +221,110 @@ T sqrt(T target)
     }
     return l;
 }
-ll expo(ll a, ll b, ll mod)
+int bin_power(int a, int b, int mod)
 {
-    ll res = 1;
+    int res = 1;
     while (b > 0)
     {
         if (b & 1)
-            res = (res * a) % mod;
-        a = (a * a) % mod;
+            res = ((res % mod) * (a % mod)) % mod;
+        a = ((a % mod) * (a % mod)) % mod;
         b = b >> 1;
     }
     return res;
 }
-ll mminvprime(ll a, ll b) { return expo(a, b - 2, b); }
-ll mod_add(ll a, ll b, ll m)
+int mod_inv(int a, int b) { return bin_power(a, b - 2, b); }
+int mod_add(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a + b) % m) + m) % m;
 }
-ll mod_mul(ll a, ll b, ll m)
+int mod_mul(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a * b) % m) + m) % m;
 }
-ll mod_sub(ll a, ll b, ll m)
+int mod_sub(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a - b) % m) + m) % m;
 }
-ll mod_div(ll a, ll b, ll m)
+int mod_div(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
-    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
+    return (mod_mul(a, mod_inv(b, m), m) + m) % m;
 }
-//------------------------------------------------------------------------------------------------//
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
 // int XX[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
-const int mod = 1000000007;
+// If you do not sacrifice for what you want, What you want becomes sacrifice.
 
+const int mod = 1000000007;
+vi g[1005];
+int deg[1005], subsize[1005];
+
+void dfs(int node, int par)
+{
+    subsize[node] = 1;
+    for (int child : g[node])
+    {
+        if (child == par)
+            continue;
+        dfs(child, node);
+        subsize[node] += subsize[child];
+    }
+}
 void solve()
 {
-    lli n, sum = 0, ss = 0, ans = 0;
-    cin >> n;
-    vlli a(n + 1);
-    rep1(i, n)
+
+    int n, x;
+    cin >> n >> x;
+    if (n == 1)
     {
-        cin >> a[i];
-        sum += a[i];
-    }
-    if (sum % 3 != 0)
-    {
-        pr(0);
+        prln("Ayush");
         return;
     }
-    sum /= 3;
-    vlli cnt(n + 2, 0); //cnt[i]->no of suffix from i to n whose sum is target sum
-    for (lli i = n; i >= 1; i--)
+    rep1(i, n)
     {
-        ss += a[i];
-        if (ss == sum)
-            cnt[i] = 1;
-        cnt[i] += cnt[i + 1];
+        g[i].clear();
+        subsize[i] = 0;
+        deg[i] = 0;
     }
-    ss = 0;
-    for (lli i = 1; i + 2 <= n; i++)
+    rep(i, n - 1)
     {
-        ss += a[i];
-        if (ss == sum)
-        {
-            ans += cnt[i + 2];
-        }
+        int u, v;
+        cin >> u >> v;
+        g[u].pb(v);
+        g[v].pb(u);
+        deg[u]++;
+        deg[v]++;
     }
-    pr(ans);
+    if (deg[x] <= 1)
+    {
+        prln("Ayush");
+        return;
+    }
+    dfs(x, -1);
+    int nodes = subsize[x] - 2;
+    if (nodes % 2 != 0)
+    {
+        prln("Ashish");
+    }
+    else
+        prln("Ayush");
     return;
 }
 int32_t main()
 {
     fastio;
     int t = 1;
+    cin >> t;
     while (t--)
     {
         solve();

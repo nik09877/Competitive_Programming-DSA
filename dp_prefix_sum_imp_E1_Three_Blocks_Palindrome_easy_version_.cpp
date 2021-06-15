@@ -3,23 +3,16 @@
 #define rrep(i, a, b) for (int i = a; i >= b; i--)
 #define rep1(i, n) for (int i = 1; i <= n; i++)
 #define fo(i, a, n) for (int i = a; i <= n; i++)
-#define repll(i, a, n) for (lli i = a; i <= n; i++)
 #define mkp make_pair
 #define pb emplace_back
 #define ff first
 #define ss second
 #define ll long long
-#define lli long long int
 #define ii int, int
 #define pii pair<int, int>
-#define pll pair<long, long>
-#define plli pair<long long int, long long int>
 #define vi vector<int>
 #define vvi vector<vector<int>>
-#define vlli vector<long long int>
 #define vpii vector<pair<int, int>>
-#define vplli vector<pair<long long int, long long int>>
-#define vvlli vector<vector<long long int>>
 #define MAXLL 1e18
 #define endl '\n'
 #define sp ' '
@@ -45,7 +38,6 @@ using namespace std;
 typedef unsigned long long ull;
 typedef long double lld;
 // typedef tree<pair<int, int>, null_type, less<pair<int, int>>, rb_tree_tag, tree_order_statistics_node_update > pbds; // find_by_order, order_of_key
-void _print(ll t) { cerr << t; }
 void _print(int t) { cerr << t; }
 void _print(string t) { cerr << t; }
 void _print(char t) { cerr << t; }
@@ -121,7 +113,7 @@ void _print(map<T, V> v)
 #define debug(x...)               \
     cerr << "[" << #x << "] = ["; \
     _print(x);                    \
-    cerr << "]"
+    cerr << "]" << endl;
 #else
 #define debug(x...)
 #endif
@@ -180,7 +172,7 @@ T gcd(T a, T b)
 {
     if (b == 0)
         return a;
-    return gcd(b % a, a);
+    return gcd(b, a % b);
 }
 template <class T>
 T lcm(T a, T b) { return (a * b) / __gcd(a, b); }
@@ -229,9 +221,9 @@ T sqrt(T target)
     }
     return l;
 }
-ll expo(ll a, ll b, ll mod)
+int bin_power(int a, int b, int mod)
 {
-    ll res = 1;
+    int res = 1;
     while (b > 0)
     {
         if (b & 1)
@@ -241,79 +233,91 @@ ll expo(ll a, ll b, ll mod)
     }
     return res;
 }
-ll mminvprime(ll a, ll b) { return expo(a, b - 2, b); }
-ll mod_add(ll a, ll b, ll m)
+int mod_inv(int a, int b) { return bin_power(a, b - 2, b); }
+int mod_add(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a + b) % m) + m) % m;
 }
-ll mod_mul(ll a, ll b, ll m)
+int mod_mul(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a * b) % m) + m) % m;
 }
-ll mod_sub(ll a, ll b, ll m)
+int mod_sub(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a - b) % m) + m) % m;
 }
-ll mod_div(ll a, ll b, ll m)
+int mod_div(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
-    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
+    return (mod_mul(a, mod_inv(b, m), m) + m) % m;
 }
-//------------------------------------------------------------------------------------------------//
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
 // int XX[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+// If you do not sacrifice for what you want, What you want becomes sacrifice.
+
+// #define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
-    lli n, sum = 0, ss = 0, ans = 0;
+    int n;
     cin >> n;
-    vlli a(n + 1);
+    vi a(n + 1);
+    rep1(i, n) cin >> a[i];
+
+    vvi pre(n + 2, vi(27, 0));
     rep1(i, n)
     {
-        cin >> a[i];
-        sum += a[i];
-    }
-    if (sum % 3 != 0)
-    {
-        pr(0);
-        return;
-    }
-    sum /= 3;
-    vlli cnt(n + 2, 0); //cnt[i]->no of suffix from i to n whose sum is target sum
-    for (lli i = n; i >= 1; i--)
-    {
-        ss += a[i];
-        if (ss == sum)
-            cnt[i] = 1;
-        cnt[i] += cnt[i + 1];
-    }
-    ss = 0;
-    for (lli i = 1; i + 2 <= n; i++)
-    {
-        ss += a[i];
-        if (ss == sum)
+        rep1(j, 26)
         {
-            ans += cnt[i + 2];
+            pre[i][j] = pre[i - 1][j];
+            if (a[i] == j)
+                pre[i][j] += 1;
         }
     }
-    pr(ans);
+
+    int ans = 1;
+    rep1(i, 26) ans = max(ans, pre[n][i]);
+
+    // for each [L,R] check max freq ,then for each num in [1,26] check min(freq[0,L-1] and freq[L+1,n]) then keep on updating ans
+
+    for (int L = 1; L <= n; L++)
+    {
+        for (int R = L; R <= n; R++)
+        {
+            int mx_freq_of_mid_el = 0, other_part = 0;
+            rep1(i, 26)
+            {
+                int cur_freq = pre[R][i] - pre[L - 1][i];
+                mx_freq_of_mid_el = max(mx_freq_of_mid_el, cur_freq);
+
+                int cur_left = pre[L - 1][i];
+                int cur_right = pre[n][i] - pre[R][i];
+                other_part = max(other_part, min(cur_left, cur_right));
+            }
+
+            int temp_ans = mx_freq_of_mid_el + 2 * other_part;
+            ans = max(ans, temp_ans);
+        }
+    }
+    prln(ans);
     return;
 }
 int32_t main()
 {
     fastio;
     int t = 1;
+    cin >> t;
     while (t--)
     {
         solve();

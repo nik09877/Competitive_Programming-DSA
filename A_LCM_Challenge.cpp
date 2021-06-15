@@ -3,23 +3,16 @@
 #define rrep(i, a, b) for (int i = a; i >= b; i--)
 #define rep1(i, n) for (int i = 1; i <= n; i++)
 #define fo(i, a, n) for (int i = a; i <= n; i++)
-#define repll(i, a, n) for (lli i = a; i <= n; i++)
 #define mkp make_pair
 #define pb emplace_back
 #define ff first
 #define ss second
 #define ll long long
-#define lli long long int
 #define ii int, int
 #define pii pair<int, int>
-#define pll pair<long, long>
-#define plli pair<long long int, long long int>
 #define vi vector<int>
 #define vvi vector<vector<int>>
-#define vlli vector<long long int>
 #define vpii vector<pair<int, int>>
-#define vplli vector<pair<long long int, long long int>>
-#define vvlli vector<vector<long long int>>
 #define MAXLL 1e18
 #define endl '\n'
 #define sp ' '
@@ -45,7 +38,6 @@ using namespace std;
 typedef unsigned long long ull;
 typedef long double lld;
 // typedef tree<pair<int, int>, null_type, less<pair<int, int>>, rb_tree_tag, tree_order_statistics_node_update > pbds; // find_by_order, order_of_key
-void _print(ll t) { cerr << t; }
 void _print(int t) { cerr << t; }
 void _print(string t) { cerr << t; }
 void _print(char t) { cerr << t; }
@@ -121,7 +113,7 @@ void _print(map<T, V> v)
 #define debug(x...)               \
     cerr << "[" << #x << "] = ["; \
     _print(x);                    \
-    cerr << "]"
+    cerr << "]" << endl;
 #else
 #define debug(x...)
 #endif
@@ -180,7 +172,7 @@ T gcd(T a, T b)
 {
     if (b == 0)
         return a;
-    return gcd(b % a, a);
+    return gcd(b, a % b);
 }
 template <class T>
 T lcm(T a, T b) { return (a * b) / __gcd(a, b); }
@@ -229,85 +221,100 @@ T sqrt(T target)
     }
     return l;
 }
-ll expo(ll a, ll b, ll mod)
+int bin_power(int a, int b, int mod)
 {
-    ll res = 1;
+    int res = 1;
     while (b > 0)
     {
         if (b & 1)
-            res = (res * a) % mod;
-        a = (a * a) % mod;
+            res = ((res % mod) * (a % mod)) % mod;
+        a = ((a % mod) * (a % mod)) % mod;
         b = b >> 1;
     }
     return res;
 }
-ll mminvprime(ll a, ll b) { return expo(a, b - 2, b); }
-ll mod_add(ll a, ll b, ll m)
+int mod_inv(int a, int b) { return bin_power(a, b - 2, b); }
+int mod_add(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a + b) % m) + m) % m;
 }
-ll mod_mul(ll a, ll b, ll m)
+int mod_mul(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a * b) % m) + m) % m;
 }
-ll mod_sub(ll a, ll b, ll m)
+int mod_sub(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a - b) % m) + m) % m;
 }
-ll mod_div(ll a, ll b, ll m)
+int mod_div(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
-    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
+    return (mod_mul(a, mod_inv(b, m), m) + m) % m;
 }
-//------------------------------------------------------------------------------------------------//
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
 // int XX[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+// If you do not sacrifice for what you want, What you want becomes sacrifice.
+
+#define int long long int
 const int mod = 1000000007;
 
+/*
+If n mod 2 = 1 => res = n * ( n — 1 ) * ( n — 2 )
+
+Of course it is, right ???
+
+if n mod 2 = 0 { We can see that n and ( n — 2 ) have GCD is 2 => res = n * ( n — 1 ) * ( n — 2 )/2 It's is small, so we think about n * ( n — 1 ) * ( n — 3 ) But if n mod 3 = 0 we can see that the result is smaller :( So we think about ( n — 1 ) * ( n — 2 ) * ( n — 3 ) You should think more careful and then you will know why :D }
+
+I dont think that ur saying if n mod 3 = 0 we can see result will be smaller is right, i think then n and n — 3 will no longer be co-prime in that case
+*/
 void solve()
 {
-    lli n, sum = 0, ss = 0, ans = 0;
+    int n;
     cin >> n;
-    vlli a(n + 1);
-    rep1(i, n)
+    if (n == 1)
     {
-        cin >> a[i];
-        sum += a[i];
-    }
-    if (sum % 3 != 0)
-    {
-        pr(0);
+        prln(1);
         return;
     }
-    sum /= 3;
-    vlli cnt(n + 2, 0); //cnt[i]->no of suffix from i to n whose sum is target sum
-    for (lli i = n; i >= 1; i--)
+    else if (n == 2)
     {
-        ss += a[i];
-        if (ss == sum)
-            cnt[i] = 1;
-        cnt[i] += cnt[i + 1];
+        prln(2);
+        return;
     }
-    ss = 0;
-    for (lli i = 1; i + 2 <= n; i++)
+    else if (n == 3)
     {
-        ss += a[i];
-        if (ss == sum)
+        prln(6);
+        return;
+    }
+    if (n & 1)
+    {
+        int ans = (n) * (n - 1) * (n - 2);
+        prln(ans);
+        return;
+    }
+    else
+    {
+        if (n % 3 == 0)
         {
-            ans += cnt[i + 2];
+            int ans = (n - 1) * (n - 2) * (n - 3);
+            prln(ans);
+        }
+        else
+        {
+            int ans = n * (n - 1) * (n - 3);
+            prln(ans);
         }
     }
-    pr(ans);
     return;
 }
 int32_t main()

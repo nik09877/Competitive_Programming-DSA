@@ -40,6 +40,7 @@ const int mod = 1000000007;
 int pi[200005];
 void solve()
 {
+    //pi[i] denotes the max length of proper prefix that matches with the suffix ending at pos i
     string p, t, st;
     cin >> p >> t;
     st = p + "#" + t;
