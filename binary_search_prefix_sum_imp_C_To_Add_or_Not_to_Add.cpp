@@ -227,8 +227,8 @@ int bin_power(int a, int b, int mod)
     while (b > 0)
     {
         if (b & 1)
-            res = (res * a) % mod;
-        a = (a * a) % mod;
+            res = ((res % mod) * (a % mod)) % mod;
+        a = ((a % mod) * (a % mod)) % mod;
         b = b >> 1;
     }
     return res;
@@ -265,47 +265,52 @@ int mod_div(int a, int b, int m)
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
 // If you do not sacrifice for what you want, What you want becomes sacrifice.
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+
+int n, k;
+bool good(int m, int i, vi &a, vi &pre)
+{
+    int val = pre[i];
+    if (i - m >= 0)
+        val -= pre[i - m];
+
+    if (m * a[i] - val <= k)
+        return true;
+
+    return false;
+}
 void solve()
 {
-    int n;
-    string s;
-    cin >> s;
-    n = s.length();
-    vi pi(n, 0);
+    cin >> n >> k;
+    vi a(n), pre(n);
+    re(a, n);
+    asort(a);
+    partial_sum(all(a), pre.begin());
+    int freq = 1, num = a[0];
     fo(i, 1, n - 1)
     {
-        int j = pi[i - 1];
-        while (j > 0 and s[i] != s[j])
-            j = pi[j - 1];
-        if (s[i] == s[j])
-            j++;
-        pi[i] = j;
-    }
-
-    int len_of_suf_equal_to_pre = pi[n - 1];
-
-    if (pi[n - 1] == 0)
-    {
-        prln("Just a legend");
-        return;
-    }
-    rep(i, n - 1)
-    {
-        if (pi[i] == len_of_suf_equal_to_pre)
+        //for each number check what is the max no o fnumbers you can make equal to this number
+        int l = 1, r = i + 1, ans = 1;
+        while (l <= r)
         {
-            prln(s.substr(0, pi[i]));
-            return;
+            int m = (l + r) >> 1;
+            if (good(m, i, a, pre))
+            {
+                ans = m;
+                l = m + 1;
+            }
+            else
+                r = m - 1;
+        }
+        if (ans > freq)
+        {
+            freq = ans;
+            num = a[i];
         }
     }
-    int ans = pi[pi[n - 1] - 1];
-    if (ans)
-    {
-        prln(s.substr(0, ans));
-        return;
-    }
-    prln("Just a legend");
+    prsp(freq);
+    prln(num);
     return;
 }
 int32_t main()

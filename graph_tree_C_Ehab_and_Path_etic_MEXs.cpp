@@ -227,8 +227,8 @@ int bin_power(int a, int b, int mod)
     while (b > 0)
     {
         if (b & 1)
-            res = (res * a) % mod;
-        a = (a * a) % mod;
+            res = ((res % mod) * (a % mod)) % mod;
+        a = ((a % mod) * (a % mod)) % mod;
         b = b >> 1;
     }
     return res;
@@ -267,45 +267,61 @@ int mod_div(int a, int b, int m)
 
 // #define int long long int
 const int mod = 1000000007;
-void solve()
+const int N = 1e5 + 5;
+int n, deg[N];
+vi g[N];
+map<pii, int> edges;
+vi ans(N, 0);
+
+void bfs(int root)
 {
-    int n;
-    string s;
-    cin >> s;
-    n = s.length();
-    vi pi(n, 0);
-    fo(i, 1, n - 1)
+    int mex = 0;
+    queue<pii> q; //{node,par}
+    q.push({root, -1});
+    while (!q.empty())
     {
-        int j = pi[i - 1];
-        while (j > 0 and s[i] != s[j])
-            j = pi[j - 1];
-        if (s[i] == s[j])
-            j++;
-        pi[i] = j;
-    }
-
-    int len_of_suf_equal_to_pre = pi[n - 1];
-
-    if (pi[n - 1] == 0)
-    {
-        prln("Just a legend");
-        return;
-    }
-    rep(i, n - 1)
-    {
-        if (pi[i] == len_of_suf_equal_to_pre)
+        int node = q.front().ff;
+        int par = q.front().ss;
+        q.pop();
+        for (int child : g[node])
         {
-            prln(s.substr(0, pi[i]));
-            return;
+            if (child != par)
+            {
+                int temp_node = node, temp_child = child;
+                if (temp_node > temp_child)
+                    swap(temp_node, temp_child);
+                int idx = edges[{temp_node, temp_child}];
+                ans[idx] = mex;
+                mex++;
+                q.push({child, node});
+            }
         }
     }
-    int ans = pi[pi[n - 1] - 1];
-    if (ans)
+}
+// Hint
+// just need to find which node has maximum degree so that we can spread our values ,then just simple bfs
+void solve()
+{
+    cin >> n;
+    int root = 0;
+    rep(i, n - 1)
     {
-        prln(s.substr(0, ans));
-        return;
+        int x, y;
+        cin >> x >> y;
+        g[x].pb(y);
+        g[y].pb(x);
+        deg[x]++, deg[y]++;
+        if (deg[x] > deg[root] or deg[y] > deg[root])
+        {
+            root = deg[x] >= deg[y] ? x : y;
+        }
+        if (x > y)
+            swap(x, y);
+        edges[{x, y}] = i;
     }
-    prln("Just a legend");
+    bfs(root);
+    rep(i, n - 1) prln(ans[i]);
+
     return;
 }
 int32_t main()

@@ -227,8 +227,8 @@ int bin_power(int a, int b, int mod)
     while (b > 0)
     {
         if (b & 1)
-            res = (res * a) % mod;
-        a = (a * a) % mod;
+            res = ((res % mod) * (a % mod)) % mod;
+        a = ((a % mod) * (a % mod)) % mod;
         b = b >> 1;
     }
     return res;
@@ -265,51 +265,108 @@ int mod_div(int a, int b, int m)
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
 // If you do not sacrifice for what you want, What you want becomes sacrifice.
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+
+vi p;
+int n, x, a, y, b, k, lc;
+
+bool good(int m)
+{
+    int items_due_to_lc = m / lc;
+    int items_due_to_a = m / a - items_due_to_lc;
+    int items_due_to_b = m / b - items_due_to_lc;
+    int tot = 0;
+    int cnt = 0;
+    fo(i, 0, items_due_to_lc - 1)
+        tot += (p[cnt] / 100) * (x + y),
+        cnt++;
+    fo(i, 0, items_due_to_a - 1)
+        tot += (p[cnt] / 100) * (x),
+        cnt++;
+    fo(i, 0, items_due_to_b - 1)
+        tot += (p[cnt] / 100) * (y),
+        cnt++;
+    if (tot >= k)
+        return true;
+
+    tot = 0;
+    cnt = 0;
+    fo(i, 0, items_due_to_lc - 1)
+        tot += (p[cnt] / 100) * (x + y),
+        cnt++;
+    fo(i, 0, items_due_to_b - 1)
+        tot += (p[cnt] / 100) * (y),
+        cnt++;
+    fo(i, 0, items_due_to_a - 1)
+        tot += (p[cnt] / 100) * (x),
+        cnt++;
+    return tot >= k;
+}
 void solve()
 {
-    int n;
-    string s;
-    cin >> s;
-    n = s.length();
-    vi pi(n, 0);
-    fo(i, 1, n - 1)
+    cin >> n;
+    p.resize(n);
+    re(p, n);
+    dsort(p);
+    cin >> x >> a >> y >> b >> k;
+    if (y > x)
     {
-        int j = pi[i - 1];
-        while (j > 0 and s[i] != s[j])
-            j = pi[j - 1];
-        if (s[i] == s[j])
-            j++;
-        pi[i] = j;
+        swap(x, y);
+        swap(a, b);
     }
+    lc = lcm(a, b);
+    int items_due_to_lc = n / lc;
+    int items_due_to_a = n / a - items_due_to_lc;
+    int items_due_to_b = n / b - items_due_to_lc;
+    int tot1 = 0;
+    int cnt = 0;
+    fo(i, 0, items_due_to_lc - 1)
+        tot1 += (p[cnt] / 100) * (x + y),
+        cnt++;
+    fo(i, 0, items_due_to_a - 1)
+        tot1 += (p[cnt] / 100) * (x),
+        cnt++;
+    fo(i, 0, items_due_to_b - 1)
+        tot1 += (p[cnt] / 100) * (y),
+        cnt++;
 
-    int len_of_suf_equal_to_pre = pi[n - 1];
+    int tot2 = 0;
+    cnt = 0;
+    fo(i, 0, items_due_to_lc - 1)
+        tot2 += (p[cnt] / 100) * (x + y),
+        cnt++;
+    fo(i, 0, items_due_to_a - 1)
+        tot2 += (p[cnt] / 100) * (x),
+        cnt++;
+    fo(i, 0, items_due_to_b - 1)
+        tot2 += (p[cnt] / 100) * (y),
+        cnt++;
 
-    if (pi[n - 1] == 0)
+    if (tot1 < k and tot2 < k)
     {
-        prln("Just a legend");
+        prln(-1);
         return;
     }
-    rep(i, n - 1)
+    int l = 0, r = n;
+    while (r - l > 1)
     {
-        if (pi[i] == len_of_suf_equal_to_pre)
-        {
-            prln(s.substr(0, pi[i]));
-            return;
-        }
+        int m = (l + r) >> 1;
+        if (good(m))
+            r = m;
+        else
+            l = m;
     }
-    int ans = pi[pi[n - 1] - 1];
-    if (ans)
-    {
-        prln(s.substr(0, ans));
-        return;
-    }
-    prln("Just a legend");
+    prln(r);
     return;
 }
 int32_t main()
 {
     fastio;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
 }

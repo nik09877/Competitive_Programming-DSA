@@ -227,8 +227,8 @@ int bin_power(int a, int b, int mod)
     while (b > 0)
     {
         if (b & 1)
-            res = (res * a) % mod;
-        a = (a * a) % mod;
+            res = ((res % mod) * (a % mod)) % mod;
+        a = ((a % mod) * (a % mod)) % mod;
         b = b >> 1;
     }
     return res;
@@ -265,47 +265,37 @@ int mod_div(int a, int b, int m)
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
 // If you do not sacrifice for what you want, What you want becomes sacrifice.
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+
 void solve()
 {
-    int n;
-    string s;
-    cin >> s;
-    n = s.length();
-    vi pi(n, 0);
-    fo(i, 1, n - 1)
+    int n, m, ta, tb, k;
+    cin >> n >> m >> ta >> tb >> k;
+    vi a(n), b(m);
+    re(a, n);
+    re(b, m);
+    if (k >= n)
     {
-        int j = pi[i - 1];
-        while (j > 0 and s[i] != s[j])
-            j = pi[j - 1];
-        if (s[i] == s[j])
-            j++;
-        pi[i] = j;
-    }
-
-    int len_of_suf_equal_to_pre = pi[n - 1];
-
-    if (pi[n - 1] == 0)
-    {
-        prln("Just a legend");
+        prln(-1);
         return;
     }
-    rep(i, n - 1)
+    rep(i, n) a[i] += ta;
+    int ans = 0;
+    rrep(i, k, 0)
     {
-        if (pi[i] == len_of_suf_equal_to_pre)
+        int arv_time = a[i];
+        int idx = lower_bound(all(b), arv_time) - b.begin();
+        int can_rmv = k - i;
+        int j = idx + can_rmv;
+        if (j >= m)
         {
-            prln(s.substr(0, pi[i]));
+            prln(-1);
             return;
         }
+        ans = max(ans, b[j] + tb);
     }
-    int ans = pi[pi[n - 1] - 1];
-    if (ans)
-    {
-        prln(s.substr(0, ans));
-        return;
-    }
-    prln("Just a legend");
+    prln(ans);
     return;
 }
 int32_t main()

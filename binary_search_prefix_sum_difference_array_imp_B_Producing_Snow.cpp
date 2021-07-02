@@ -227,8 +227,8 @@ int bin_power(int a, int b, int mod)
     while (b > 0)
     {
         if (b & 1)
-            res = (res * a) % mod;
-        a = (a * a) % mod;
+            res = ((res % mod) * (a % mod)) % mod;
+        a = ((a % mod) * (a % mod)) % mod;
         b = b >> 1;
     }
     return res;
@@ -265,47 +265,50 @@ int mod_div(int a, int b, int m)
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
 // If you do not sacrifice for what you want, What you want becomes sacrifice.
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+
 void solve()
 {
     int n;
-    string s;
-    cin >> s;
-    n = s.length();
-    vi pi(n, 0);
-    fo(i, 1, n - 1)
+    cin >> n;
+    vi v(n), t(n);
+    re(v, n);
+    re(t, n);
+    vi pre(n, 0), diff(n + 1, 0), ans(n, 0);
+    rep(i, n)
     {
-        int j = pi[i - 1];
-        while (j > 0 and s[i] != s[j])
-            j = pi[j - 1];
-        if (s[i] == s[j])
-            j++;
-        pi[i] = j;
+        pre[i] = t[i];
+        if (i)
+            pre[i] += pre[i - 1];
     }
-
-    int len_of_suf_equal_to_pre = pi[n - 1];
-
-    if (pi[n - 1] == 0)
+    rep(i, n)
     {
-        prln("Just a legend");
-        return;
-    }
-    rep(i, n - 1)
-    {
-        if (pi[i] == len_of_suf_equal_to_pre)
+        int vol = v[i];
+        if (not vol)
+            continue;
+        if (i)
+            vol += pre[i - 1];
+        int idx = upper_bound(all(pre), vol) - pre.begin() - 1;
+        if (idx >= i)
         {
-            prln(s.substr(0, pi[i]));
-            return;
+            diff[i] += 1;
+            diff[idx + 1] -= 1;
         }
+        if (idx >= i)
+        {
+            vol -= pre[idx];
+            if (idx + 1 < n)
+                ans[idx + 1] += vol;
+        }
+        else
+            ans[i] += v[i];
     }
-    int ans = pi[pi[n - 1] - 1];
-    if (ans)
-    {
-        prln(s.substr(0, ans));
-        return;
-    }
-    prln("Just a legend");
+    rep1(i, n) diff[i] += diff[i - 1];
+    rep(i, n) ans[i] += diff[i] * t[i];
+    for (auto x : ans)
+        prsp(x);
+    cout << endl;
     return;
 }
 int32_t main()

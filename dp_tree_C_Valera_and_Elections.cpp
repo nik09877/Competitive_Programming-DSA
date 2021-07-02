@@ -139,26 +139,7 @@ void _print(map<T, V> v)
 //         a[i] = mpp[a[i]];
 //     }
 // }
-///---------------custom_hash---------------------///
-// class chash
-// {
-// public:
-//     static uint64_t splitmix64(uint64_t x)
-//     {
-//         x += 0x9e3779b97f4a7c15;
-//         x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-//         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-//         return x ^ (x >> 31);
-//     }
-
-//     size_t operator()(uint64_t x) const
-//     {
-//         static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-//         return splitmix64(x + FIXED_RANDOM);
-//     }
-//     // umap<lli, lli, custom_hash> mp;
-// };
-//--------------------------------------------------------------------//
+// -----------POLICY BASED DATA STRUCTURES------------------------
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
@@ -221,14 +202,15 @@ T sqrt(T target)
     }
     return l;
 }
-int bin_power(int a, int b, int mod)
+template <class T>
+T bin_power(T a, T b, T mod)
 {
-    int res = 1;
+    T res = 1;
     while (b > 0)
     {
         if (b & 1)
-            res = (res * a) % mod;
-        a = (a * a) % mod;
+            res = ((res % mod) * (a % mod)) % mod;
+        a = ((a % mod) * (a % mod)) % mod;
         b = b >> 1;
     }
     return res;
@@ -258,6 +240,25 @@ int mod_div(int a, int b, int m)
     b = b % m;
     return (mod_mul(a, mod_inv(b, m), m) + m) % m;
 }
+///---------------custom_hash---------------------///
+// class chash
+// {
+// public:
+//     static uint64_t splitmix64(uint64_t x)
+//     {
+//         x += 0x9e3779b97f4a7c15;
+//         x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+//         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+//         return x ^ (x >> 31);
+//     }
+
+//     size_t operator()(uint64_t x) const
+//     {
+//         static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+//         return splitmix64(x + FIXED_RANDOM);
+//     }
+//     // umap<lli, lli, custom_hash> mp;
+// };
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
@@ -267,45 +268,48 @@ int mod_div(int a, int b, int m)
 
 // #define int long long int
 const int mod = 1000000007;
+const int N = 1e5 + 5;
+vi adj[N];
+int dp[N], col[N];
+vi ans;
+void dfs(int node, int par)
+{
+    //dp[node] denotes the no of coloured nodes in its subtree
+    dp[node] = 0;
+    if (col[node])
+        dp[node]++;
+    for (int child : adj[node])
+    {
+        if (child == par)
+            continue;
+        dfs(child, node);
+        dp[node] += dp[child];
+    }
+    //if it contains one colored node and it is colored itself
+    if (dp[node] == 1 and col[node] == 1)
+        ans.pb(node);
+}
 void solve()
 {
     int n;
-    string s;
-    cin >> s;
-    n = s.length();
-    vi pi(n, 0);
-    fo(i, 1, n - 1)
-    {
-        int j = pi[i - 1];
-        while (j > 0 and s[i] != s[j])
-            j = pi[j - 1];
-        if (s[i] == s[j])
-            j++;
-        pi[i] = j;
-    }
-
-    int len_of_suf_equal_to_pre = pi[n - 1];
-
-    if (pi[n - 1] == 0)
-    {
-        prln("Just a legend");
-        return;
-    }
+    cin >> n;
     rep(i, n - 1)
     {
-        if (pi[i] == len_of_suf_equal_to_pre)
+        int x, y, t;
+        cin >> x >> y >> t;
+        adj[x].pb(y);
+        adj[y].pb(x);
+        if (t == 2)
         {
-            prln(s.substr(0, pi[i]));
-            return;
+            col[x] = 1;
+            col[y] = 1;
         }
     }
-    int ans = pi[pi[n - 1] - 1];
-    if (ans)
-    {
-        prln(s.substr(0, ans));
-        return;
-    }
-    prln("Just a legend");
+    dfs(1, -1);
+    prln(sz(ans));
+    for (auto x : ans)
+        prsp(x);
+    cout << endl;
     return;
 }
 int32_t main()

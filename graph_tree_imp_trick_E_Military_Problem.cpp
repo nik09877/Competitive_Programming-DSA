@@ -139,26 +139,7 @@ void _print(map<T, V> v)
 //         a[i] = mpp[a[i]];
 //     }
 // }
-///---------------custom_hash---------------------///
-// class chash
-// {
-// public:
-//     static uint64_t splitmix64(uint64_t x)
-//     {
-//         x += 0x9e3779b97f4a7c15;
-//         x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-//         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-//         return x ^ (x >> 31);
-//     }
-
-//     size_t operator()(uint64_t x) const
-//     {
-//         static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-//         return splitmix64(x + FIXED_RANDOM);
-//     }
-//     // umap<lli, lli, custom_hash> mp;
-// };
-//--------------------------------------------------------------------//
+// -----------POLICY BASED DATA STRUCTURES------------------------
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
@@ -221,14 +202,15 @@ T sqrt(T target)
     }
     return l;
 }
-int bin_power(int a, int b, int mod)
+template <class T>
+T bin_power(T a, T b, T mod)
 {
-    int res = 1;
+    T res = 1;
     while (b > 0)
     {
         if (b & 1)
-            res = (res * a) % mod;
-        a = (a * a) % mod;
+            res = ((res % mod) * (a % mod)) % mod;
+        a = ((a % mod) * (a % mod)) % mod;
         b = b >> 1;
     }
     return res;
@@ -258,6 +240,25 @@ int mod_div(int a, int b, int m)
     b = b % m;
     return (mod_mul(a, mod_inv(b, m), m) + m) % m;
 }
+// /---------------custom_hash---------------------///
+class chash
+{
+public:
+    static uint64_t splitmix64(uint64_t x)
+    {
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const
+    {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+    // umap<lli, lli, custom_hash> mp;
+};
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
@@ -267,45 +268,47 @@ int mod_div(int a, int b, int m)
 
 // #define int long long int
 const int mod = 1000000007;
+const int N = 2e5 + 5;
+vi ans;
+set<int> g[N];
+umap<ii, chash> mp1, mp2;
+void dfs(int node)
+{
+    //in position
+    mp1[node] = sz(ans);
+    ans.pb(node);
+
+    for (int child : g[node])
+        dfs(child);
+
+    //out position
+    mp2[node] = sz(ans);
+    // ans.pb(-1);
+}
 void solve()
 {
-    int n;
-    string s;
-    cin >> s;
-    n = s.length();
-    vi pi(n, 0);
-    fo(i, 1, n - 1)
+    int n, q;
+    cin >> n >> q;
+    fo(i, 2, n)
     {
-        int j = pi[i - 1];
-        while (j > 0 and s[i] != s[j])
-            j = pi[j - 1];
-        if (s[i] == s[j])
-            j++;
-        pi[i] = j;
+        int p;
+        cin >> p;
+        g[p].insert(i);
     }
-
-    int len_of_suf_equal_to_pre = pi[n - 1];
-
-    if (pi[n - 1] == 0)
+    dfs(1);
+    while (q--)
     {
-        prln("Just a legend");
-        return;
-    }
-    rep(i, n - 1)
-    {
-        if (pi[i] == len_of_suf_equal_to_pre)
+        int commander, kth_ele;
+        cin >> commander >> kth_ele;
+        int idx = mp1[commander];
+        int res = idx + kth_ele - 1;
+        if (res >= sz(ans) or res >= mp2[commander])
         {
-            prln(s.substr(0, pi[i]));
-            return;
+            prln(-1);
+            continue;
         }
+        prln(ans[res]);
     }
-    int ans = pi[pi[n - 1] - 1];
-    if (ans)
-    {
-        prln(s.substr(0, ans));
-        return;
-    }
-    prln("Just a legend");
     return;
 }
 int32_t main()
