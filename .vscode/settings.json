@@ -81,14 +81,14 @@
     "*.rh": "cpp"
   },
   "git.ignoreLimitWarning": true,
-  "editor.defaultFormatter": "ms-vscode.cpptools",
   "files.autoSave": "onFocusChange",
   "files.exclude": {
     "*/.bin": true,
     "*/.exe": true
   },
   "editor.wordWrap": "on",
-  "code-runner.runInTerminal": true
+  "code-runner.runInTerminal": true,
+  "editor.defaultFormatter": "ms-vscode.cpptools"
 
   //   "files.exclude": {
   //     "**/*.git": true,
