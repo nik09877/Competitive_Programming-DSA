@@ -78,6 +78,7 @@ void solve()
     else
     {
         cout << "YES\n";
+        //presently the node we are at may or maynot be in the negative cycle so we go back n-1 times to make sure we are in the negative cycle
         for (int i = 0; i < n; i++)
         {
             cycle = par[cycle];
@@ -108,12 +109,7 @@ void solve()
 int main()
 {
     fastio;
-    int t = 1;
-    // cin >> t;
-    while (t--)
-    {
-        solve();
-    }
+    solve();
     return 0;
 }
 
