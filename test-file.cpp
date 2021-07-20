@@ -1,5 +1,6 @@
-#pragma GCC optimize("O3")
-#pragma GCC target("sse4")
+#pragma GCC optimize("Ofast")
+#pragma GCC target("avx,avx2,fma")
+#pragma GCC optimization("unroll-loops")
 #include <bits/stdc++.h>
 #define rep(i, n) for (int i = 0; i < n; i++)
 #define rrep(i, a, b) for (int i = a; i >= b; i--)
@@ -272,38 +273,9 @@ int mod_div(int a, int b, int m)
 // #define int long long int
 const int mod = 1000000007;
 
-// let dp[i] denote max length ending at i
-// so we can either start at i or look at its divisors and extend from them
-// dp[i] = max({1, dp[i] , 1 + dp[j] }) where j is its divisor
 void solve()
 {
-    int n, ans = 1;
-    cin >> n;
-    vi a(n + 1), dp(n + 1, 1);
 
-    dp[0] = 0;
-
-    rep1(i, n) cin >> a[i];
-
-    fo(i, 2, n)
-    {
-
-        for (int j = 1; j * j <= i; j++)
-        {
-
-            if (i % j == 0)
-            {
-
-                if (a[j] < a[i])
-                    dp[i] = max(dp[i], 1 + dp[j]);
-
-                if (j != 1 and a[i / j] < a[i])
-                    dp[i] = max(dp[i], 1 + dp[i / j]);
-            }
-        }
-    }
-    fo(i, 1, n) ans = max(ans, dp[i]);
-    prln(ans);
     return;
 }
 int32_t main()
@@ -313,7 +285,7 @@ int32_t main()
     cin >> t;
     while (t--)
         solve();
-    // #ifndef ONLINE_JUDGE
-    // TIME;
-    // #endif
+#ifndef ONLINE_JUDGE
+    TIME;
+#endif
 }

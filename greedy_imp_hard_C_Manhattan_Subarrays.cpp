@@ -272,48 +272,49 @@ int mod_div(int a, int b, int m)
 // #define int long long int
 const int mod = 1000000007;
 
-// let dp[i] denote max length ending at i
-// so we can either start at i or look at its divisors and extend from them
-// dp[i] = max({1, dp[i] , 1 + dp[j] }) where j is its divisor
+//subarrays of length>=5 are always increasing or decreasing if we arrange them properly (ie choose 3 values such that they are increasing or decreasing)
+
+bool good(vi &a)
+{
+    int n = sz(a);
+    rep(i, n) fo(j, i + 1, n - 1) fo(k, j + 1, n - 1)
+    {
+        if ((a[i] <= a[j] and a[j] <= a[k]) || (a[i] >= a[j] and a[j] >= a[k]))
+            return false;
+    }
+    return true;
+}
 void solve()
 {
-    int n, ans = 1;
+    int n;
     cin >> n;
-    vi a(n + 1), dp(n + 1, 1);
-
-    dp[0] = 0;
-
-    rep1(i, n) cin >> a[i];
-
-    fo(i, 2, n)
+    vi a(n);
+    re(a, n);
+    int ans = 0;
+    rep(i, n)
     {
-
-        for (int j = 1; j * j <= i; j++)
+        vi v;
+        fo(j, i, n - 1)
         {
-
-            if (i % j == 0)
-            {
-
-                if (a[j] < a[i])
-                    dp[i] = max(dp[i], 1 + dp[j]);
-
-                if (j != 1 and a[i / j] < a[i])
-                    dp[i] = max(dp[i], 1 + dp[i / j]);
-            }
+            v.pb(a[j]);
+            if (!good(v))
+                break;
+            ans++;
         }
     }
-    fo(i, 1, n) ans = max(ans, dp[i]);
     prln(ans);
     return;
 }
 int32_t main()
 {
     fastio;
-    int t;
+    int t = 1;
     cin >> t;
     while (t--)
+    {
         solve();
+    }
     // #ifndef ONLINE_JUDGE
-    // TIME;
+    //     TIME;
     // #endif
 }

@@ -271,49 +271,47 @@ int mod_div(int a, int b, int m)
 
 // #define int long long int
 const int mod = 1000000007;
+int cycles = 0;
+vi a, b, vis, pos;
 
-// let dp[i] denote max length ending at i
-// so we can either start at i or look at its divisors and extend from them
-// dp[i] = max({1, dp[i] , 1 + dp[j] }) where j is its divisor
+void dfs(int node)
+{
+    vis[node] = 1;
+    if (vis[pos[a[node]]])
+        cycles++;
+    else
+        dfs(pos[a[node]]);
+}
 void solve()
 {
-    int n, ans = 1;
+    int n;
     cin >> n;
-    vi a(n + 1), dp(n + 1, 1);
+    a.resize(n);
+    b.resize(n);
+    vis.resize(n, 0);
+    pos.resize(n);
 
-    dp[0] = 0;
-
-    rep1(i, n) cin >> a[i];
-
-    fo(i, 2, n)
+    //make a equal to b
+    rep(i, n) cin >> a[i];
+    rep(i, n) cin >> b[i], pos[b[i]] = i;
+    rep(i, n)
     {
-
-        for (int j = 1; j * j <= i; j++)
-        {
-
-            if (i % j == 0)
-            {
-
-                if (a[j] < a[i])
-                    dp[i] = max(dp[i], 1 + dp[j]);
-
-                if (j != 1 and a[i / j] < a[i])
-                    dp[i] = max(dp[i], 1 + dp[i / j]);
-            }
-        }
+        if (!vis[i])
+            dfs(i);
     }
-    fo(i, 1, n) ans = max(ans, dp[i]);
-    prln(ans);
+    prln(n - cycles);
     return;
 }
 int32_t main()
 {
     fastio;
-    int t;
+    int t = 1;
     cin >> t;
     while (t--)
+    {
         solve();
+    }
     // #ifndef ONLINE_JUDGE
-    // TIME;
+    //     TIME;
     // #endif
 }
