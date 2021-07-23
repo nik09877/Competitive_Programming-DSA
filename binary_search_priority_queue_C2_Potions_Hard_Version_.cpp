@@ -88,3 +88,30 @@ int32_t main()
     fastio;
     solve();
 }
+
+/*
+void solve()
+{
+    int n;
+    cin >> n;
+    priority_queue<int, vi, greater<int>> pq;
+    int ans = 0, health = 0;
+    rep(i, n)
+    {
+        int x;
+        cin >> x;
+        health += x;
+        ans++;
+        pq.push(x);
+        while (health < 0)
+        {
+            ans--;
+            int val = pq.top();
+            pq.pop();
+            health -= val;
+        }
+    }
+    prln(ans);
+    return;
+}
+*/

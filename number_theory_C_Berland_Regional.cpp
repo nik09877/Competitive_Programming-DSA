@@ -272,3 +272,70 @@ int32_t main()
         solve();
     }
 }
+/*
+void solve()
+{
+    int n;
+    cin >> n;
+    vvi uni(n);
+    vpii a(n); //{power_of_programmer,university}
+    rep(i, n)
+    {
+        cin >> a[i].ss;
+        a[i].ss--;
+    }
+    rep(i, n) cin >> a[i].ff;
+    sort(all(a), greater<pii>());
+
+    //storing prefix sum the smart way
+    for (auto x : a)
+    {
+        int uni_id = x.ss;
+        int power = x.ff;
+        if (uni[uni_id].size() == 0)
+        {
+            uni[uni_id].pb(power);
+        }
+        else
+        {
+            int pre = uni[uni_id].back();
+            uni[uni_id].pb(power + pre);
+        }
+    }
+
+    vi ans(n + 1, 0);
+
+    //iterate through each university
+    rep(i, n)
+    {
+        if (uni[i].size() == 0)
+            continue;
+
+        bitset<200001> vis;
+        int sz = uni[i].size();
+
+        // for each uni j students will contribute if k is a divisor of j
+        // to prevent double counting i have kept a vis array
+
+        for (int j = sz; j >= 1; j--)
+        {
+            for (int k = 1; k * k <= j; k++)
+            {
+                if (j % k == 0)
+                {
+                    if (vis[k] == 0)
+                    {
+                        vis[k] = 1;
+                        ans[k] += uni[i][j - 1];
+                    }
+                    if (k != (j / k) and vis[j / k] == 0)
+                        ans[j / k] += uni[i][j - 1], vis[j / k] = 1;
+                }
+            }
+        }
+    }
+    rep1(i, n) prsp(ans[i]);
+    cout << endl;
+    return;
+}
+*/

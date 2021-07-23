@@ -245,74 +245,97 @@ int mod_div(int a, int b, int m)
     return (mod_mul(a, mod_inv(b, m), m) + m) % m;
 }
 ///---------------custom_hash---------------------///
-class chash
-{
-public:
-    static uint64_t splitmix64(uint64_t x)
-    {
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
-    }
+// class chash
+// {
+// public:
+//     static uint64_t splitmix64(uint64_t x)
+//     {
+//         x += 0x9e3779b97f4a7c15;
+//         x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+//         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+//         return x ^ (x >> 31);
+//     }
 
-    size_t operator()(uint64_t x) const
-    {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-    // umap<lli, lli, custom_hash> cnt;
-};
+//     size_t operator()(uint64_t x) const
+//     {
+//         static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+//         return splitmix64(x + FIXED_RANDOM);
+//     }
+//     // umap<lli, lli, custom_hash> mp;
+// };
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
 // int XX[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
 // If you do not sacrifice for what you want, What you want becomes sacrifice.
+
 #define int long long int
-const int mod = 1e5 + 5;
+const int mod = 1000000007;
+/*
+1-Brute Force (complete search)(bitmask)(Number theory)
+2-greedy sorting two pointer
+3-Binary Search
+4-dp
+5-prefix sum
+6-graph,bit manipulation(dependency)
+7-segment tree (fenwick tree)
 
-// dp[i][j] denotes length of digit j after i operations
-// dp[i][j] = dp[i - 1][j + 1]; jsut like binary lifting
-// 4th parent of i == 3rd parent of parent[i]
+1-try going backward if given find A to B ,you find B to A
+2-try out small test cases or do brute force solutions to find pattern
 
+0 ? 1 0
+0 1 0 1 mask
+1 0 1 0 ~mask
+*/
 void solve()
 {
     int n;
+    string s;
+    cin >> s;
+    n = sz(s);
+    bitset<200005> mask;
+    for (int i = 1; i < n; i += 2)
+        mask[i] = 1;
 
+    //pre[i]denotes number of consecutive ? ending at i
+    vi pre(n, 0);
+    rep(i, n)
+    {
+        if (s[i] == '?')
+        {
+            pre[i] = 1;
+            if (i)
+                pre[i] += pre[i - 1];
+        }
+    }
+
+    int ans = 0, l = 0;
+    for (int r = 0; r < n; r++)
+    {
+        if (s[r] != '?' and s[r] - '0' != mask[r])
+        {
+            if (r)
+            {
+                l = r - pre[r - 1];
+            }
+            mask = ~mask;
+        }
+        ans += (r - l + 1);
+    }
+    prln(ans);
     return;
 }
 int32_t main()
 {
     fastio;
-
-    int t, m, mod = 1000000007;
-    int ans = 0, dp[200001][10];
-    string s;
-
-    //if no operation is there
-    for (int i = 0; i < 10; i++)
-        dp[0][i] = 1;
-
-    //taking into consideration order of evaluation
-    for (int i = 1; i < 200001; i++)
-    {
-        for (int j = 0; j < 9; j++)
-            dp[i][j] = dp[i - 1][j + 1];
-        dp[i][9] = (dp[i - 1][1] + dp[i - 1][0]) % mod;
-    }
+    int t = 1;
     cin >> t;
     while (t--)
     {
-        cin >> m;
-        s = to_string(m);
-        cin >> m;
-        ans = 0;
-        for (auto si : s)
-        {
-            ans += dp[m][si - '0'];
-            ans %= mod;
-        }
-        cout << ans << endl;
+        solve();
     }
+    // #ifndef ONLINE_JUDGE
+    //     TIME;
+    // #endif
 }

@@ -245,74 +245,79 @@ int mod_div(int a, int b, int m)
     return (mod_mul(a, mod_inv(b, m), m) + m) % m;
 }
 ///---------------custom_hash---------------------///
-class chash
-{
-public:
-    static uint64_t splitmix64(uint64_t x)
-    {
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
-    }
+// class chash
+// {
+// public:
+//     static uint64_t splitmix64(uint64_t x)
+//     {
+//         x += 0x9e3779b97f4a7c15;
+//         x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+//         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+//         return x ^ (x >> 31);
+//     }
 
-    size_t operator()(uint64_t x) const
-    {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-    // umap<lli, lli, custom_hash> cnt;
-};
+//     size_t operator()(uint64_t x) const
+//     {
+//         static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+//         return splitmix64(x + FIXED_RANDOM);
+//     }
+//     // umap<lli, lli, custom_hash> mp;
+// };
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
 // int XX[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
 // If you do not sacrifice for what you want, What you want becomes sacrifice.
+
 #define int long long int
-const int mod = 1e5 + 5;
+const int mod = 1000000007;
 
-// dp[i][j] denotes length of digit j after i operations
-// dp[i][j] = dp[i - 1][j + 1]; jsut like binary lifting
-// 4th parent of i == 3rd parent of parent[i]
+/*
+basically u have to choose k-1 indexes from the array so that k subarray can be formed. now choose those k-1 indexes efficiently as ex. if k=3, so choose 2 indexes ,let it be i & j so cost is a[i]-a[0]+a[j]-a[i+1]+a[n]-a[j+1]. now write these terms efficiently so (a[i]-a[i+1])+(a[j]-a[j+1])+(a[n]-a[0]) now for to minimise this expression ,first two brackets should be min. as last bracket is always constant so sort the array(array of differences of a[i]-a[i+1]) and take 2 values (means if k=3) and then add (a[n]-a[0]).. this is yur minimum answer.
 
+OR this is possible also
+
+Let a[1], a[2].. a[n] be the elements in the array. Let 1 <= i < j < k < l....< n be the k-1 indices we choose for dividing the array into k segments. So, cost of division = (a[i] — a[1]) + (a[j] — a[i+1]) + .... + (a[k] — a[j+1]) + (a[n] — a[k+1]), on rearranging : (a[n] — a[1]) — ((a[i+1] — a[i]) + (a[j+1] — a[j]) +.....+ (a[k+1] — a[k])). So, we will store the difference of a[i+1]-a[i] for each 1<=i<n , sort them in decreasing order and take first k-1 differences and finally subtract from (a[n]-a[1]).
+
+*/
 void solve()
 {
-    int n;
-
+    int n, k;
+    cin >> n >> k;
+    vi a(n);
+    re(a, n);
+    if (k == n)
+    {
+        prln(0);
+        return;
+    }
+    if (k == 1)
+    {
+        int mx = *max_element(all(a));
+        int mn = *min_element(all(a));
+        prln(mx - mn);
+        return;
+    }
+    int ans = a[n - 1] - a[0];
+    vi v;
+    rep(i, n - 1)
+    {
+        v.pb(a[i] - a[i + 1]);
+    }
+    asort(v);
+    rep(i, k - 1)
+    {
+        ans += v[i];
+    }
+    prln(ans);
     return;
 }
 int32_t main()
 {
     fastio;
-
-    int t, m, mod = 1000000007;
-    int ans = 0, dp[200001][10];
-    string s;
-
-    //if no operation is there
-    for (int i = 0; i < 10; i++)
-        dp[0][i] = 1;
-
-    //taking into consideration order of evaluation
-    for (int i = 1; i < 200001; i++)
-    {
-        for (int j = 0; j < 9; j++)
-            dp[i][j] = dp[i - 1][j + 1];
-        dp[i][9] = (dp[i - 1][1] + dp[i - 1][0]) % mod;
-    }
-    cin >> t;
-    while (t--)
-    {
-        cin >> m;
-        s = to_string(m);
-        cin >> m;
-        ans = 0;
-        for (auto si : s)
-        {
-            ans += dp[m][si - '0'];
-            ans %= mod;
-        }
-        cout << ans << endl;
-    }
+    solve();
+    // #ifndef ONLINE_JUDGE
+    //     TIME;
+    // #endif
 }

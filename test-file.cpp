@@ -268,24 +268,40 @@ int mod_div(int a, int b, int m)
 // const int dy[4] = {0, 0, -1, 1};
 // int XX[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
-// If you do not sacrifice for what you want, What you want becomes sacrifice.
 
-// #define int long long int
+/*
+If you do not sacrifice for what you want, What you want becomes the sacrifice.
+1-Brute Force (complete search)(bitmask)(Number theory)
+2-greedy sorting two pointer
+3-Binary Search
+4-dp
+5-prefix sum
+6-graph,bit manipulation(dependency)
+7-segment tree (fenwick tree)
+
+1-try going backward if given find A to B ,you find B to A
+2-try out small test cases or do brute force solutions to find pattern
+3- dont get stuck on only one approach
+*/
+#define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
+    int n;
 
     return;
 }
 int32_t main()
 {
     fastio;
-    int t;
+    int t = 1;
     cin >> t;
     while (t--)
+    {
         solve();
-#ifndef ONLINE_JUDGE
-    TIME;
-#endif
+    }
+    // #ifndef ONLINE_JUDGE
+    //     TIME;
+    // #endif
 }
