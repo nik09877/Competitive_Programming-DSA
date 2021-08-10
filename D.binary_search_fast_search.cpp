@@ -39,7 +39,7 @@ int BinarySearch_lb(int x, vi &a, int n)
     int r = n;  //a[r]>=x
     while (r - l > 1)
     {
-        int mid = (l + r) >> 2;
+        int mid = (l + r) >> 1;
         if (a[mid] < x)
         {
             l = mid;
@@ -57,7 +57,7 @@ int BinarySearch_ub(int x, vi &a, int n)
     int r = n;  //a[r]>x
     while (r - l > 1)
     {
-        int mid = (l + r) >> 2;
+        int mid = (l + r) >> 1;
         if (a[mid] <= x)
         {
             l = mid;
@@ -87,6 +87,24 @@ void solve()
     }
     return;
 }
+// This is also accepted
+// void solve()
+// {
+//     int n, k;
+//     cin >> n;
+//     vi a(n);
+//     rep(i, n) cin >> a[i];
+//     asort(a);
+//     cin >> k;
+//     while (k--)
+//     {
+//         int l, r;
+//         cin >> l >> r;
+//         int lb = lower_bound(all(a), l) - a.begin();
+//         int ub = upper_bound(all(a), r) - a.begin() - 1;
+//         cout << (ub - lb + 1) << " ";
+//     }
+// }
 int32_t main()
 {
     fastio;

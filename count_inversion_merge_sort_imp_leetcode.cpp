@@ -1,25 +1,21 @@
+#pragma GCC optimize("Ofast")
+#pragma GCC target("avx,avx2,fma")
+#pragma GCC optimization("unroll-loops")
 #include <bits/stdc++.h>
 #define rep(i, n) for (int i = 0; i < n; i++)
 #define rrep(i, a, b) for (int i = a; i >= b; i--)
 #define rep1(i, n) for (int i = 1; i <= n; i++)
 #define fo(i, a, n) for (int i = a; i <= n; i++)
-#define repll(i, a, n) for (lli i = a; i <= n; i++)
 #define mkp make_pair
 #define pb emplace_back
 #define ff first
 #define ss second
 #define ll long long
-#define lli long long int
 #define ii int, int
 #define pii pair<int, int>
-#define pll pair<long, long>
-#define plli pair<long long int, long long int>
 #define vi vector<int>
 #define vvi vector<vector<int>>
-#define vlli vector<long long int>
 #define vpii vector<pair<int, int>>
-#define vplli vector<pair<long long int, long long int>>
-#define vvlli vector<vector<long long int>>
 #define MAXLL 1e18
 #define endl '\n'
 #define sp ' '
@@ -35,7 +31,8 @@
 #define pr(x) cout << x
 #define prsp(x) cout << x << sp
 #define prln(x) cout << x << endl
-#define fastio ios_base::sync_with_stdio(0), cout.tie(0), cin.tie(0)
+#define TIME cerr << "Time Taken:" << (float)clock() / CLOCKS_PER_SEC * 1000 << "ms" << endl
+#define fastio ios_base::sync_with_stdio(0), cin.tie(0)
 #define re(a, n)   \
     rep(i, n)      \
             cin >> \
@@ -45,7 +42,6 @@ using namespace std;
 typedef unsigned long long ull;
 typedef long double lld;
 // typedef tree<pair<int, int>, null_type, less<pair<int, int>>, rb_tree_tag, tree_order_statistics_node_update > pbds; // find_by_order, order_of_key
-void _print(ll t) { cerr << t; }
 void _print(int t) { cerr << t; }
 void _print(string t) { cerr << t; }
 void _print(char t) { cerr << t; }
@@ -120,7 +116,8 @@ void _print(map<T, V> v)
 #ifndef ONLINE_JUDGE
 #define debug(x...)               \
     cerr << "[" << #x << "] = ["; \
-    _print(x)
+    _print(x);                    \
+    cerr << "]" << endl;
 #else
 #define debug(x...)
 #endif
@@ -146,26 +143,7 @@ void _print(map<T, V> v)
 //         a[i] = mpp[a[i]];
 //     }
 // }
-///---------------custom_hash---------------------///
-// class chash
-// {
-// public:
-//     static uint64_t splitmix64(uint64_t x)
-//     {
-//         x += 0x9e3779b97f4a7c15;
-//         x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-//         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-//         return x ^ (x >> 31);
-//     }
-
-//     size_t operator()(uint64_t x) const
-//     {
-//         static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-//         return splitmix64(x + FIXED_RANDOM);
-//     }
-//     // umap<lli, lli, custom_hash> mp;
-// };
-//--------------------------------------------------------------------//
+// -----------POLICY BASED DATA STRUCTURES------------------------
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
@@ -179,7 +157,7 @@ T gcd(T a, T b)
 {
     if (b == 0)
         return a;
-    return gcd(b % a, a);
+    return gcd(b, a % b);
 }
 template <class T>
 T lcm(T a, T b) { return (a * b) / __gcd(a, b); }
@@ -228,134 +206,177 @@ T sqrt(T target)
     }
     return l;
 }
-ll expo(ll a, ll b, ll mod)
+template <class T>
+T bin_power(T a, T b, T mod)
 {
-    ll res = 1;
+    T res = 1;
     while (b > 0)
     {
         if (b & 1)
-            res = (res * a) % mod;
-        a = (a * a) % mod;
+            res = ((res % mod) * (a % mod)) % mod;
+        a = ((a % mod) * (a % mod)) % mod;
         b = b >> 1;
     }
     return res;
 }
-ll mminvprime(ll a, ll b) { return expo(a, b - 2, b); }
-ll mod_add(ll a, ll b, ll m)
+int mod_inv(int a, int b) { return bin_power(a, b - 2, b); }
+int mod_add(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a + b) % m) + m) % m;
 }
-ll mod_mul(ll a, ll b, ll m)
+int mod_mul(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a * b) % m) + m) % m;
 }
-ll mod_sub(ll a, ll b, ll m)
+int mod_sub(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
     return (((a - b) % m) + m) % m;
 }
-ll mod_div(ll a, ll b, ll m)
+int mod_div(int a, int b, int m)
 {
     a = a % m;
     b = b % m;
-    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
+    return (mod_mul(a, mod_inv(b, m), m) + m) % m;
 }
-//------------------------------------------------------------------------------------------------//
+///---------------custom_hash---------------------///
+// class chash
+// {
+// public:
+//     static uint64_t splitmix64(uint64_t x)
+//     {
+//         x += 0x9e3779b97f4a7c15;
+//         x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+//         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+//         return x ^ (x >> 31);
+//     }
+
+//     size_t operator()(uint64_t x) const
+//     {
+//         static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+//         return splitmix64(x + FIXED_RANDOM);
+//     }
+//     // umap<lli, lli, custom_hash> mp;
+// };
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
 // int XX[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+/*
+If you do not sacrifice for what you want, What you want becomes the sacrifice.
+1-Brute Force (complete search)(bitmask)(Number theory)
+2-greedy sorting two pointer
+3-Binary Search
+4-dp
+5-prefix sum
+6-graph,bit manipulation(dependency)
+7-segment tree (fenwick tree)
+
+1-try going backward if given find A to B ,you find B to A
+2-try out small test cases or do brute force solutions to find pattern
+3- dont get stuck on only one approach
+*/
+#define int long long int
 const int mod = 1000000007;
 
 class Solution
 {
 public:
-    //Function to find largest rectangular area possible in a given histogram.
-    int getMaxArea(vi &a, int n)
+    //merge sort [l,r) is considered here
+    vector<int> countSmaller(vector<int> &nums)
     {
-        vector<pair<int, int>> track(n);
-        //finding nearest left element smaller than current element
-        stack<int> L;
-        for (int i = 0; i < n; i++)
+        //new array
+        vector<pair<int, int>> arr;
+        vector<int> count(nums.size(), 0);
+
+        for (int i = 0; i < nums.size(); i++)
         {
-            while (!L.empty() and a[L.top()] >= a[i])
-                L.pop();
-            if (L.empty())
-                track[i].ff = 0;
-            else
-                track[i].ff = L.top() + 1;
-            L.push(i);
+            arr.push_back({nums[i], i});
         }
 
-        //finding nearest right element smaller than current element
-        stack<int> R;
-        for (int i = n - 1; i >= 0; i--)
-        {
-            while (!R.empty() and a[R.top()] >= a[i])
-                R.pop();
-            if (R.empty())
-                track[i].ss = n - 1;
-            else
-                track[i].ss = R.top() - 1;
-            R.push(i);
-        }
-
-        // int mxArea = -9e9;
-        int mxArea = 0;
-        rep(i, n)
-        {
-            int currArea_if_ith_block_is_included = (track[i].ss - track[i].ff + 1) * a[i];
-            mxArea = max(mxArea, currArea_if_ith_block_is_included);
-        }
-        pr(mxArea);
-        return mxArea;
+        merge_with_inversions(0, nums.size(), arr, count);
+        return count;
     }
-    //Variation problem
-    int maximalRectangle(vector<vector<char>> &matrix)
-    {
-        int m = matrix.size();
-        if (m == 0)
-            return 0;
-        int n = matrix[0].size(), result = 0;
-        vector<int> histogram(n, 0);
 
-        for (int i = 0; i < m; i++)
+    //merge with couting inversions
+
+    void merge_with_inversions(int start, int end, vector<pair<int, int>> &arr, vector<int> &count)
+    {
+        if (start < end && end - start > 1)
         {
-            for (int j = 0; j < n; j++)
+            int mid = start + (end - start) / 2;
+
+            merge_with_inversions(start, mid, arr, count);
+            merge_with_inversions(mid, end, arr, count);
+
+            vpii ans;
+            int i = start, j = mid;
+
+            int inversions = 0;
+            while (i < mid && j < end)
             {
-                if (matrix[i][j] == '1')
-                    histogram[j] += 1;
+                if (arr[i].first <= arr[j].first)
+                {
+                    ans.push_back(arr[i]);
+                    count[arr[i].second] += inversions;
+                    i++;
+                }
                 else
-                    histogram[j] = 0;
+                {
+                    //we have an inversion here
+                    //element of second array is smaller than first so increment its value
+                    ans.push_back(arr[j]);
+                    inversions++;
+                    j++;
+                }
+            }
+            //as the left block elements are left that means the right block elements are smaller than the current remaining elements,so add the inversion count
+            while (i < mid)
+            {
+                ans.push_back(arr[i]);
+                count[arr[i].second] += inversions;
+                i++;
             }
 
-            result = max(result, getMaxArea(histogram, n));
+            while (j < end)
+            {
+                ans.push_back(arr[j]);
+                j++;
+            }
+
+            //copying ans to original array
+            j = 0;
+            for (int i = start; i < end; i++)
+            {
+                arr[i] = ans[j];
+                j++;
+            }
         }
-        return result;
     }
 };
-
 void solve()
 {
     int n;
     cin >> n;
-    Solution a;
-    vi b = {9, 10, 4, 10, 4, 5, 16};
-    a.getMaxArea(b, 7);
     return;
 }
 int32_t main()
 {
     fastio;
     int t = 1;
+    cin >> t;
     while (t--)
     {
         solve();
     }
+    // #ifndef ONLINE_JUDGE
+    //     TIME;
+    // #endif
 }

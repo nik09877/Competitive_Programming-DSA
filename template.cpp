@@ -1,4 +1,8 @@
 //ctrl+alt+b to run
+//alt to view menu bar
+//ctrl+shift+p toggle side bar
+//ctrl+j cmd prompt
+//cls to clean cmd
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
