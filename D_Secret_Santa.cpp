@@ -283,25 +283,64 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-
-https://codeforces.com/problemset/problem/276/C
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
- 
 */
 #define int long long int
 const int mod = 1000000007;
+/*
+There are some other approaches to problem D:
 
+Maintain a set of numbers from 1 to n. This set will contain the remaining elements which can be used.
+
+First, place all the first occurring numbers to their corresponding indexes and mark them visited. For example, if array A is : {6,6,6,1,1,1} , then after the first step our B array should look like this : {6,0,0,1,0,0} , i.e., we placed the first occurring 2 and 1 at the same index for now. Since we placed 2 and 1 so remove it from the set. Set will contain {2,3,4,5}
+
+Now traverse from left to right, when a particular index is not visited, then we have to place some value at that index. I will take out the first element from set (you can take out any remaining element, doesn't matter) and let that be val. Now if val != index then we can simply put that value at the current index and move forward. If val == index, then first look up the position of a[cur_id] and then place val at pos[a[cur_id]] and a[cur_id] will contain the correct or initial value. 
+*/
 void solve()
 {
     int n;
+    cin >> n;
+    vi a(n), ans(n, 0), pos(n + 1);
+    re(a, n);
+    set<int> s;
+    for (int i = 1; i <= n; i++)
+        s.insert(i);
 
+    int cnt = 0;
+    for (int i = 0; i < n; i++)
+    {
+        auto it = s.find(a[i]);
+        if (it != s.end())
+        {
+            cnt++;
+            ans[i] = *it;
+            pos[a[i]] = i;
+            s.erase(it);
+        }
+    }
+    prln(cnt);
+    for (int i = 0; i < n; i++)
+    {
+        if (ans[i] == 0)
+        {
+            auto it = s.begin();
+            if (i + 1 != *it)
+            {
+                ans[i] = *it;
+            }
+            else
+            {
+                int idx = pos[a[i]];
+                ans[i] = *it;
+                swap(ans[i], ans[idx]);
+                pos[ans[i]] = i;
+                pos[ans[idx]] = idx;
+            }
+            s.erase(it);
+        }
+    }
+    for (auto x : ans)
+        cout << x << " ";
+    cout << endl;
     return;
 }
 int32_t main()

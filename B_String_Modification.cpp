@@ -282,26 +282,34 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
-4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-
-https://codeforces.com/problemset/problem/276/C
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
- 
 */
 #define int long long int
 const int mod = 1000000007;
 
+string modified(string &s, int n, int k)
+{
+    string result_prefix = s.substr(k - 1, n - k + 1);
+    string result_suffix = s.substr(0, k - 1);
+    if (n % 2 == k % 2)
+        reverse(result_suffix.begin(), result_suffix.end());
+    return result_prefix + result_suffix;
+}
+
 void solve()
 {
     int n;
-
+    string s;
+    cin >> n >> s;
+    vector<pair<string, int>> a;
+    for (int i = 1; i <= n; i++)
+    {
+        string temp = s;
+        temp = modified(temp, n, i);
+        a.push_back({temp, i});
+    }
+    sort(all(a));
+    cout << a[0].ff << endl
+         << a[0].ss << endl;
     return;
 }
 int32_t main()

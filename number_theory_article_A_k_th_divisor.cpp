@@ -282,37 +282,51 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
-4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-
-https://codeforces.com/problemset/problem/276/C
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
- 
 */
 #define int long long int
 const int mod = 1000000007;
-
+/*You could have also stored all the divisors and sorted the array to get the answer*/
 void solve()
 {
-    int n;
+    int n, k, sz;
+    cin >> n >> k;
+    vi div;
+    for (int i = 1; i * i <= n; i++)
+        if (n % i == 0)
+            div.pb(i);
 
+    int sqr = (int)std::sqrt(n);
+    if (sqr * sqr == n)
+        sz = 2 * sz(div) - 1;
+    else
+        sz = 2 * sz(div);
+
+    if (k > sz)
+    {
+        prln(-1);
+        return;
+    }
+    int cnt = 1;
+    for (int x : div)
+    {
+        if (k == cnt)
+        {
+            prln(x);
+            return;
+        }
+        if (k == sz - cnt + 1)
+        {
+            prln(n / x);
+            return;
+        }
+        cnt++;
+    }
     return;
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
+    solve();
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

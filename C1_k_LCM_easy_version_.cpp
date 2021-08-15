@@ -282,26 +282,37 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
-4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-
-https://codeforces.com/problemset/problem/276/C
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
- 
 */
 #define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
-    int n;
-
+    int n, k;
+    cin >> n >> k;
+    if (n & 1)
+    {
+        prsp(1), prsp(n / 2), prln(n / 2);
+        return;
+    }
+    n /= 2;
+    if (n % 2 != 0)
+    {
+        prsp(n - 1);
+        prsp(n - 1);
+        prln(2);
+        return;
+    }
+    if (n <= 2)
+    {
+        prsp(1);
+        prsp(1);
+        prln(2);
+        return;
+    }
+    prsp(n / 2);
+    prsp(n / 2);
+    prln(n);
     return;
 }
 int32_t main()

@@ -283,26 +283,29 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-
-https://codeforces.com/problemset/problem/276/C
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
- 
 */
 #define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
-    int n;
+    int n, m;
+    string s, t;
+    cin >> s >> t;
+    n = s.size(), m = t.size();
 
-    return;
+    int i = n - 1, j = m - 1;
+    while (i >= 0 and j >= 0)
+    {
+        if (s[i] == t[j])
+            i--, j--;
+        else
+            i -= 2;
+    }
+    if (j < 0)
+        yes;
+    else
+        no;
 }
 int32_t main()
 {
