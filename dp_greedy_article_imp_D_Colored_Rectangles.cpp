@@ -1,7 +1,7 @@
 #pragma GCC optimize("Ofast")
 #pragma GCC target("avx,avx2,fma")
 #pragma GCC optimization("unroll-loops")
-#include <bits/stdc++.h>
+#include "bits/stdc++.h"
 #define rep(i, n) for (int i = 0; i < n; i++)
 #define rrep(i, a, b) for (int i = a; i >= b; i--)
 #define rep1(i, n) for (int i = 1; i <= n; i++)
@@ -284,32 +284,54 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-6- If given convert a->b then convert both of them to same thing x a-> x -> b (b->x is reverse of x->b)
-7- In case of graphs if given after removing an edge or node calculate something,why don't u go from back to front
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
-binary search
 */
 #define int long long int
 const int mod = 1000000007;
 
+vi a, b, c;
+int n1, n2, n3;
+int dp[202][202][202];
+int getAns(int i, int j, int k)
+{
+    int cnt = (i == n1) + (j == n2) + (k == n3);
+    if (cnt > 1)
+        return 0;
+    if (dp[i][j][k] != -1)
+        return dp[i][j][k];
+    int ans = 0;
+
+    if (i < n1 and j < n2)
+        ans = max(ans, a[i] * b[j] + getAns(i + 1, j + 1, k));
+
+    if (j < n2 and k < n3)
+        ans = max(ans, b[j] * c[k] + getAns(i, j + 1, k + 1));
+
+    if (i < n1 and k < n3)
+        ans = max(ans, a[i] * c[k] + getAns(i + 1, j, k + 1));
+
+    return dp[i][j][k] = ans;
+}
 void solve()
 {
-    int n;
-
+    memset(dp, -1, sizeof(dp));
+    cin >> n1 >> n2 >> n3;
+    a.resize(n1);
+    b.resize(n2);
+    c.resize(n3);
+    re(a, n1);
+    re(b, n2);
+    re(c, n3);
+    sort(a.rbegin(), a.rend());
+    sort(b.rbegin(), b.rend());
+    sort(c.rbegin(), c.rend());
+    int ans = getAns(0, 0, 0);
+    cout << ans << endl;
     return;
 }
 int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
     while (t--)
     {
         solve();

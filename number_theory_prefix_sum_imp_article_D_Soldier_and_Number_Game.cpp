@@ -18,7 +18,6 @@
 #define vpii vector<pair<int, int>>
 #define MAXLL 1e18
 #define endl '\n'
-#define sp ' '
 #define dsort(v) sort(v.begin(), v.end(), greater<int>())
 #define asort(v) sort(v.begin(), v.end())
 #define uniq(v) v.erase(unique(v.begin(), v.end()), v.end())
@@ -279,42 +278,67 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph,bit manipulation(dependency)
 7-segment tree (fenwick tree)
 
-0-If there are choices or constraints are low think about dp,if high constraints then think about (left[i],right[i]),recursion 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-6- If given convert a->b then convert both of them to same thing x a-> x -> b (b->x is reverse of x->b)
-7- In case of graphs if given after removing an edge or node calculate something,why don't u go from back to front
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
-binary search
 */
 #define int long long int
 const int mod = 1000000007;
+int ans[maxN];
+const int maxN = 5e6 + 1;
+int sp[maxN];
+bitset<5000001> vis;
+void sieve()
+{
+    for (int i = 2; i < maxN; i += 2)
+        sp[i] = 2;
+    for (int i = 3; i < maxN; i += 2)
+    {
+        if (!vis[i])
+        {
+            sp[i] = i;
+            for (int j = i; (j * i) < maxN; j += 2)
+            {
+                if (!vis[j * i])
+                    vis[j * i] = true, sp[j * i] = i;
+            }
+        }
+    }
+}
+int factorize(int n)
+{
+    int cnt = 0;
+    while (n > 1)
+    {
+        cnt++;
+        n /= sp[n];
+    }
+    return cnt;
+}
 
 void solve()
 {
-    int n;
-
+    int a, b;
+    cin >> a >> b;
+    int res = 0;
+    res = ans[a] - ans[b];
+    cout << res << endl;
     return;
 }
 int32_t main()
 {
     fastio;
+    sieve();
+    for (int i = 2; i < maxN; i++)
+    {
+        ans[i] += ans[i - 1];
+        ans[i] += factorize(i);
+    }
     int t = 1;
     cin >> t;
     while (t--)
     {
         solve();
     }
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
 }

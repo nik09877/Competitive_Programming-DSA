@@ -279,30 +279,53 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph,bit manipulation(dependency)
 7-segment tree (fenwick tree)
 
-0-If there are choices or constraints are low think about dp,if high constraints then think about (left[i],right[i]),recursion 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-6- If given convert a->b then convert both of them to same thing x a-> x -> b (b->x is reverse of x->b)
-7- In case of graphs if given after removing an edge or node calculate something,why don't u go from back to front
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
-binary search
 */
 #define int long long int
 const int mod = 1000000007;
-
+int in[10004];
 void solve()
 {
-    int n;
-
+    memset(in, 0, sizeof(in));
+    int n, pos = -1;
+    cin >> n;
+    vi a(n);
+    rep(i, n)
+    {
+        cin >> a[i];
+        if (a[i] == 0)
+        {
+            pos = i + 1;
+            in[n + 1]++;
+        }
+        else
+            in[i + 1]++;
+        if (i + 2 <= n)
+            in[i + 2]++;
+    }
+    int cnt = 0;
+    rep1(i, n + 1) if (in[i] == 0) cnt++;
+    if (cnt > 1)
+    {
+        prln(-1);
+        return;
+    }
+    if (pos == -1)
+    {
+        prsp(n + 1);
+        fo(i, 1, n) prsp(i);
+        return;
+    }
+    else
+    {
+        fo(i, 1, pos) prsp(i);
+        prsp(n + 1);
+        fo(i, pos + 1, n) prsp(i);
+    }
+    cout << endl;
     return;
 }
 int32_t main()

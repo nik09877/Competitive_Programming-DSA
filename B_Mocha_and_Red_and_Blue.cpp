@@ -279,30 +279,58 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph,bit manipulation(dependency)
 7-segment tree (fenwick tree)
 
-0-If there are choices or constraints are low think about dp,if high constraints then think about (left[i],right[i]),recursion 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-6- If given convert a->b then convert both of them to same thing x a-> x -> b (b->x is reverse of x->b)
-7- In case of graphs if given after removing an edge or node calculate something,why don't u go from back to front
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
-binary search
 */
 #define int long long int
 const int mod = 1000000007;
 
+void transform(string &s)
+{
+    while (s.length() < 100)
+        s += s;
+    s = s.substr(0, 100);
+}
 void solve()
 {
     int n;
+    string s, a = "RB", b = "BR";
+    transform(a), transform(b);
+    cin >> n >> s;
+    rep(i, n)
+    {
+        if (s[i] != '?')
+            pr(s[i]);
+        else
+        {
+            int len = 0;
+            for (int j = i; j < n && s[j] == '?'; j++)
+                len++;
+            string op1 = a.substr(0, len);
+            string op2 = b.substr(0, len);
+            int j = i + len - 1;
 
+            int cnt1 = 0, cnt2 = 0;
+            if (i - 1 >= 0 and s[i - 1] == op1[0])
+                cnt1++;
+            if (j + 1 < n and s[j + 1] == op1.back())
+                cnt1++;
+
+            if (i - 1 >= 0 and s[i - 1] == op2[0])
+                cnt2++;
+            if (j + 1 < n and s[j + 1] == op2.back())
+                cnt2++;
+
+            if (cnt1 <= cnt2)
+                pr(op1);
+            else
+                pr(op2);
+            i = j;
+        }
+    }
+    cout << endl;
     return;
 }
 int32_t main()

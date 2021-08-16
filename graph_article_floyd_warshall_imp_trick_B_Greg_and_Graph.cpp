@@ -279,22 +279,10 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph,bit manipulation(dependency)
 7-segment tree (fenwick tree)
 
-0-If there are choices or constraints are low think about dp,if high constraints then think about (left[i],right[i]),recursion 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-6- If given convert a->b then convert both of them to same thing x a-> x -> b (b->x is reverse of x->b)
-7- In case of graphs if given after removing an edge or node calculate something,why don't u go from back to front
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
-binary search
 */
 #define int long long int
 const int mod = 1000000007;
@@ -302,19 +290,33 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
+    cin >> n;
+    int dist[n + 1][n + 1];
+    rep1(i, n) rep1(j, n) cin >> dist[i][j];
+    vi a(n + 1), ans(n + 1, 0);
+    rep1(i, n) cin >> a[i];
+    bitset<505> vis;
 
+    //going from backwards
+    for (int l = n; l >= 1; l--)
+    {
+        int k = a[l];
+        vis[k] = 1;
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= n; j++)
+            {
+                dist[i][j] = min(dist[i][k] + dist[k][j], dist[i][j]);
+                if (vis[i] and vis[j])
+                    ans[l] += dist[i][j];
+            }
+        }
+    }
+    rep1(i, n) cout << ans[i] << " ";
     return;
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

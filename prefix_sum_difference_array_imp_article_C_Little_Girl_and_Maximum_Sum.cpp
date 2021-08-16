@@ -279,41 +279,69 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph,bit manipulation(dependency)
 7-segment tree (fenwick tree)
 
-0-If there are choices or constraints are low think about dp,if high constraints then think about (left[i],right[i]),recursion 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-6- If given convert a->b then convert both of them to same thing x a-> x -> b (b->x is reverse of x->b)
-7- In case of graphs if given after removing an edge or node calculate something,why don't u go from back to front
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
-binary search
 */
 #define int long long int
-const int mod = 1000000007;
 
 void solve()
 {
-    int n;
-
+    int n, q, j = 0, cnt = 1, res = 0;
+    cin >> n >> q;
+    vi a(n), pre(n + 1, 0), ans(n);
+    vpii v(q);
+    re(a, n);
+    rep(i, q)
+    {
+        cin >> v[i].ff >> v[i].ss;
+        v[i].ff--, v[i].ss--;
+        pre[v[i].ff]++;
+        pre[v[i].ss + 1]--;
+    }
+    asort(a);
+    partial_sum(all(pre), pre.begin());
+    map<int, set<pii>> mp;
+    rep1(i, n - 1)
+    {
+        if (pre[i] == pre[i - 1])
+            cnt++;
+        else
+        {
+            int pre_freq = pre[i - 1];
+            mp[pre_freq].insert({cnt, i - 1});
+            cnt = 1;
+        }
+    }
+    mp[pre[n - 1]].insert({cnt, n - 1});
+    for (auto it : mp)
+    {
+        for (auto x : it.ss)
+        {
+            int len = x.ff;
+            int end = x.ss;
+            while (len)
+            {
+                ans[end] = a[j];
+                end--, j++, len--;
+            }
+        }
+    }
+    partial_sum(all(ans), ans.begin());
+    rep(i, q)
+    {
+        res += ans[v[i].ss];
+        if (v[i].ff)
+            res -= ans[v[i].ff - 1];
+    }
+    prln(res);
     return;
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
+    solve();
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

@@ -279,22 +279,10 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph,bit manipulation(dependency)
 7-segment tree (fenwick tree)
 
-0-If there are choices or constraints are low think about dp,if high constraints then think about (left[i],right[i]),recursion 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-6- If given convert a->b then convert both of them to same thing x a-> x -> b (b->x is reverse of x->b)
-7- In case of graphs if given after removing an edge or node calculate something,why don't u go from back to front
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
-binary search
 */
 #define int long long int
 const int mod = 1000000007;
@@ -302,7 +290,29 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
+    string s, t;
+    cin >> n >> s >> t;
+    //convert s to 000000000 or 1111111111
+    //convert t to 000000000 or 1111111111
+    //reverse the operations to convert t to 000000000 or 111111111
+    //s -> 0000 or 1111 -> t
+    vi op1, op2;
+    for (int i = 1; i < n; i++)
+    {
+        if (s[i] != s[i - 1])
+            op1.push_back(i);
+        if (t[i] != t[i - 1])
+            op2.push_back(i);
+    }
+    //make sure that s and t are both converted to 0000 or 1111
+    if (s[n - 1] != t[n - 1])
+        op1.push_back(n);
 
+    op1.insert(op1.end(), op2.rbegin(), op2.rend());
+    cout << op1.size() << " ";
+    for (auto x : op1)
+        cout << x << " ";
+    cout << endl;
     return;
 }
 int32_t main()
