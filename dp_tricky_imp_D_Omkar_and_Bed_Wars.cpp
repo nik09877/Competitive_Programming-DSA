@@ -279,32 +279,54 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph,bit manipulation(dependency)
 7-segment tree (fenwick tree)
 
-0-If there are choices or constraints are low think about dp,if high constraints then think about (left[i],right[i]),recursion 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-6- If given convert a->b then convert both of them to same thing x a-> x -> b (b->x is reverse of x->b)
-7- In case of graphs if given after removing an edge or node calculate something,why don't u go from back to front
-8- maximize something means minimize its cost
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
-binary search
 */
-#define int long long int
+// #define int long long int
 const int mod = 1000000007;
+
+// RRR or LLL not allowed
 
 void solve()
 {
-    int n;
-
-    return;
+    int n, ans = 0;
+    cin >> n;
+    string s;
+    cin >> s;
+    int cnt = 0;
+    while (s.size() && s[0] == s.back())
+    {
+        cnt++;
+        s.pop_back();
+    }
+    if (s.empty())
+    {
+        if (cnt <= 2)
+        {
+            cout << "0\n";
+            return;
+        }
+        if (cnt == 3)
+        {
+            cout << "1\n";
+            return;
+        }
+        cout << (cnt + 2) / 3 << '\n';
+        return;
+    }
+    s.push_back('$'); //cuz at last count will be left in the end and after the for loop i have to add cnt/3 to answer again ,so i finished it in the loop .
+    for (int i = 0; i + 1 < s.size(); i++)
+    {
+        cnt++;
+        if (s[i] != s[i + 1])
+        {
+            ans += cnt / 3;
+            cnt = 0;
+        }
+    }
+    cout << ans << '\n';
 }
 int32_t main()
 {

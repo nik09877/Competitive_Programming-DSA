@@ -279,42 +279,44 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph,bit manipulation(dependency)
 7-segment tree (fenwick tree)
 
-0-If there are choices or constraints are low think about dp,if high constraints then think about (left[i],right[i]),recursion 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-6- If given convert a->b then convert both of them to same thing x a-> x -> b (b->x is reverse of x->b)
-7- In case of graphs if given after removing an edge or node calculate something,why don't u go from back to front
-8- maximize something means minimize its cost
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
-binary search
 */
 #define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
-    int n;
+    int n, k;
+    cin >> n >> k;
+    vi a(n);
+    re(a, n);
+    map<ii> left, right;
+    left[a[0]]++;
+    fo(i, 1, n - 1) right[a[i]]++;
 
+    int ans = 0;
+    //let i be the middle element of the gp series
+    fo(i, 1, n - 1)
+    {
+        right[a[i]]--;
+        if (a[i] % k != 0)
+        {
+            left[a[i]]++;
+            continue;
+        }
+        ans += left[a[i] / k] * right[a[i] * k];
+        left[a[i]]++;
+    }
+    cout << ans;
     return;
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
+    solve();
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

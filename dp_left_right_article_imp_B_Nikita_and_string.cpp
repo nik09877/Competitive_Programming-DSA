@@ -279,23 +279,10 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph,bit manipulation(dependency)
 7-segment tree (fenwick tree)
 
-0-If there are choices or constraints are low think about dp,if high constraints then think about (left[i],right[i]),recursion 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5- If number theory think in terms of prime numbers ,gcd,prime factorization etc
-6- If given convert a->b then convert both of them to same thing x a-> x -> b (b->x is reverse of x->b)
-7- In case of graphs if given after removing an edge or node calculate something,why don't u go from back to front
-8- maximize something means minimize its cost
-
-Filter-1:
-greedy
-hashing
-sortings
-strings
-two pointers
-binary search
 */
 #define int long long int
 const int mod = 1000000007;
@@ -303,18 +290,45 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
+    string s;
+    cin >> s;
+    n = sz(s);
+    vi left(n, 0), right(n, 0), b(n, 0);
+    rep(i, n)
+    {
+        if (i)
+            left[i] += left[i - 1], b[i] += b[i - 1];
 
+        if (s[i] != 'a')
+            left[i]++;
+        if (s[i] != 'b')
+            b[i]++;
+    }
+    rrep(i, n - 1, 0)
+    {
+        if (s[i] != 'a')
+            right[i]++;
+        if (i + 1 < n)
+            right[i] += right[i + 1];
+    }
+    int cost = n;
+    fo(i, 0, n - 1)
+    {
+        fo(j, i, n - 1)
+        {
+            int temp = b[j] - (i - 1 >= 0 ? b[i - 1] : 0) + (j + 1 < n ? right[j + 1] : 0) + (i - 1 >= 0 ? left[i - 1] : 0);
+            cost = min(cost, temp);
+        }
+    }
+    //string can also contain all a's
+    cost = min(cost, left[n - 1]);
+    prln(n - cost);
     return;
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
+    solve();
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif
