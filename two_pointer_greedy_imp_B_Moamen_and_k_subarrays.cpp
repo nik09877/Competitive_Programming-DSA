@@ -286,83 +286,63 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 */
 #define int long long int
 const int mod = 1000000007;
-/*
-DP SOLUTION 
-FIND THE MAXIMUM LENGTH OF GOOD PREFIX ENDING AT i OR USING FIRST i ELEMENTS HOWEVER YOU WANT TO DO
 
-int main(){
- 
-    cin.tie(0);
-    cin.sync_with_stdio(0);
- 
-    #ifdef Cyborg101
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    #endif
- 
-    string s;
-    cin >> s;
- 
-    int n = s.size();
- 
-    int dp[3][n + 1];
-    memset(dp, 0xff, sizeof dp);
- 
-    dp[0][0] = dp[1][0] = dp[2][0] = 0;
- 
-    for(int i = 0; i < n; ++i){
-    	dp[0][i + 1] = dp[0][i] + (s[i] == 'a'); //max. count of (a)
-    	dp[1][i + 1] = max(dp[0][i],  dp[1][i]) + (s[i] == 'b'); //max. count of (a) or (ab) or (b)
-    	dp[2][i + 1] = max(dp[1][i], dp[2][i]) + (s[i] == 'a'); //max. count of (a) or (ab) or (b) or (ba) or (aba)
-    }
- 
-    cout << max({dp[0][n], dp[1][n], dp[2][n]}) << endl;
- 
-    return 0;
-
-*/
 void solve()
 {
-    int n;
-    string s;
-    cin >> s;
-    n = sz(s);
-    vi left(n, 0), right(n, 0), b(n, 0);
+    int n, k;
+    cin >> n >> k;
+    vi a(n);
+    map<ii> mp;
     rep(i, n)
     {
-        if (i)
-            left[i] += left[i - 1], b[i] += b[i - 1];
-
-        if (s[i] != 'a')
-            left[i]++;
-        if (s[i] != 'b')
-            b[i]++;
+        cin >> a[i];
+        mp[a[i]] = i;
     }
-    rrep(i, n - 1, 0)
+    if (k == n)
     {
-        if (s[i] != 'a')
-            right[i]++;
-        if (i + 1 < n)
-            right[i] += right[i + 1];
+        prln("Yes");
+        return;
     }
-    int cost = n;
-    fo(i, 0, n - 1)
+    if (k == 1)
     {
-        fo(j, i, n - 1)
+        if (is_sorted(all(a)))
         {
-            int temp = b[j] - (i - 1 >= 0 ? b[i - 1] : 0) + (j + 1 < n ? right[j + 1] : 0) + (i - 1 >= 0 ? left[i - 1] : 0);
-            cost = min(cost, temp);
+            prln("Yes");
+            return;
+        }
+        else
+        {
+            prln("No");
+            return;
         }
     }
-    //string can also contain all a's
-    cost = min(cost, left[n - 1]);
-    prln(n - cost);
+    vi b(a);
+    asort(b);
+    int ans = 0, i = 0;
+    while (i < n)
+    {
+        int j = mp[b[i]];
+        while (i < n and j < n and a[j] == b[i])
+            i++, j++;
+        ans++;
+    }
+    if (ans <= k)
+    {
+        prln("Yes");
+    }
+    else
+        prln("No");
     return;
 }
 int32_t main()
 {
     fastio;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

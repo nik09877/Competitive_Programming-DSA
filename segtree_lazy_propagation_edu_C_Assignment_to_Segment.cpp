@@ -286,84 +286,180 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 */
 #define int long long int
 const int mod = 1000000007;
-/*
-DP SOLUTION 
-FIND THE MAXIMUM LENGTH OF GOOD PREFIX ENDING AT i OR USING FIRST i ELEMENTS HOWEVER YOU WANT TO DO
 
-int main(){
- 
-    cin.tie(0);
-    cin.sync_with_stdio(0);
- 
-    #ifdef Cyborg101
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    #endif
- 
-    string s;
-    cin >> s;
- 
-    int n = s.size();
- 
-    int dp[3][n + 1];
-    memset(dp, 0xff, sizeof dp);
- 
-    dp[0][0] = dp[1][0] = dp[2][0] = 0;
- 
-    for(int i = 0; i < n; ++i){
-    	dp[0][i + 1] = dp[0][i] + (s[i] == 'a'); //max. count of (a)
-    	dp[1][i + 1] = max(dp[0][i],  dp[1][i]) + (s[i] == 'b'); //max. count of (a) or (ab) or (b)
-    	dp[2][i + 1] = max(dp[1][i], dp[2][i]) + (s[i] == 'a'); //max. count of (a) or (ab) or (b) or (ba) or (aba)
+struct node
+{
+    // int mn;
+    // int cnt;
+    int val;
+};
+struct segtree
+{
+    //------------------------------DATA MEMBERS--------------------------------------//
+    //0 based indexing and query in range [l,r)
+
+    int size;
+    vector<node> st;
+    node NO_OPERATION = {LLONG_MAX};
+    // node NEUTRAL_ELEMENT = {INT_MAX, 0};
+
+    //------------------------------MERGE OPERATION--------------------------------------//
+    node merge(node a, node b)
+    {
+        // if (a.mn < b.mn)
+        //     return a;
+        // if (a.mn > b.mn)
+        //     return b;
+        // return {a.mn, a.cnt + b.cnt};
+        return {0};
     }
- 
-    cout << max({dp[0][n], dp[1][n], dp[2][n]}) << endl;
- 
-    return 0;
 
-*/
+    node single_merge(int v)
+    {
+        // return {v, 1};
+        return {0};
+    }
+
+    //----------------------------INITIALIZE AND BUILD OPERATION--------------------------------//
+    void init(int n)
+    {
+        size = 1;
+        // get to the nearest power of two
+        while (size < n)
+            size *= 2;
+
+        st.resize(2 * size);
+    }
+
+    void build(int x, int lx, int rx, vi &a)
+    {
+        if (rx - lx == 1)
+        {
+            //as we have increased our segment range we need to check if left boundary is within the size of the array and if true initialize segtree with that value else it is already assigned to 0 in the init function
+
+            if (lx < sz(a))
+            {
+                st[x] = single_merge(a[lx]);
+            }
+            return;
+        }
+
+        int m = (lx + rx) / 2;
+        build(2 * x + 1, lx, m, a);
+        build(2 * x + 2, m, rx, a);
+
+        st[x] = merge(st[2 * x + 1], st[2 * x + 2]);
+        return;
+    }
+    void build(vi &a)
+    {
+        build(0, 0, size, a);
+    }
+
+    //---------------------------------LAZY PROPAGATION---------------------------------------------//
+    //----------------------------RANGE UPDATE(NON-COMMUTATIVE)-------------------------------------//
+    //----------------------------MODIFY(l,r,v) and GET(i)------------------------------------------//
+    node operation(node a, node b)
+    {
+        //example for assignment operation
+        if (b.val == NO_OPERATION.val)
+            return a;
+        return b;
+    }
+    void apply_operation(node &a, node b)
+    {
+        a = operation(a, b);
+    }
+
+    void propagate(int x, int lx, int rx)
+    {
+        //If current node is leaf node we can't push current node's operation to its children
+        if (rx - lx == 1)
+            return;
+
+        //push current node's operations to its children and mark current node's operation as NO_OPERATION
+        apply_operation(st[2 * x + 1], st[x]);
+        apply_operation(st[2 * x + 2], st[x]);
+        st[x] = NO_OPERATION;
+    }
+
+    void modify(int l, int r, int v, int x, int lx, int rx)
+    {
+        //propagate
+        propagate(x, lx, rx);
+
+        //if segtree range is out of query range
+        if (lx >= r || rx <= l)
+        {
+            return;
+        }
+        //complete overlap (segtree range completely inside query range)
+        if (lx >= l && rx <= r)
+        {
+            apply_operation(st[x], {v});
+            return;
+        }
+
+        //partial overlap
+        int m = (lx + rx) / 2;
+        modify(l, r, v, 2 * x + 1, lx, m);
+        modify(l, r, v, 2 * x + 2, m, rx);
+    }
+    void modify(int l, int r, int v)
+    {
+        modify(l, r, v, 0, 0, size);
+    }
+
+    node get(int i, int x, int lx, int rx)
+    {
+        propagate(x, lx, rx);
+        //If I am at leaf node
+        if (rx - lx == 1)
+            return st[x];
+
+        node res;
+
+        int m = (lx + rx) / 2;
+        if (i < m)
+            res = get(i, 2 * x + 1, lx, m);
+        else
+            res = get(i, 2 * x + 2, m, rx);
+
+        return res;
+    }
+    int get(int i)
+    {
+        return get(i, 0, 0, size).val;
+    }
+};
+
 void solve()
 {
-    int n;
-    string s;
-    cin >> s;
-    n = sz(s);
-    vi left(n, 0), right(n, 0), b(n, 0);
-    rep(i, n)
+    int n, m;
+    cin >> n >> m;
+    segtree st;
+    st.init(n);
+    while (m--)
     {
-        if (i)
-            left[i] += left[i - 1], b[i] += b[i - 1];
-
-        if (s[i] != 'a')
-            left[i]++;
-        if (s[i] != 'b')
-            b[i]++;
-    }
-    rrep(i, n - 1, 0)
-    {
-        if (s[i] != 'a')
-            right[i]++;
-        if (i + 1 < n)
-            right[i] += right[i + 1];
-    }
-    int cost = n;
-    fo(i, 0, n - 1)
-    {
-        fo(j, i, n - 1)
+        int op;
+        cin >> op;
+        if (op == 1)
         {
-            int temp = b[j] - (i - 1 >= 0 ? b[i - 1] : 0) + (j + 1 < n ? right[j + 1] : 0) + (i - 1 >= 0 ? left[i - 1] : 0);
-            cost = min(cost, temp);
+            int l, r, v;
+            cin >> l >> r >> v;
+            st.modify(l, r, v);
+        }
+        else
+        {
+            int i;
+            cin >> i;
+            cout << st.get(i) << endl;
         }
     }
-    //string can also contain all a's
-    cost = min(cost, left[n - 1]);
-    prln(n - cost);
     return;
 }
 int32_t main()
 {
     fastio;
     solve();
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
 }

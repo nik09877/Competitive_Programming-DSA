@@ -296,6 +296,8 @@ sortings
 strings
 two pointers
 binary search
+
+Filter 2:dp
 */
 #define int long long int
 const int mod = 1000000007;
@@ -303,7 +305,6 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
-
     return;
 }
 int32_t main()

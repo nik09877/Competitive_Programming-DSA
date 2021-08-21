@@ -286,77 +286,48 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 */
 #define int long long int
 const int mod = 1000000007;
-/*
-DP SOLUTION 
-FIND THE MAXIMUM LENGTH OF GOOD PREFIX ENDING AT i OR USING FIRST i ELEMENTS HOWEVER YOU WANT TO DO
 
-int main(){
- 
-    cin.tie(0);
-    cin.sync_with_stdio(0);
- 
-    #ifdef Cyborg101
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    #endif
- 
-    string s;
-    cin >> s;
- 
-    int n = s.size();
- 
-    int dp[3][n + 1];
-    memset(dp, 0xff, sizeof dp);
- 
-    dp[0][0] = dp[1][0] = dp[2][0] = 0;
- 
-    for(int i = 0; i < n; ++i){
-    	dp[0][i + 1] = dp[0][i] + (s[i] == 'a'); //max. count of (a)
-    	dp[1][i + 1] = max(dp[0][i],  dp[1][i]) + (s[i] == 'b'); //max. count of (a) or (ab) or (b)
-    	dp[2][i + 1] = max(dp[1][i], dp[2][i]) + (s[i] == 'a'); //max. count of (a) or (ab) or (b) or (ba) or (aba)
-    }
- 
-    cout << max({dp[0][n], dp[1][n], dp[2][n]}) << endl;
- 
-    return 0;
-
-*/
 void solve()
 {
-    int n;
-    string s;
-    cin >> s;
-    n = sz(s);
-    vi left(n, 0), right(n, 0), b(n, 0);
-    rep(i, n)
+    int n, m;
+    cin >> n >> m;
+    char a[n + 1][m + 1];
+    int preR[n + 1][m + 1];
+    int preD[n + 1][m + 1];
+    fo(i, 1, n) fo(j, 1, m) cin >> a[i][j];
+    fo(i, 1, n)
     {
-        if (i)
-            left[i] += left[i - 1], b[i] += b[i - 1];
-
-        if (s[i] != 'a')
-            left[i]++;
-        if (s[i] != 'b')
-            b[i]++;
-    }
-    rrep(i, n - 1, 0)
-    {
-        if (s[i] != 'a')
-            right[i]++;
-        if (i + 1 < n)
-            right[i] += right[i + 1];
-    }
-    int cost = n;
-    fo(i, 0, n - 1)
-    {
-        fo(j, i, n - 1)
+        fo(j, 2, m)
         {
-            int temp = b[j] - (i - 1 >= 0 ? b[i - 1] : 0) + (j + 1 < n ? right[j + 1] : 0) + (i - 1 >= 0 ? left[i - 1] : 0);
-            cost = min(cost, temp);
+            if (a[i][j] == '.' and a[i][j - 1] == '.')
+                preR[i][j] = 1 + preR[i][j - 1];
+            else
+                preR[i][j] = preR[i][j - 1];
         }
     }
-    //string can also contain all a's
-    cost = min(cost, left[n - 1]);
-    prln(n - cost);
+    fo(j, 1, m)
+    {
+        fo(i, 2, n)
+        {
+            if (a[i][j] == '.' and a[i - 1][j] == '.')
+                preD[i][j] = 1 + preD[i - 1][j];
+            else
+                preD[i][j] = preD[i - 1][j];
+        }
+    }
+    int q;
+    cin >> q;
+    while (q--)
+    {
+        int r1, c1, r2, c2;
+        cin >> r1 >> c1 >> r2 >> c2;
+        int ans = 0;
+        fo(i, r1, r2)
+            ans += preR[i][c2] - preR[i][c1];
+        fo(i, c1, c2)
+            ans += preD[r2][i] - preD[r1][i];
+        prln(ans);
+    }
     return;
 }
 int32_t main()
