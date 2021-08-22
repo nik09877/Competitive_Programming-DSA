@@ -290,7 +290,104 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
-    cin >> n;
+    string s;
+    cin >> s;
+    n = sz(s);
+    umap<char, int> left, right;
+    for (char c : s)
+        right[c]++;
+    bitset<500005> used;
+    rep(i, n)
+    {
+        int left_cnt = 0, right_cnt = 0;
+        left[s[i]]++;
+        right[s[i]]--;
+        bool good = true;
+        umap<char, int> mp;
+        for (auto it : right)
+        {
+            right_cnt++;
+            char c = it.ff;
+            int cnt = it.ss;
+            if (left[c] == 0 or cnt % left[c] != 0)
+            {
+                good = false;
+                break;
+            }
+            mp[c] = cnt / left[c];
+            if (used[cnt / left[c]] == 1)
+            {
+                good = false;
+                break;
+            }
+            used[cnt / left[c]] = 1;
+        }
+        if (not good)
+            continue;
+        string steps = "??????????????????????????????";
+        char missing;
+        int f = 0;
+        for (auto it : left)
+        {
+            left_cnt++;
+            if (right[it.ff] == 0)
+            {
+                f++;
+                missing = it.ff;
+            }
+            if (f > 1)
+            {
+                good = false;
+                break;
+            }
+        }
+        if (not good)
+            continue;
+
+        steps[0] = missing;
+        if (left_cnt != right_cnt + f)
+        {
+            good = false;
+            continue;
+        }
+
+        //claculate mex
+        int mex = 1;
+        for (int bit = 1; bit <= left_cnt + 1; bit++)
+        {
+            if (used[i] == 1)
+                mex++;
+            else
+                break;
+        }
+        if (mex != left_cnt)
+        {
+            good = false;
+            continue;
+        }
+
+        //got the answer
+        for (auto it : mp)
+        {
+            char c = it.ff;
+            int pos = it.ss;
+            if (steps[pos] != '?')
+            {
+                good = false;
+                break;
+            }
+            steps[pos] = c;
+        }
+        if (not good)
+            continue;
+        if (good)
+        {
+            prsp(s.substr(0, i + 1));
+            prln(steps.substr(0, mex));
+            return;
+        }
+    }
+    prln(-1);
     return;
 }
 int32_t main()

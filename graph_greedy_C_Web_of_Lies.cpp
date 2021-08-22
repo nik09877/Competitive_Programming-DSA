@@ -284,25 +284,64 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 3- dont get stuck on only one approach
 4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
 */
-#define int long long int
+// #define int long long int
 const int mod = 1000000007;
-
+const int N = 2e5 + 5;
+set<int> g[N];
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, m;
+    cin >> n >> m;
+    rep(i, m)
+    {
+        int a, b;
+        cin >> a >> b;
+        g[a].insert(b);
+        g[b].insert(a);
+    }
+    int ans = 0, q;
+    bitset<200005> alive;
+    fo(i, 1, n)
+    {
+        if (g[i].empty())
+            ans++, alive[i] = 1;
+        else if (*g[i].rbegin() < i)
+            ans++, alive[i] = 1;
+    }
+    cin >> q;
+    while (q--)
+    {
+        int op, a, b;
+        cin >> op;
+        if (op == 3)
+        {
+            cout << ans << endl;
+        }
+        else if (op == 1)
+        {
+            cin >> a >> b;
+            g[a].insert(b);
+            g[b].insert(a);
+            if (*g[a].rbegin() > a and alive[a] == 1)
+                ans--, alive[a] = 0;
+            if (*g[b].rbegin() > b and alive[b] == 1)
+                ans--, alive[b] = 0;
+        }
+        else
+        {
+            cin >> a >> b;
+            g[a].erase(b);
+            g[b].erase(a);
+            if (alive[a] == 0 and (g[a].empty() or *g[a].rbegin() < a))
+                ans++, alive[a] = 1;
+            if (alive[b] == 0 and (g[b].empty() or *g[b].rbegin() < b))
+                ans++, alive[b] = 1;
+        }
+    }
     return;
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

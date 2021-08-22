@@ -286,11 +286,36 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 */
 #define int long long int
 const int mod = 1000000007;
-
+int get_max_prefix_len(string &t, string &s)
+{
+    int i = 0, j = 0;
+    while (i < sz(s) and j < sz(t))
+    {
+        if (s[i] == t[j])
+            i++, j++;
+        else
+            i++;
+    }
+    return j;
+}
 void solve()
 {
     int n;
-    cin >> n;
+    string s;
+    cin >> s;
+    n = sz(s);
+    vector<string> powers;
+    for (int i = 0; i < 63; i++)
+        powers.pb(to_string(1ll << i));
+    int ans = n + 1;
+    for (auto t : powers)
+    {
+        int temp_ans;
+        int mx_pre_len = get_max_prefix_len(t, s);
+        temp_ans = (n - mx_pre_len) + (t.length() - mx_pre_len);
+        ans = min(ans, temp_ans);
+    }
+    prln(ans);
     return;
 }
 int32_t main()
