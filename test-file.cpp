@@ -281,8 +281,9 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
-3- dont get stuck on only one approach
-4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
+3-dont get stuck on only one approach
+4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
+5-calculate contributtion of each element towards our answer  
 */
 #define int long long int
 const int mod = 1000000007;
@@ -290,19 +291,14 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
-    cin >> n;
+
     return;
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    // int t = 1;
+    // cin >> t;
+    // while (t--)
+    solve();
 }

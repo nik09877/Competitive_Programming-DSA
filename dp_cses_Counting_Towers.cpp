@@ -16,7 +16,7 @@ using namespace std;
 
 int n = 1000000;
 ll dp[1000001][2];
-// dp[i][0]=number of ways to reach n th height if i-1th pos had 2 tiles of width 1
+// dp[i][0]=number of ways to reach n th height if i-1 th pos had 2 tiles of width 1
 
 //dp[i][1]=if i-1 th pos had a tile of width 2
 int main()
