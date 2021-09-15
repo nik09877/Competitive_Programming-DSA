@@ -144,11 +144,11 @@ void _print(map<T, V> v)
 //     }
 // }
 // -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+template <class T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 // template <class K, class V>
 // using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
@@ -283,24 +283,65 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 2-try out small test cases or do brute force solutions to find pattern
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer  
-6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index> 
+5-calculate contributtion of each element towards our answer
+6-insert duplicate values in set like pair<int,int> = <value, -index>  
 */
 #define int long long int
 const int mod = 1000000007;
 
+struct range
+{
+    int l, r, index;
+
+    bool operator<(const range &other) const
+    {
+        if (l == other.l)
+            return r > other.r;
+        return l < other.l;
+    }
+};
 void solve()
 {
     int n;
     cin >> n;
+    vector<range> ranges(n);
+    vector<int> contains(n, 0), contained_in(n, 0);
+    rep(i, n) cin >> ranges[i].l >> ranges[i].r, ranges[i].index = i;
+
+    //sort ranges based on l values and if l values are equal then sort based on the descending r values
+    sort(all(ranges));
+
+    //using ordered set to do find_by_order(0 based indexing) and order_of_key
+    ordered_set<pair<int, int>> st;
+
+    //calculating contained_in
+    rep(i, n)
+    {
+        st.insert({ranges[i].r, -i}); // -i because if set stores {6,0} and we find the order of key of {6,3} it will be st.size()-1 but in case of -ve index we will get st.size()-2 because {6,-3} < {6,0}
+        int order = st.order_of_key({ranges[i].r, -i});
+        int count = st.size() - order - 1; // 0 based indexing
+        contained_in[ranges[i].index] = count;
+    }
+
+    //calculating contains[]
+    st = ordered_set<pii>();
+    for (int i = n - 1; i >= 0; i--)
+    {
+        st.insert({ranges[i].r, -i});
+        int order = st.order_of_key({ranges[i].r, -i});
+        contains[ranges[i].index] = order;
+    }
+    for (auto x : contains)
+        prsp(x);
+    cout << endl;
+    for (auto x : contained_in)
+        prsp(x);
     return;
 }
 int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
     while (t--)
     {
         solve();

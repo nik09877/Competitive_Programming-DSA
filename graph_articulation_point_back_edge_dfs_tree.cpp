@@ -283,17 +283,78 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 2-try out small test cases or do brute force solutions to find pattern
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer  
-6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index> 
+5-calculate contributtion of each element towards our answer
+6-graph=tree + back edges (edges that connect to current node's ancestors) 
 */
 #define int long long int
 const int mod = 1000000007;
+const int N = 1e3 + 5;
+
+vi g[N];
+int lvl[N], dp[N];
+bitset<N> vis;
+
+// graph = tree + backedge (dfs tree)
+
+//dp[node] denotes the minimum level of the node we can reach from any node present in the subtree rooted at current node
+
+//If we delete a bridge the count of connected components will increase and no backedge can be a bridge ever
+//node -> child is a bridge if there is no node in the subtree rooted at child
+//from which there is a backedge to one of node's ancestors or it's siblings
+
+//node is an articulation point if any one of its child doesn't have a backedge to any of node's ancestors
+
+void dfs(int node, int par)
+{
+    bool good = true; //not articulation point (flag)
+    if (par == -1)
+        lvl[node] = dp[node] = 0;
+    else
+        lvl[node] = dp[node] = lvl[par] + 1;
+    vis[node] = true;
+
+    for (int child : g[node])
+    {
+        if (child == par)
+            continue;
+
+        //we found a backedge (as there can be multiple backedges to different levels we have to take the minimum)
+        if (vis[child] == true)
+            dp[node] = min(dp[node], lvl[child]);
+        else
+        {
+            dfs(child, node);
+
+            //check articulation point
+            if (dp[child] > lvl[node])
+                good = false;
+
+            //check u -> v is a bridge or not
+            if (dp[child] > lvl[node])
+            {
+                cout << node << " -> " << child << " is a bridge\n";
+            }
+        }
+    }
+
+    if (not good)
+        cout << node << " is an articulation point\n";
+}
 
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, m;
+    cin >> n >> m;
+    rep1(i, n) g[i].clear(), vis[i] = 0, dp[i] = n + 1;
+    memset(lvl, 0, sizeof(lvl));
+    rep(i, m)
+    {
+        int a, b;
+        cin >> a >> b;
+        g[a].pb(b);
+        g[b].pb(a);
+    }
+    dfs(1, -1);
     return;
 }
 int32_t main()

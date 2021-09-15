@@ -284,21 +284,32 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
 5-calculate contributtion of each element towards our answer  
-6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index> 
 */
 #define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
-    int n;
-    cin >> n;
+    int d, e;
+    vector<int> a(3);
+    for (int i = 0; i < 3; i++)
+        cin >> a[i];
+    cin >> d >> e;
+    sort(begin(a), end(a));
+    do
+    {
+        if (a[0] + a[1] <= d and a[2] <= e)
+        {
+            cout << "YES\n";
+            return;
+        }
+    } while (next_permutation(begin(a), end(a)));
+    cout << "NO\n";
     return;
 }
 int32_t main()
 {
-    fastio;
+    ios_base::sync_with_stdio(0), cin.tie(0);
     int t = 1;
     cin >> t;
     while (t--)

@@ -284,23 +284,41 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
 5-calculate contributtion of each element towards our answer  
-6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index> 
 */
 #define int long long int
 const int mod = 1000000007;
 
+/*
+
+At any index i in a sorted array a, currSum represents sum(a[ 0...i ]).
+We can form every possible sum from 1...currSum, when we are at index i. So the next possible smallest sum at index i can be currSum+1.
+We can get currSum+1 as the answer if and only if a[i+1] > currSum + 1, otherwise we would be able to form subsets with sums from 1...(currSum + a[i+1])
+( just add a[i+1] to all subsets which give sum 1...currSum to get subsets giving sum 1...currSum+a[i+1]).
+
+*/
 void solve()
 {
     int n;
     cin >> n;
+    vi a(n);
+    re(a, n);
+    asort(a);
+
+    int cur_sum = 0;
+    rep(i, n)
+    {
+        if (cur_sum + 1 < a[i])
+            break;
+        cur_sum += a[i];
+    }
+    cout << cur_sum + 1 << endl;
     return;
 }
 int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--)
     {
         solve();

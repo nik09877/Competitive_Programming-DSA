@@ -284,23 +284,63 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
 5-calculate contributtion of each element towards our answer  
-6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index> 
 */
 #define int long long int
 const int mod = 1000000007;
 
+/*
+
+Your task is to collect the numbers from 1 to n in increasing order
+1st transversal: 1
+2nd transversal: 2
+3rd transversal: 3 4
+
+If the number x occurs before x+1 then you can always take both of them in a single round and hence it won’t contribute anything to the answer but if x comes after x+1 then we cannot take them in the single round hence we add 1 to the final answer.
+*/
 void solve()
 {
-    int n;
+    /* imagine it as vector of vectors a [1] -> {1,2}
+                                         [2] -> {3,4,5}
+    ans = a.size();                                   */
+    int n, ans = 1; //currently we are in the first row
     cin >> n;
+    vi a(n), mp(n + 1, -1);
+    rep(i, n)
+    {
+        cin >> a[i];
+        mp[a[i]] = i;
+    }
+    for (int x = 2; x <= n; x++)
+    {
+        ans += (mp[x] < mp[x - 1]);
+    }
+    prln(ans);
+    //DOSEN'T work for this problem but nice concept for other similar problems
+    // int x;
+    // cin >> n >> x;
+    // set<int> s;
+    // s.insert(x);
+    // rep(i, n - 1)
+    // {
+    //     cin >> x;
+    //     auto it = s.upper_bound(x);
+    //     if (it == s.begin())
+    //         s.insert(x);
+    //     else
+    //     {
+    //         it--;
+    //         s.erase(it);
+    //         s.insert(x);
+    //     }
+    // }
+    // cout << s.size() << endl;
     return;
 }
 int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--)
     {
         solve();

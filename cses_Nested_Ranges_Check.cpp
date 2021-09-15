@@ -284,23 +284,66 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
 5-calculate contributtion of each element towards our answer  
-6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index> 
 */
 #define int long long int
 const int mod = 1000000007;
+
+struct range
+{
+    int l;
+    int r;
+    int index;
+
+    bool operator<(const range &other) const
+    {
+        if (l == other.l)
+            return r > other.r;
+        return l < other.l;
+    }
+};
 
 void solve()
 {
     int n;
     cin >> n;
+    vector<range> ranges(n);
+    vector<int> contains(n, 0), contained_in(n, 0);
+    rep(i, n) cin >> ranges[i].l >> ranges[i].r, ranges[i].index = i;
+
+    //sort ranges based on l value
+    sort(all(ranges));
+
+    //for contained_in calculation
+    //a range is contained_in another range if max_r_bound >= current range r value
+    int max_r_bound = -1;
+    rep(i, n)
+    {
+        if (max_r_bound >= ranges[i].r)
+            contained_in[ranges[i].index] = 1;
+        max_r_bound = max(max_r_bound, ranges[i].r);
+    }
+
+    //for contains calculation (iterate from backward direction)
+    //a range contains another range if min_r_bound<=current range r value
+    int min_r_bound = INT_MAX;
+    for (int i = n - 1; i >= 0; i--)
+    {
+        if (min_r_bound <= ranges[i].r)
+            contains[ranges[i].index] = 1;
+        min_r_bound = min(min_r_bound, ranges[i].r);
+    }
+    for (auto x : contains)
+        prsp(x);
+    cout << endl;
+    for (auto x : contained_in)
+        prsp(x);
+    cout << endl;
     return;
 }
 int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
     while (t--)
     {
         solve();
