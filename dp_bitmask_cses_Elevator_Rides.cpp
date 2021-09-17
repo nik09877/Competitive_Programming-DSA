@@ -283,91 +283,75 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 2-try out small test cases or do brute force solutions to find pattern
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer
-6-graph=tree + back edges (edges that connect to current node's ancestors) 
+5-calculate contributtion of each element towards our answer  
+6-graph=tree + back edges (edges that connect to current node's ancestors)
+7-insert duplicate values in set like pair<int,int> = <value, -index> 
 */
 #define int long long int
 const int mod = 1000000007;
-const int N = 1e3 + 5;
 
-vi g[N];
-int lvl[N], dp[N];
-bitset<N> vis;
+/*
+The problem can be easily solved in O(n!n) time by testing all possible permutations of n people. However, we can use dynamic programming to get a more
+efficient O(2^n * n) time algorithm. The idea is to calculate for each subset of people
+two values: the minimum number of rides needed and the minimum weight of
+people who ride in the last group.
+Let weight[p] denote the weight of person p. We define two functions: rides(S)
+is the minimum number of rides for a subset S, and last(S) is the minimum
+weight of the last ride. For example, in the above scenario
+rides({1,3,4}) = 2 and last({1,3,4}) = 5,
+because the optimal rides are {1,4} and {3}, and the second ride has weight 5. Ofcourse, our final goal is to calculate the value of rides({0...n−1}).
+We can calculate the values of the functions recursively and then apply
+dynamic programming. The idea is to go through all people who belong to S and
+optimally choose the last person p who enters the elevator. Each such choice
+yields a subproblem for a smaller subset of people. If last(S \ p)+weight[p] ≤ x,
+we can add p to the last ride. Otherwise, we have to reserve a new ride that
+initially only contains p.
+To implement dynamic programming, we declare an array
+pair<int,int> best[1<<N];
+that contains for each subset S a pair (rides(S),last(S)). We set the value for an
+empty group as follows:
+best[0] = {1,0};
 
-// graph = tree + backedge (dfs tree)
-
-//dp[node] denotes the minimum level of the node we can reach from any node present in the subtree rooted at current node
-
-//If we delete a bridge the count of connected components will increase and no backedge can be a bridge ever
-//node -> child is a bridge if there is no node in the subtree rooted at child
-//from which there is a backedge to one of node's ancestors or it's siblings
-
-//node is an articulation point if any one of its child doesn't have a backedge to any of node's ancestors
-
-void dfs(int node, int par)
-{
-    bool good = true; //not articulation point (flag)
-    if (par == -1)
-        lvl[node] = dp[node] = 0;
-    else
-        lvl[node] = dp[node] = lvl[par] + 1;
-    vis[node] = true;
-
-    for (int child : g[node])
-    {
-        if (child == par)
-            continue;
-
-        //we found a backedge (as there can be multiple backedges to different levels we have to take the minimum)
-        if (vis[child] == true)
-            dp[node] = min(dp[node], lvl[child]);
-        else
-        {
-            dfs(child, node);
-
-            //check articulation point
-            if (dp[child] >= lvl[node])
-                good = false;
-
-            //check u -> v is a bridge or not
-            if (dp[child] > lvl[node])
-            {
-                cout << node << " -> " << child << " is a bridge\n";
-            }
-            dp[node] = min(dp[node], dp[child]);
-        }
-    }
-
-    if (not good)
-        cout << node << " is an articulation point\n";
-}
-
+*/
 void solve()
 {
-    int n, m;
-    cin >> n >> m;
-    rep1(i, n) g[i].clear(), vis[i] = 0, dp[i] = n + 1;
-    memset(lvl, 0, sizeof(lvl));
-    rep(i, m)
+    int n, x;
+    cin >> n >> x;
+    int weight[n];
+    rep(i, n) cin >> weight[i];
+    pair<int, int> best[1 << n]; //rides(subset),last(subset)
+
+    //If there is an empty group
+    best[0] = {1, 0};
+    for (int s = 1; s < (1 << n); s++)
     {
-        int a, b;
-        cin >> a >> b;
-        g[a].pb(b);
-        g[b].pb(a);
+        // initial value: n+1 rides are needed
+        best[s] = {n + 1, 0};
+        for (int p = 0; p < n; p++)
+        {
+            if (s & (1 << p))
+            {
+                auto option = best[s ^ (1 << p)];
+                if (option.second + weight[p] <= x)
+                {
+                    // add p to an existing ride
+                    option.second += weight[p];
+                }
+                else
+                {
+                    // reserve a new ride for p
+                    option.first++;
+                    option.second = weight[p];
+                }
+                best[s] = min(best[s], option);
+            }
+        }
     }
-    dfs(1, -1);
+    cout << best[(1 << n) - 1].ff << endl;
     return;
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

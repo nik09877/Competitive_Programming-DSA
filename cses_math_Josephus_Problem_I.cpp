@@ -144,11 +144,11 @@ void _print(map<T, V> v)
 //     }
 // }
 // -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+template <class T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 // template <class K, class V>
 // using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
@@ -283,86 +283,35 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 2-try out small test cases or do brute force solutions to find pattern
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer
-6-graph=tree + back edges (edges that connect to current node's ancestors) 
+5-calculate contributtion of each element towards our answer  
+6-graph=tree + back edges (edges that connect to current node's ancestors)
+7-insert duplicate values in set like pair<int,int> = <value, -index> 
 */
 #define int long long int
 const int mod = 1000000007;
-const int N = 1e3 + 5;
-
-vi g[N];
-int lvl[N], dp[N];
-bitset<N> vis;
-
-// graph = tree + backedge (dfs tree)
-
-//dp[node] denotes the minimum level of the node we can reach from any node present in the subtree rooted at current node
-
-//If we delete a bridge the count of connected components will increase and no backedge can be a bridge ever
-//node -> child is a bridge if there is no node in the subtree rooted at child
-//from which there is a backedge to one of node's ancestors or it's siblings
-
-//node is an articulation point if any one of its child doesn't have a backedge to any of node's ancestors
-
-void dfs(int node, int par)
-{
-    bool good = true; //not articulation point (flag)
-    if (par == -1)
-        lvl[node] = dp[node] = 0;
-    else
-        lvl[node] = dp[node] = lvl[par] + 1;
-    vis[node] = true;
-
-    for (int child : g[node])
-    {
-        if (child == par)
-            continue;
-
-        //we found a backedge (as there can be multiple backedges to different levels we have to take the minimum)
-        if (vis[child] == true)
-            dp[node] = min(dp[node], lvl[child]);
-        else
-        {
-            dfs(child, node);
-
-            //check articulation point
-            if (dp[child] >= lvl[node])
-                good = false;
-
-            //check u -> v is a bridge or not
-            if (dp[child] > lvl[node])
-            {
-                cout << node << " -> " << child << " is a bridge\n";
-            }
-            dp[node] = min(dp[node], dp[child]);
-        }
-    }
-
-    if (not good)
-        cout << node << " is an articulation point\n";
-}
 
 void solve()
 {
-    int n, m;
-    cin >> n >> m;
-    rep1(i, n) g[i].clear(), vis[i] = 0, dp[i] = n + 1;
-    memset(lvl, 0, sizeof(lvl));
-    rep(i, m)
+    int n, k;
+    cin >> n;
+    k = 1; //as ordered set uses 0 based indexing
+    ordered_set<int> joseph;
+    fo(i, 1, n) joseph.insert(i);
+    int person_to_be_killed = 0;
+    while (joseph.size() > 1)
     {
-        int a, b;
-        cin >> a >> b;
-        g[a].pb(b);
-        g[b].pb(a);
+        person_to_be_killed = (person_to_be_killed + k) % joseph.size();
+        int person_number = *joseph.find_by_order(person_to_be_killed);
+        prsp(person_number);
+        joseph.erase(person_number);
     }
-    dfs(1, -1);
+    prsp(*joseph.begin());
     return;
 }
 int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
     while (t--)
     {
         solve();

@@ -283,79 +283,70 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 2-try out small test cases or do brute force solutions to find pattern
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer
-6-graph=tree + back edges (edges that connect to current node's ancestors) 
+5-calculate contributtion of each element towards our answer  
+6-graph=tree + back edges (edges that connect to current node's ancestors)
+7-insert duplicate values in set like pair<int,int> = <value, -index> 
 */
-#define int long long int
+// #define int long long int
 const int mod = 1000000007;
-const int N = 1e3 + 5;
+//11450 - Wedding shopping(Uva online judge)
+/*
 
-vi g[N];
-int lvl[N], dp[N];
-bitset<N> vis;
+int shop(int money, int g) {
+if (money < 0) return -1000000000; // order of >1 base cases is important
 
-// graph = tree + backedge (dfs tree)
+if (g == C) return M - money; // VERY CLEVER
 
-//dp[node] denotes the minimum level of the node we can reach from any node present in the subtree rooted at current node
-
-//If we delete a bridge the count of connected components will increase and no backedge can be a bridge ever
-//node -> child is a bridge if there is no node in the subtree rooted at child
-//from which there is a backedge to one of node's ancestors or it's siblings
-
-//node is an articulation point if any one of its child doesn't have a backedge to any of node's ancestors
-
-void dfs(int node, int par)
-{
-    bool good = true; //not articulation point (flag)
-    if (par == -1)
-        lvl[node] = dp[node] = 0;
-    else
-        lvl[node] = dp[node] = lvl[par] + 1;
-    vis[node] = true;
-
-    for (int child : g[node])
-    {
-        if (child == par)
-            continue;
-
-        //we found a backedge (as there can be multiple backedges to different levels we have to take the minimum)
-        if (vis[child] == true)
-            dp[node] = min(dp[node], lvl[child]);
-        else
-        {
-            dfs(child, node);
-
-            //check articulation point
-            if (dp[child] >= lvl[node])
-                good = false;
-
-            //check u -> v is a bridge or not
-            if (dp[child] > lvl[node])
-            {
-                cout << node << " -> " << child << " is a bridge\n";
-            }
-            dp[node] = min(dp[node], dp[child]);
-        }
-    }
-
-    if (not good)
-        cout << node << " is an articulation point\n";
+int &ans = memo[money][g]; // remember the memory address
+if (ans != -1) return ans;
+for (int model = 1; model <= price[g][0]; model++)
+ans = max(ans, shop(money - price[g][model], g + 1));
+return ans; // ans (or memo[money][g]) is directly updated
 }
 
+*/
 void solve()
 {
-    int n, m;
-    cin >> n >> m;
-    rep1(i, n) g[i].clear(), vis[i] = 0, dp[i] = n + 1;
-    memset(lvl, 0, sizeof(lvl));
-    rep(i, m)
+    int n, max_cost;
+    cin >> max_cost >> n;
+
+    //dp[i][j] denotes if it is possible to make sum j by using first i elements of the array
+    //dp[i][j] = dp[i][j] or dp[i-1][j-x] for all x in a[i]
+    vector<vector<bool>> dp(n, vector<bool>(max_cost + 1, false));
+
+    vvi a(n);
+    rep(i, n)
     {
-        int a, b;
-        cin >> a >> b;
-        g[a].pb(b);
-        g[b].pb(a);
+        int m;
+        cin >> m;
+        a[i].resize(m);
+        rep(j, m) cin >> a[i][j];
     }
-    dfs(1, -1);
+    for (auto x : a[0])
+        if (x <= max_cost)
+            dp[0][x] = true;
+
+    for (int i = 1; i < n; i++)
+    {
+        for (int j = 1; j <= max_cost; j++)
+        {
+            for (auto x : a[i])
+            {
+                if (x <= j)
+                    dp[i][j] = (dp[i][j] or dp[i - 1][j - x]);
+            }
+        }
+    }
+    int ans = -1;
+    for (int i = 1; i <= max_cost; i++)
+        if (dp[n - 1][i] == true)
+            ans = max(ans, i);
+    if (ans == -1)
+    {
+        prln("no solution");
+    }
+    else
+        prln(ans);
     return;
 }
 int32_t main()
