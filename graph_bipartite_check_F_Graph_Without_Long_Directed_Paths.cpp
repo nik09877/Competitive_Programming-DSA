@@ -289,22 +289,67 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 */
 // #define int long long int
 const int mod = 1000000007;
+const int N = 2e5 + 5;
 
+/*
+What if the given graph will contain a cycle of odd length? It will mean that some two consecutive edges of this cycle will be oriented in the same way and will form a path of length two.
+
+What if there is no cycles of odd length in this graph? Then it is bipartite. Let's color it and see what we got. We got some vertices in the left part, some vertices in the right part and all edges connecting vertices from different parts. Let's orient all edges such that them will go from the left part to the right part. That's it.
+*/
+
+int n, m;
+vi g[N];
+bitset<N> vis, col;
+
+//check if graph contains odd length cycle(bipartite graph or not)
+bool dfs(int node, int c)
+{
+    vis[node] = 1;
+    col[node] = c;
+    for (auto child : g[node])
+    {
+        if (not vis[child] and not dfs(child, c ^ 1))
+            return false;
+        else if (vis[child] and col[node] == col[child])
+            return false;
+    }
+    return true;
+}
 void solve()
 {
-
+    cin >> n >> m;
+    vector<pair<int, int>> edges;
+    rep(i, m)
+    {
+        int a, b;
+        cin >> a >> b;
+        edges.push_back({a, b});
+        g[a].pb(b);
+        g[b].pb(a);
+    }
+    if (not dfs(1, 0))
+    {
+        no;
+        return;
+    }
+    string ans(m, '0');
+    //col[node]=0 means all edges should be out going else otherwise
+    rep(i, m)
+    {
+        int a, b;
+        a = edges[i].ff;
+        b = edges[i].ss;
+        if (col[a] == 0)
+            ans[i] = '0';
+        else
+            ans[i] = '1';
+    }
+    yes;
+    cout << ans << endl;
     return;
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

@@ -287,24 +287,102 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index> 
 */
-// #define int long long int
-const int mod = 1000000007;
+#define int long long int
+const int mod = 998244353;
+const int N = 3e5 + 5;
+int even_cnt, odd_cnt;
+int n, m;
+vi g[N];
+bitset<N> vis, col;
+/*
+    Think of each component of the graph as tree + back-edges.
+    
+    If one component is not Bipartite then the answer is 0.
+    
+    Else we can calculate answer for each component and multiply our answer as the componets are not independent of each other as they belong to the same graph.
+    
+    If there are a even lvl nodes and b odd lvl nodes the answer for the current component is 2^a+2^b
+    
+    Because we can either 
+    [ fill the even lvl's with {1,3} and fill odd lvl's with {2} ] 
+    or 
+    [ fill the even lvl's with {2} and fill odd lvl's with {1,3} ]  
+*/
+bool dfs(int node, int c)
+{
+    vis[node] = true;
+    col[node] = c;
 
+    if (c == 0)
+        even_cnt++;
+    else
+        odd_cnt++;
+
+    for (auto child : g[node])
+    {
+        if (not vis[child] and not dfs(child, c ^ 1))
+            return false;
+        else if (vis[child] and col[node] == col[child])
+            return false;
+    }
+    return true;
+}
+int binPower(int a, int n)
+{
+    int res = 1;
+    while (n > 0)
+    {
+        if (n & 1)
+        {
+            res = (res * a) % mod;
+        }
+        n >>= 1;
+        a = (a * a) % mod;
+    }
+    return res;
+}
 void solve()
 {
+    for (int i = 1; i <= n; i++)
+    {
+        vis[i] = 0;
+        g[i].clear();
+    }
+    int ans = 1;
+    cin >> n >> m;
+    rep(i, m)
+    {
+        int a, b;
+        cin >> a >> b;
+        g[a].pb(b);
+        g[b].pb(a);
+    }
+    fo(i, 1, n)
+    {
+        if (not vis[i])
+        {
+            even_cnt = 0, odd_cnt = 0;
 
+            if (not dfs(i, 0))
+            {
+                prln(0);
+                return;
+            }
+
+            int cur_ans = (binPower(2, even_cnt) % mod + binPower(2, odd_cnt) % mod) % mod;
+            ans *= cur_ans;
+            ans %= mod;
+        }
+    }
+
+    prln(ans);
     return;
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
+    int t;
     cin >> t;
     while (t--)
-    {
         solve();
-    }
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
 }

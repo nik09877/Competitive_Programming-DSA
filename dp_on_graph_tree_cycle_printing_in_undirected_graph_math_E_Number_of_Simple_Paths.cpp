@@ -287,24 +287,101 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index> 
 */
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
 
-void solve()
-{
+/*
+    EDITORIAL:
+    As there are n edges that means it is basically a Tree + cycle
+    As there is a cycle every pair of nodes in the graph will have exactly 2 path between them
+    Except for the nodes in the subtrees of every cycle node if we root the cycle nodes one by one
 
-    return;
+    formula - total pairs - (subtree[cycle node] choose 2) for all cycle nodes
+    formula - n*(n-1) - (subtree[cycle node] choose 2) for all cycle nodes
+    It is done to avoid over counting
+
+    n * (n-1) comes from the fact that 
+    for every node it can reach other (n-1) nodes in 2 ways
+    If there was only one way (ie in case of a Tree) it would have been Nc2
+*/
+int n = 2e5 + 5;
+
+vvi adj(n);
+vi par(n);
+
+//whether or not u is a cycle node
+vector<bool> vis(n), isOnCycle(n);
+
+vi cycle;
+bool found;
+vi sub(n);
+
+void dfs(int u, int p)
+{
+    if (found)
+        return; //we dont explore any further since this dfs has accomplished its task
+    par[u] = p;
+    vis[u] = 1;
+    for (int v : adj[u])
+    {
+        if (found)
+            return;
+        if (!vis[v])
+            dfs(v, u);
+        else if (v != p)
+        { //this means cycle contains u and v
+            found = true;
+            while (u != v)
+            {
+                isOnCycle[u] = 1;
+                cycle.pb(u);
+                u = par[u];
+            }
+            isOnCycle[u] = 1;
+            cycle.pb(u); //u == v
+            return;
+        }
+    }
+}
+int dfs2(int u, int p) //finding the subtree sizes
+{
+    sub[u] = 1;
+    for (int v : adj[u])
+        if (!isOnCycle[v] && v != p)
+            sub[u] += dfs2(v, u);
+    return sub[u];
 }
 int32_t main()
 {
     fastio;
-    int t = 1;
+    int t;
     cin >> t;
     while (t--)
     {
-        solve();
+        cin >> n;
+        found = false;
+        cycle.clear();
+        for (int i = 1; i <= n; i++)
+        {
+            adj[i].clear(), par[i] = -1, isOnCycle[i] = 0, vis[i] = 0,
+                            sub[i] = 0;
+        }
+        for (int i = 1; i <= n; i++)
+        {
+            int u, v;
+            cin >> u >> v;
+            adj[u].pb(v), adj[v].pb(u);
+        }
+        dfs(1, -1);
+
+        ll ans = 1ll * n * (1ll * n - 1); //complementary counting
+        for (int u : cycle)
+        {
+            dfs2(u, -1);
+            ll val = sub[u];
+            ans -= ((val - 1) * (val)) / 2; //subtree size choose 2
+        }
+        cout << ans << '\n';
     }
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    return 0;
 }
