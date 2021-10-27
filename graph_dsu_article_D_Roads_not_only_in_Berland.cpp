@@ -121,36 +121,36 @@ void _print(map<T, V> v)
 #else
 #define debug(x...)
 #endif
-// only for prime m
-// DEBUG TEMPLATE ENDS HERE
-//  void compress(vi &a)
-//  {
-//      //for fenwick tree
-//      int n = sz(a);
-//      map<ii> mpp, back;
-//      int idx = 1;
-//      rep(i, n)
-//      {
-//          if (mpp.find(a[i]) == mpp.end())
-//          {
-//              mpp.insert({a[i], idx});
-//              back.insert({idx, a[i]}); //to get back original values
-//              idx++;
-//          }
-//      }
-//      rep(i, n)
-//      {
-//          a[i] = mpp[a[i]];
-//      }
-//  }
-//  -----------POLICY BASED DATA STRUCTURES------------------------
-//  #include <ext/pb_ds/assoc_container.hpp>
-//  #include <ext/pb_ds/tree_policy.hpp>
-//  using namespace __gnu_pbds;
-//  template <class T>
-//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-//  template <class K, class V>
-//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//only for prime m
+//DEBUG TEMPLATE ENDS HERE
+// void compress(vi &a)
+// {
+//     //for fenwick tree
+//     int n = sz(a);
+//     map<ii> mpp, back;
+//     int idx = 1;
+//     rep(i, n)
+//     {
+//         if (mpp.find(a[i]) == mpp.end())
+//         {
+//             mpp.insert({a[i], idx});
+//             back.insert({idx, a[i]}); //to get back original values
+//             idx++;
+//         }
+//     }
+//     rep(i, n)
+//     {
+//         a[i] = mpp[a[i]];
+//     }
+// }
+// -----------POLICY BASED DATA STRUCTURES------------------------
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+// template <class T>
+// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+// template <class K, class V>
+// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -283,29 +283,90 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 2-try out small test cases or do brute force solutions to find pattern
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer
+5-calculate contributtion of each element towards our answer  
 6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index>
+7-insert duplicate values in set like pair<int,int> = <value, -index> 
 */
-// #define int long long int
 const int mod = 1000000007;
+
+vi nodes; //contains a node from each connected component
+vpii back_edges;
+int n;
+
+class Dsu
+{
+public:
+    int par[1005];
+    int sz[1005];
+    Dsu(int n)
+    {
+        for (int i = 1; i <= n; i++)
+        {
+            par[i] = i;
+            sz[i] = 1;
+        }
+    }
+
+    int find(int a)
+    {
+        if (a == par[a])
+            return a;
+        return par[a] = find(par[a]);
+    }
+
+    void merge(int a, int b)
+    {
+        int par_a = find(a);
+        int par_b = find(b);
+
+        if (par_a == par_b) //They belong to the same connected component
+        {
+            //a->b is a backedge
+            back_edges.push_back({a, b});
+        }
+
+        else
+        {
+            //The larger sized component eats up the smaller component
+            if (sz[par_a] < sz[par_b])
+                swap(par_a, par_b);
+            par[par_b] = par_a;
+            sz[par_a] += sz[par_b];
+        }
+    }
+};
 
 void solve()
 {
+    cin >> n;
+    Dsu ds(n);
+    //answer is (no of connected components - 1)
+    //find all the back edges
+    //find a node from every connected component
+    rep(i, n - 1)
+    {
+        int a, b;
+        cin >> a >> b;
+        ds.merge(a, b);
+    }
+    fo(i, 1, n)
+    {
+        if (ds.par[i] == i)
+            nodes.pb(i);
+    }
+
+    cout << sz(nodes) - 1 << endl;
+    rep(i, sz(nodes) - 1)
+    {
+        prsp(back_edges[i].ff);
+        prsp(back_edges[i].ss);
+        prsp(nodes[i]);
+        prsp(nodes[i + 1]);
+    }
     return;
 }
-
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

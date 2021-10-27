@@ -121,36 +121,36 @@ void _print(map<T, V> v)
 #else
 #define debug(x...)
 #endif
-// only for prime m
-// DEBUG TEMPLATE ENDS HERE
-//  void compress(vi &a)
-//  {
-//      //for fenwick tree
-//      int n = sz(a);
-//      map<ii> mpp, back;
-//      int idx = 1;
-//      rep(i, n)
-//      {
-//          if (mpp.find(a[i]) == mpp.end())
-//          {
-//              mpp.insert({a[i], idx});
-//              back.insert({idx, a[i]}); //to get back original values
-//              idx++;
-//          }
-//      }
-//      rep(i, n)
-//      {
-//          a[i] = mpp[a[i]];
-//      }
-//  }
-//  -----------POLICY BASED DATA STRUCTURES------------------------
-//  #include <ext/pb_ds/assoc_container.hpp>
-//  #include <ext/pb_ds/tree_policy.hpp>
-//  using namespace __gnu_pbds;
-//  template <class T>
-//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-//  template <class K, class V>
-//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//only for prime m
+//DEBUG TEMPLATE ENDS HERE
+// void compress(vi &a)
+// {
+//     //for fenwick tree
+//     int n = sz(a);
+//     map<ii> mpp, back;
+//     int idx = 1;
+//     rep(i, n)
+//     {
+//         if (mpp.find(a[i]) == mpp.end())
+//         {
+//             mpp.insert({a[i], idx});
+//             back.insert({idx, a[i]}); //to get back original values
+//             idx++;
+//         }
+//     }
+//     rep(i, n)
+//     {
+//         a[i] = mpp[a[i]];
+//     }
+// }
+// -----------POLICY BASED DATA STRUCTURES------------------------
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+// template <class T>
+// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+// template <class K, class V>
+// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -283,28 +283,63 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 2-try out small test cases or do brute force solutions to find pattern
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer
+5-calculate contributtion of each element towards our answer  
 6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index>
+7-insert duplicate values in set like pair<int,int> = <value, -index> 
 */
 // #define int long long int
 const int mod = 1000000007;
 
+//just simulate the process and use set<int>g[n] to find the child nodes faster
 void solve()
 {
+    int n;
+    cin >> n;
+    set<int> g[n + 1];
+    vi order(n);
+    rep(i, n - 1)
+    {
+        int a, b;
+        cin >> a >> b;
+        g[a].insert(b);
+        g[b].insert(a);
+    }
+    re(order, n);
+
+    queue<int> q;
+    q.push(1);
+    int ind = 1;
+    while (q.size())
+    {
+        int node = q.front();
+        q.pop();
+
+        //keep on traversing the tree and removing the edges that have already been processed
+        while (g[node].size())
+        {
+            int child = order[ind++];
+            if (g[node].find(child) == g[node].end())
+            {
+                cout << "No";
+                return;
+            }
+            q.push(child);
+            g[node].erase(child);
+            g[child].erase(node);
+        }
+    }
+    cout << "Yes";
     return;
 }
-
 int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--)
     {
         solve();
     }
-
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

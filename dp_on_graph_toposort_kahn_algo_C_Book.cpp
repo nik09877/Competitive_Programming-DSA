@@ -121,36 +121,36 @@ void _print(map<T, V> v)
 #else
 #define debug(x...)
 #endif
-// only for prime m
-// DEBUG TEMPLATE ENDS HERE
-//  void compress(vi &a)
-//  {
-//      //for fenwick tree
-//      int n = sz(a);
-//      map<ii> mpp, back;
-//      int idx = 1;
-//      rep(i, n)
-//      {
-//          if (mpp.find(a[i]) == mpp.end())
-//          {
-//              mpp.insert({a[i], idx});
-//              back.insert({idx, a[i]}); //to get back original values
-//              idx++;
-//          }
-//      }
-//      rep(i, n)
-//      {
-//          a[i] = mpp[a[i]];
-//      }
-//  }
-//  -----------POLICY BASED DATA STRUCTURES------------------------
-//  #include <ext/pb_ds/assoc_container.hpp>
-//  #include <ext/pb_ds/tree_policy.hpp>
-//  using namespace __gnu_pbds;
-//  template <class T>
-//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-//  template <class K, class V>
-//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//only for prime m
+//DEBUG TEMPLATE ENDS HERE
+// void compress(vi &a)
+// {
+//     //for fenwick tree
+//     int n = sz(a);
+//     map<ii> mpp, back;
+//     int idx = 1;
+//     rep(i, n)
+//     {
+//         if (mpp.find(a[i]) == mpp.end())
+//         {
+//             mpp.insert({a[i], idx});
+//             back.insert({idx, a[i]}); //to get back original values
+//             idx++;
+//         }
+//     }
+//     rep(i, n)
+//     {
+//         a[i] = mpp[a[i]];
+//     }
+// }
+// -----------POLICY BASED DATA STRUCTURES------------------------
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+// template <class T>
+// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+// template <class K, class V>
+// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -283,18 +283,65 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 2-try out small test cases or do brute force solutions to find pattern
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer
+5-calculate contributtion of each element towards our answer  
 6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index>
+7-insert duplicate values in set like pair<int,int> = <value, -index> 
 */
 // #define int long long int
 const int mod = 1000000007;
+const int N = 2e5 + 5;
+vi g[N];
+int in[N], dp[N];
+
+// dp[i] denotes the minimum times we need to read the book to understand chapter i
 
 void solve()
 {
+    int n;
+    cin >> n;
+    fo(i, 1, n) g[i].clear(), in[i] = 0, dp[i] = 0;
+    fo(i, 1, n)
+    {
+        int k, a;
+        cin >> k;
+        while (k--)
+        {
+            cin >> a;
+            g[a].pb(i);
+            in[i]++;
+        }
+    }
+
+    //Kahn's algo
+    queue<int> q;
+    vector<bool> vis(n + 1, false);
+    fo(i, 1, n) if (in[i] == 0) dp[i] = 1, q.push(i);
+
+    while (q.size())
+    {
+        int node = q.front();
+        vis[node] = true;
+        q.pop();
+        for (auto child : g[node])
+        {
+            in[child]--;
+            if (in[child] == 0)
+                q.push(child);
+
+            dp[child] = max(dp[child], dp[node] + (node > child));
+        }
+    }
+    //check if graph contains cycle ie if the graph contains cycle there will be a connected component in which no node has in degree 0 , so we can't visit that connected component
+    fo(i, 1, n) if (not vis[i])
+    {
+        prln(-1);
+        return;
+    }
+
+    int ans = *max_element(dp + 1, dp + n + 1);
+    prln(ans);
     return;
 }
-
 int32_t main()
 {
     fastio;
@@ -304,7 +351,6 @@ int32_t main()
     {
         solve();
     }
-
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif
