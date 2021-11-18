@@ -143,14 +143,6 @@ void _print(map<T, V> v)
 //          a[i] = mpp[a[i]];
 //      }
 //  }
-//  -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -263,6 +255,16 @@ int mod_div(int a, int b, int m)
 //     }
 //     // umap<lli, lli, custom_hash> mp;
 // };
+
+// -----------POLICY BASED DATA STRUCTURES------------------------
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+template <class T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+template <class K, class V>
+using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
@@ -287,17 +289,29 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
 */
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+
+int reversePairs(vector<int> &nums)
+{
+    int ans = 0, id = 0;
+    ordered_set<pair<int, int>> s;
+    // for each a[j] find in the left part,count of elements such that they are >= 2* a[j] + 1
+    for (auto &j : nums)
+    {
+        int cnt_of_smaller_elements = s.order_of_key({(int)2 * j + 1, 0});
+        ans += s.size() - cnt_of_smaller_elements;
+        s.insert({(int)j, id++});
+    }
+    return ans;
+}
 
 void solve()
 {
     int n;
     cin >> n;
-
     return;
 }
-
 int32_t main()
 {
     fastio;
@@ -307,7 +321,6 @@ int32_t main()
     {
         solve();
     }
-
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

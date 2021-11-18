@@ -144,13 +144,13 @@ void _print(map<T, V> v)
 //      }
 //  }
 //  -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//  #include <ext/pb_ds/assoc_container.hpp>
+//  #include <ext/pb_ds/tree_policy.hpp>
+//  using namespace __gnu_pbds;
+//  template <class T>
+//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//  template <class K, class V>
+//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -289,15 +289,59 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 */
 // #define int long long int
 const int mod = 1000000007;
+const int N = 4e5 + 5;
+vi g[N];
+int n, k, deg[N];
 
 void solve()
 {
-    int n;
-    cin >> n;
+    cin >> n >> k;
+    fo(i, 1, n) g[i].clear(), deg[i] = 0;
+    rep(i, n - 1)
+    {
+        int a, b;
+        cin >> a >> b;
+        g[a].pb(b);
+        g[b].pb(a);
+        deg[a]++;
+        deg[b]++;
+        a++;
+    }
 
+    // TOPOLOGICAL SORT
+    if (k >= n)
+    {
+        prln(0);
+        return;
+    }
+    int ans = n;
+    queue<int> q;
+    fo(i, 1, n) if (deg[i] == 1) q.push(i);
+    while (true)
+    {
+        if (k == 0 or ans <= 0)
+            break;
+        int m = q.size();
+        rep(i, m)
+        {
+            int node = q.front();
+            q.pop();
+            for (auto child : g[node])
+            {
+                if (deg[child] == 1)
+                    continue;
+                else
+                    deg[child]--;
+                if (deg[child] == 1)
+                    q.push(child);
+            }
+        }
+        ans -= m;
+        k--;
+    }
+    cout << (ans <= 0 ? 0 : ans) << endl;
     return;
 }
-
 int32_t main()
 {
     fastio;
@@ -307,7 +351,6 @@ int32_t main()
     {
         solve();
     }
-
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

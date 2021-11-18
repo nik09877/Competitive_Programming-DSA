@@ -144,13 +144,13 @@ void _print(map<T, V> v)
 //      }
 //  }
 //  -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//  #include <ext/pb_ds/assoc_container.hpp>
+//  #include <ext/pb_ds/tree_policy.hpp>
+//  using namespace __gnu_pbds;
+//  template <class T>
+//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//  template <class K, class V>
+//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -287,27 +287,53 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
 */
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, m, k, ans = 0ll;
+    map<pii, int> mp;
+    cin >> n >> m >> k;
+    vpii a(n);
+    rep(i, n)
+    {
+        cin >> a[i].ff;
+        a[i].ss = i;
+    }
+    vpii sorted_a = a;
+    sort(all(sorted_a), greater<pii>());
+    fo(i, 0, m * k - 1) ans += sorted_a[i].ff, mp[sorted_a[i]]++;
 
+    int i = 0, cnt = 0;
+
+    prln(ans);
+    vi res;
+    while (i < n)
+    {
+        while (cnt < m)
+        {
+            if (i >= n)
+                break;
+            if (mp[a[i]] == 1)
+                cnt++;
+            i++;
+        }
+
+        res.pb(i - 1);
+        cnt = 0;
+    }
+    rep(i, k - 1) prsp(res[i] + 1);
     return;
 }
-
 int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
     while (t--)
     {
         solve();
     }
-
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

@@ -144,13 +144,13 @@ void _print(map<T, V> v)
 //      }
 //  }
 //  -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//  #include <ext/pb_ds/assoc_container.hpp>
+//  #include <ext/pb_ds/tree_policy.hpp>
+//  using namespace __gnu_pbds;
+//  template <class T>
+//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//  template <class K, class V>
+//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -286,18 +286,65 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 5-calculate contributtion of each element towards our answer
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
-*/
-// #define int long long int
-const int mod = 1000000007;
 
+*/
+#define int long long int
+const int mod = 1000000007;
+int n, dp[15][2][2];
+vi a;
+int getAns(int i, int even_c, int odd_c)
+{
+    if (i >= n)
+    {
+        return (even_c > 0 or odd_c > 0) ? 0 : 1;
+    }
+    if (dp[i][even_c][odd_c] != -1)
+        return dp[i][even_c][odd_c];
+
+    int ans = 0;
+    if (i % 2 == 0)
+    {
+        rep(x1, 10)
+        {
+            rep(x2, 10)
+            {
+                int cur_dig = (x1 + x2 + even_c) % 10;
+                int next_even_c = (x1 + x2 + even_c) / 10;
+                if (cur_dig == a[i])
+                    ans += getAns(i + 1, next_even_c, odd_c);
+            }
+        }
+    }
+    else
+    {
+        rep(x1, 10)
+        {
+            rep(x2, 10)
+            {
+                int cur_dig = (x1 + x2 + odd_c) % 10;
+                int next_odd_c = (x1 + x2 + odd_c) / 10;
+                if (cur_dig == a[i])
+                    ans += getAns(i + 1, even_c, next_odd_c);
+            }
+        }
+    }
+    return dp[i][even_c][odd_c] = ans;
+}
 void solve()
 {
-    int n;
-    cin >> n;
-
+    memset(dp, -1, sizeof(dp));
+    int num;
+    cin >> num;
+    a.clear();
+    while (num)
+    {
+        a.pb(num % 10);
+        num /= 10;
+    }
+    n = sz(a);
+    cout << getAns(0, 0, 0) - 2 << endl;
     return;
 }
-
 int32_t main()
 {
     fastio;
@@ -307,7 +354,6 @@ int32_t main()
     {
         solve();
     }
-
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

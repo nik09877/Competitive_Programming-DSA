@@ -68,7 +68,7 @@ public:
         return mx_prof;
     }
     //  Best Time to Buy and Sell Stock - II
-    //idea is to buy on local minima and sell on local maxima
+    // idea is to buy on local minima and sell on local maxima
     int maxProfit(vector<int> &prices)
     {
         int profit = 0;
@@ -126,18 +126,18 @@ public:
     //  Best Time to Buy and Sell Stock III (HARD) (atmost 2)
     int getAns(int i, bool bought_prev, int k, vector<int> &a, vector<vector<int>> &dp_buy, vector<vector<int>> &dp_sell, int &n)
     {
-        //it's time to buy
+        // it's time to buy
         if (not bought_prev)
         {
             if (dp_buy[i][k] != -1)
                 return dp_buy[i][k];
-            //if it's the last element or we have already bought 2 items we can't buy this item
+            // if it's the last element or we have already bought 2 items we can't buy this item
             if (i == n - 1 or k == 0)
                 return 0;
             return dp_buy[i][k] = max(-a[i] + getAns(i + 1, true, k - 1, a, dp_buy, dp_sell, n), getAns(i + 1, false, k, a, dp_buy, dp_sell, n));
         }
 
-        //it's time to sell
+        // it's time to sell
         else
         {
             if (dp_sell[i][k] != -1)
@@ -158,18 +158,18 @@ public:
     // Best Time to Buy and Sell Stock IV (Hard) (at most k)
     int getAns(int i, bool bought_prev, int k, vector<int> &a, vector<vector<int>> &dp_buy, vector<vector<int>> &dp_sell, int &n)
     {
-        //it's time to buy
+        // it's time to buy
         if (not bought_prev)
         {
             if (dp_buy[i][k] != -1)
                 return dp_buy[i][k];
-            //if it's the last element or we have already bought 2 items we can't buy this item
+            // if it's the last element or we have already bought 2 items we can't buy this item
             if (i == n - 1 or k == 0)
                 return 0;
             return dp_buy[i][k] = max(-a[i] + getAns(i + 1, true, k - 1, a, dp_buy, dp_sell, n), getAns(i + 1, false, k, a, dp_buy, dp_sell, n));
         }
 
-        //it's time to sell
+        // it's time to sell
         else
         {
             if (dp_sell[i][k] != -1)
@@ -189,7 +189,7 @@ public:
         int ans = getAns(0, false, k, a, dp_buy, dp_sell, n);
         return ans;
     }
-    //House Robbery
+    // House Robbery
     int dp[101][2];
     int getAns(int i, int prev_taken, int &n, vector<int> &a)
     {
