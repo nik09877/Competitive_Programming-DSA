@@ -144,13 +144,13 @@ void _print(map<T, V> v)
 //      }
 //  }
 //  -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//  #include <ext/pb_ds/assoc_container.hpp>
+//  #include <ext/pb_ds/tree_policy.hpp>
+//  using namespace __gnu_pbds;
+//  template <class T>
+//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//  template <class K, class V>
+//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -286,30 +286,64 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 5-calculate contributtion of each element towards our answer
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
-8-in multi source bfs think in reverse direction
 */
 // #define int long long int
 const int mod = 1000000007;
+const int INF = 1000000007;
+const int N = 1e5 + 5;
+int n, m;
+vector<pair<int, int>> g[N];
+vector<int> dist(N, INF);
 
+// In 0-1 bfs we have edge weights 0 and 1 , we give priority to 0 edge weight more than that of 1 edge weight.
+
+// we only visit a node if dist[node]+ wt < dist[child]
+
+int zero_one_bfs()
+{
+    deque<int> q;
+    q.push_back(1);
+    dist[1] = 0;
+    while (!q.empty())
+    {
+        int node = q.front();
+        q.pop_front();
+
+        for (auto child : g[node])
+        {
+            int child_node = child.ff;
+            int wt = child.ss;
+
+            if (dist[node] + wt < dist[child_node])
+            {
+                dist[child_node] = dist[node] + wt;
+
+                if (wt == 0)
+                    q.push_front(child_node);
+                else
+                    q.push_back(child_node);
+            }
+        }
+    }
+    return dist[n] == INF ? -1 : dist[n];
+}
 void solve()
 {
-    int n;
-    cin >> n;
+    cin >> n >> m;
 
+    rep(i, m)
+    {
+        int a, b;
+        cin >> a >> b;
+        g[a].push_back({b, 0});
+        g[b].push_back({a, 1});
+    }
+
+    cout << zero_one_bfs() << endl;
     return;
 }
-
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

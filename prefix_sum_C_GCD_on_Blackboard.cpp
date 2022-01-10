@@ -144,13 +144,13 @@ void _print(map<T, V> v)
 //      }
 //  }
 //  -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//  #include <ext/pb_ds/assoc_container.hpp>
+//  #include <ext/pb_ds/tree_policy.hpp>
+//  using namespace __gnu_pbds;
+//  template <class T>
+//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//  template <class K, class V>
+//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -286,30 +286,38 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 5-calculate contributtion of each element towards our answer
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
-8-in multi source bfs think in reverse direction
 */
 // #define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
-    int n;
+    int n, mx_ans = 0;
     cin >> n;
+    vi a(n + 1), left(n + 1, 0), right(n + 2, 0);
 
+    fo(i, 1, n)
+    {
+        cin >> a[i];
+        left[i] = __gcd(a[i], left[i - 1]);
+    }
+    rrep(i, n, 1)
+    {
+        right[i] = __gcd(a[i], right[i + 1]);
+    }
+
+    mx_ans = left[n];
+
+    fo(i, 1, n)
+    {
+        int cur_gcd = __gcd(left[i - 1], right[i + 1]);
+        mx_ans = max(mx_ans, cur_gcd);
+    }
+    cout << mx_ans << endl;
     return;
 }
-
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

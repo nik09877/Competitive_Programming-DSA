@@ -144,13 +144,13 @@ void _print(map<T, V> v)
 //      }
 //  }
 //  -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//  #include <ext/pb_ds/assoc_container.hpp>
+//  #include <ext/pb_ds/tree_policy.hpp>
+//  using namespace __gnu_pbds;
+//  template <class T>
+//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//  template <class K, class V>
+//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -286,30 +286,82 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 5-calculate contributtion of each element towards our answer
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
-8-in multi source bfs think in reverse direction
+8-In multi source bfs think in reverse direction
 */
 // #define int long long int
 const int mod = 1000000007;
+const int INF = 1000000007;
+const int N = 2e5 + 2;
 
+int n;
+vi rev_g[N], a, odd, even;
+
+void multi_source_bfs(vi &source, vi &destination, vi &dist)
+{
+    vi d(n + 1, INF);
+    queue<int> q;
+    for (auto node : source)
+        d[node] = 0, q.push(node);
+
+    while (!q.empty())
+    {
+        int node = q.front();
+        q.pop();
+
+        for (auto child : rev_g[node])
+        {
+            if (d[node] + 1 < d[child])
+            {
+                d[child] = d[node] + 1;
+                q.push(child);
+            }
+        }
+    }
+    for (auto node : destination)
+    {
+        if (d[node] == INF)
+            continue;
+        else
+            dist[node] = d[node];
+    }
+}
 void solve()
 {
-    int n;
     cin >> n;
+    a = vector<int>(n + 1);
+    fo(i, 1, n)
+    {
+        cin >> a[i];
+        if (a[i] & 1)
+            odd.pb(i);
+        else
+            even.pb(i);
 
+        int left = i - a[i];
+        int right = i + a[i];
+
+        if (left >= 1)
+            rev_g[left].pb(i);
+
+        if (right <= n)
+            rev_g[right].pb(i);
+    }
+    vector<int> dist(n + 1, -1);
+
+    // calculating the min dist to travel to reach an odd node
+    //  from every even node
+    multi_source_bfs(odd, even, dist);
+
+    // calculating the min dist to travel to reach an even node
+    //  from every odd node
+    multi_source_bfs(even, odd, dist);
+
+    fo(i, 1, n)
+        prsp(dist[i]);
     return;
 }
-
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

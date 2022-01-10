@@ -46,7 +46,6 @@ const int mod = 1000000007;
 lli n, k;
 
 // Let's say that a segment of this array a[l..r] (1≤l≤r≤n) is good if the difference between the maximum and minimum elements on this segment is at most k. Your task is to find the number of different good segments.
-//Emti b gote question heipariba
 struct stack
 {
     vlli s, s_max = {LLONG_MIN}, s_min = {LLONG_MAX};
@@ -119,7 +118,7 @@ void solve()
             remove();
             l++;
         }
-        ans += r - l + 1; //why? think
+        ans += r - l + 1; // why? think
     }
     prln(ans);
     return;

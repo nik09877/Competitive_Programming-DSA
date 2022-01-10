@@ -286,16 +286,71 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 5-calculate contributtion of each element towards our answer
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
-8-in multi source bfs think in reverse direction
 */
 // #define int long long int
 const int mod = 1000000007;
+const int N = 1e6 + 5;
+int dist[N], dp[N], mx_dist = -1;
+vector<int> g[N];
 
+/*
+0th city -> town hall
+p[i] -> parent of ith node
+Find the farthest node from town hall that contains all the nodes which are farthest from the town hall in its subtree.
+*/
+void dfs(int node, int d)
+{
+    dist[node] = d;
+    mx_dist = max(mx_dist, d);
+    for (auto child : g[node])
+    {
+        dfs(child, d + 1);
+    }
+}
+void dfs1(int node, umap<ii> &mp)
+{
+    if (mp.find(node) != mp.end())
+        dp[node]++;
+    for (auto child : g[node])
+    {
+        dfs1(child, mp);
+        dp[node] += dp[child];
+    }
+}
 void solve()
 {
     int n;
     cin >> n;
+    vi p(n);
+    re(p, n);
 
+    rep(i, n)
+    {
+        if (p[i] == -1)
+            continue;
+        int a = p[i];
+        int b = i;
+        g[a].pb(b);
+    }
+    dfs(0, 0);
+    unordered_map<ii> mp;
+    int cnt_node = 0;
+    rep(node, n)
+    {
+        if (dist[node] == mx_dist)
+            mp[node]++, cnt_node++;
+    }
+    dfs1(0, mp);
+    int ans = 0, cur_dist = 0;
+    rep(i, n)
+    {
+        if (dp[i] == cnt_node and dist[i] > cur_dist)
+        {
+            cur_dist = dist[i];
+            ans = i;
+        }
+    }
+    cout << ans << endl;
     return;
 }
 
@@ -303,7 +358,7 @@ int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--)
     {
         solve();

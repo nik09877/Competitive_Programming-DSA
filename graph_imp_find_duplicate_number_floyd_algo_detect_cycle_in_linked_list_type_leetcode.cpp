@@ -121,36 +121,36 @@ void _print(map<T, V> v)
 #else
 #define debug(x...)
 #endif
-//only for prime m
-//DEBUG TEMPLATE ENDS HERE
-// void compress(vi &a)
-// {
-//     //for fenwick tree
-//     int n = sz(a);
-//     map<ii> mpp, back;
-//     int idx = 1;
-//     rep(i, n)
-//     {
-//         if (mpp.find(a[i]) == mpp.end())
-//         {
-//             mpp.insert({a[i], idx});
-//             back.insert({idx, a[i]}); //to get back original values
-//             idx++;
-//         }
-//     }
-//     rep(i, n)
-//     {
-//         a[i] = mpp[a[i]];
-//     }
-// }
-// -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+// only for prime m
+// DEBUG TEMPLATE ENDS HERE
+//  void compress(vi &a)
+//  {
+//      //for fenwick tree
+//      int n = sz(a);
+//      map<ii> mpp, back;
+//      int idx = 1;
+//      rep(i, n)
+//      {
+//          if (mpp.find(a[i]) == mpp.end())
+//          {
+//              mpp.insert({a[i], idx});
+//              back.insert({idx, a[i]}); //to get back original values
+//              idx++;
+//          }
+//      }
+//      rep(i, n)
+//      {
+//          a[i] = mpp[a[i]];
+//      }
+//  }
+//  -----------POLICY BASED DATA STRUCTURES------------------------
+//  #include <ext/pb_ds/assoc_container.hpp>
+//  #include <ext/pb_ds/tree_policy.hpp>
+//  using namespace __gnu_pbds;
+//  template <class T>
+//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//  template <class K, class V>
+//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -288,11 +288,11 @@ const int mod = 1000000007;
 
 class Solution
 {
-    //https://leetcode.com/problems/find-the-duplicate-number/
+    // https://leetcode.com/problems/find-the-duplicate-number/
 public:
     int findDuplicate(vector<int> &a)
     {
-        //floyd's algo (detect cycle in a linked list)
+        // floyd's algo (detect cycle in a linked list)
         int slow = a[0], fast = a[0];
         do
         {
@@ -306,7 +306,29 @@ public:
             fast = a[fast];
         }
         return fast;
-        //or return slow
+        // or return slow
+
+        /*
+            Floyd cycle detetction can be used.
+            cycle is create through index -> value -> index
+
+            Another approach:
+                Keep marking a[abs(cur_val)] as -ve
+                If it has already been marked as -ve then
+                cur_val is the duplicate number because there are
+                two outgoing edges from duplicate number to the same
+                number.
+            CODE:
+                for(int cur_val : a){
+
+                int idx = abs(cur_val);
+
+                if(a[idx] < 0)
+                    return abs(cur_val);
+                else a[idx]*=-1;
+                }
+                return -1;
+       */
     }
 };
 

@@ -1,6 +1,5 @@
-#pragma GCC optimize("Ofast")
-#pragma GCC target("avx,avx2,fma")
-#pragma GCC optimization("unroll-loops")
+#pragma GCC optimize("O3")
+#pragma GCC target("sse4")
 #include <bits/stdc++.h>
 #define rep(i, n) for (int i = 0; i < n; i++)
 #define rrep(i, a, b) for (int i = a; i >= b; i--)
@@ -31,7 +30,6 @@
 #define pr(x) cout << x
 #define prsp(x) cout << x << sp
 #define prln(x) cout << x << endl
-#define TIME cerr << "Time Taken:" << (float)clock() / CLOCKS_PER_SEC * 1000 << "ms" << endl
 #define fastio ios_base::sync_with_stdio(0), cin.tie(0)
 #define re(a, n)   \
     rep(i, n)      \
@@ -144,13 +142,13 @@ void _print(map<T, V> v)
 //      }
 //  }
 //  -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//  #include <ext/pb_ds/assoc_container.hpp>
+//  #include <ext/pb_ds/tree_policy.hpp>
+//  using namespace __gnu_pbds;
+//  template <class T>
+//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//  template <class K, class V>
+//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -268,48 +266,61 @@ int mod_div(int a, int b, int m)
 // const int dy[4] = {0, 0, -1, 1};
 // int XX[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+// If you do not sacrifice for what you want, What you want becomes sacrifice.
 
-/*
-If you do not sacrifice for what you want, What you want becomes the sacrifice.
-1-Brute Force (complete search)(bitmask)(Number theory)
-2-greedy sorting two pointer
-3-Binary Search
-4-dp
-5-prefix sum
-6-graph,bit manipulation(dependency)
-7-segment tree (fenwick tree)
-
-1-try going backward if given find A to B ,you find B to A
-2-try out small test cases or do brute force solutions to find pattern
-3-dont get stuck on only one approach
-4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer
-6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index>
-8-in multi source bfs think in reverse direction
-*/
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+
+vi city, tower;
+int n, m;
+/*
+
+ For every city find its nearest left and right towers and find the minimum distance among the
+ two. Maximum among all the minimums is our answer.
+
+ so while tower[j] <= city[i] j++
+ Then,
+ calc mn_dist_for_city_i = min(left_dist,right_dist);
+ ans = max(ans, mn_dist_for_city_i);
+
+EDITORIAL:
+    all you have to do is find the Maximum shortest distance between two towers and a city in between, so as typical Two-pointers algorithm suggest you have to indices l and r :: l for the cities array and r for the towers array, then you move the r index while city[l] > tower[r] by then we have tower[r] >= city[l] so we check the right distance between them which is tower[r] - city[l] under the condition that r < m and the left distance i.e. city[l] - tower[r - 1] also under condition that r > 0 and get the minimum out of these two i.e The shortest range that the city[l] can be covered with; achieved by the comparison of the distance of those two adjacent towers and then you have to maximize this property as much as possible!
+    https://codeforces.com/problemset/problem/702/C
+*/
 
 void solve()
 {
-    int n;
-    cin >> n;
+    cin >> n >> m;
+    city.resize(n);
+    tower.resize(m);
+    re(city, n);
+    re(tower, m);
+    int ans = 0;
 
+    int i = 0, j = 0;
+    while (i < n)
+    {
+        if (j < m and tower[j] < city[i])
+            j++;
+        else
+        {
+            int left_d = 1e15;
+            int right_d = 1e15;
+            if (j > 0)
+                left_d = city[i] - tower[j - 1];
+            if (j < m)
+                right_d = tower[j] - city[i];
+
+            int mn_d = min(left_d, right_d);
+            ans = max(ans, mn_d);
+            i++;
+        }
+    }
+    prln(ans);
     return;
 }
-
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

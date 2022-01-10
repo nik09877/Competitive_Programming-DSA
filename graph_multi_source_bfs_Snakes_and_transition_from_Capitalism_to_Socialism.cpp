@@ -144,13 +144,13 @@ void _print(map<T, V> v)
 //      }
 //  }
 //  -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//  #include <ext/pb_ds/assoc_container.hpp>
+//  #include <ext/pb_ds/tree_policy.hpp>
+//  using namespace __gnu_pbds;
+//  template <class T>
+//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//  template <class K, class V>
+//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -286,19 +286,72 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 5-calculate contributtion of each element towards our answer
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
-8-in multi source bfs think in reverse direction
 */
 // #define int long long int
 const int mod = 1000000007;
+const int INF = 1000000007;
+int n, m, mx;
+vvi a;
 
-void solve()
+int dx[8] = {-1, 1, 0, 0, -1, -1, 1, 1};
+int dy[8] = {0, 0, -1, 1, -1, 1, -1, 1};
+bool good(int x, int y)
 {
-    int n;
-    cin >> n;
-
-    return;
+    if (x < 0 or x >= n or y < 0 or y >= m)
+        return false;
+    return true;
 }
 
+int multi_source_bfs(vpii &source)
+{
+    vvi dist(n, vi(m, INF));
+    queue<pii> q;
+    int max_of_min = 0;
+
+    for (auto node : source)
+    {
+        int x = node.ff;
+        int y = node.ss;
+        dist[x][y] = 0;
+        q.push({x, y});
+    }
+
+    while (!q.empty())
+    {
+        int x = q.front().ff;
+        int y = q.front().ss;
+        q.pop();
+        for (int i = 0; i < 8; i++)
+        {
+            if (good(x + dx[i], y + dy[i]))
+            {
+                int new_x = x + dx[i];
+                int new_y = y + dy[i];
+
+                if (dist[x][y] + 1 < dist[new_x][new_y])
+                {
+                    dist[new_x][new_y] = dist[x][y] + 1;
+                    max_of_min = max(max_of_min, dist[new_x][new_y]);
+                    q.push({new_x, new_y});
+                }
+            }
+        }
+    }
+    return max_of_min;
+}
+void solve()
+{
+    mx = -1;
+    cin >> n >> m;
+    a = vvi(n, vi(m));
+
+    rep(i, n) rep(j, m) cin >> a[i][j], mx = max(mx, a[i][j]);
+
+    vpii source;
+    rep(i, n) rep(j, m) if (a[i][j] == mx) source.push_back({i, j});
+    cout << multi_source_bfs(source) << endl;
+    return;
+}
 int32_t main()
 {
     fastio;
@@ -308,7 +361,6 @@ int32_t main()
     {
         solve();
     }
-
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

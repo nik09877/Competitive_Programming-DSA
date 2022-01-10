@@ -1,40 +1,40 @@
-//YOU CAN KEEP TRACK OF ELEMENTS USING QUEUE
-// void solve()
-// {
-//     int n, k;
-//     cin >> n >> k;
-//     queue<int> q;
-//     ordered_set<int> ms;
-//     rep(i, n)
-//     {
-//         int a;
-//         cin >> a;
-//         if (q.size() == k)
-//         {
-//             if (k & 1)
-//             {
-//                 prsp(*(ms.find_by_order(k / 2)));
-//             }
-//             else
-//             {
-//                 prsp(*(ms.find_by_order((k - 1) / 2)));
-//             }
-//             int val = q.front();
-//             ms.erase(ms.find_by_order(ms.order_of_key(val)));
-//             q.pop();
-//         }
-//         q.push(a);
-//         ms.insert(a);
-//     }
-//     if (k & 1)
-//     {
-//         prsp(*(ms.find_by_order(k / 2)));
-//     }
-//     else
-//     {
-//         prsp(*(ms.find_by_order((k - 1) / 2)));
-//     }
-// }
+// YOU CAN KEEP TRACK OF ELEMENTS USING QUEUE
+//  void solve()
+//  {
+//      int n, k;
+//      cin >> n >> k;
+//      queue<int> q;
+//      ordered_set<int> ms;
+//      rep(i, n)
+//      {
+//          int a;
+//          cin >> a;
+//          if (q.size() == k)
+//          {
+//              if (k & 1)
+//              {
+//                  prsp(*(ms.find_by_order(k / 2)));
+//              }
+//              else
+//              {
+//                  prsp(*(ms.find_by_order((k - 1) / 2)));
+//              }
+//              int val = q.front();
+//              ms.erase(ms.find_by_order(ms.order_of_key(val)));
+//              q.pop();
+//          }
+//          q.push(a);
+//          ms.insert(a);
+//      }
+//      if (k & 1)
+//      {
+//          prsp(*(ms.find_by_order(k / 2)));
+//      }
+//      else
+//      {
+//          prsp(*(ms.find_by_order((k - 1) / 2)));
+//      }
+//  }
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -69,7 +69,7 @@ void solve()
         s.insert({a[r], r});
     }
 
-    //MAINTAIN L,R like this
+    // MAINTAIN L,R like this
     for (; r <= n; r++, l++)
     {
         int median = (*s.find_by_order((k - 1) / 2)).first;
@@ -78,7 +78,10 @@ void solve()
         if (r == n)
             break;
 
+        // remove L
         s.erase({a[l], l});
+
+        // add R
         s.insert({a[r], r});
     }
     cout << "\n";

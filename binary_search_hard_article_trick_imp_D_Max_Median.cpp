@@ -144,13 +144,13 @@ void _print(map<T, V> v)
 //      }
 //  }
 //  -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//  #include <ext/pb_ds/assoc_container.hpp>
+//  #include <ext/pb_ds/tree_policy.hpp>
+//  using namespace __gnu_pbds;
+//  template <class T>
+//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//  template <class K, class V>
+//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -286,30 +286,60 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 5-calculate contributtion of each element towards our answer
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
-8-in multi source bfs think in reverse direction
 */
 // #define int long long int
 const int mod = 1000000007;
 
+bool good(int *arr, int &n, int &k, int median)
+{
+    int pre[n];
+    for (int i = 0; i < n; i++)
+    {
+        if (arr[i] >= median)
+            pre[i] = 1;
+        else
+            pre[i] = -1;
+
+        if (i > 0)
+            pre[i] += pre[i - 1];
+    }
+
+    int mx = pre[k - 1];
+    int mn = 0;
+    for (int i = k; i < n; i++)
+    {
+        mn = min(mn, pre[i - k]);
+        mx = max(mx, pre[i] - mn);
+    }
+    if (mx > 0)
+        return true;
+    return false;
+}
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, k;
+    cin >> n >> k;
+    int *arr = new int[n];
+    rep(i, n) cin >> arr[i];
 
+    int l = 1, r = n + 1;
+    int mx_median = -1;
+    while (l <= r)
+    {
+        int mid = (l + r) / 2;
+        if (good(arr, n, k, mid))
+        {
+            mx_median = mid;
+            l = mid + 1;
+        }
+        else
+            r = mid - 1;
+    }
+    cout << mx_median;
     return;
 }
-
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }
