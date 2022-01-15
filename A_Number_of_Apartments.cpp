@@ -337,7 +337,22 @@ void solve()
 {
     int n;
     cin >> n;
-
+    fo(i, 0, n)
+    {
+        fo(j, 0, n)
+        {
+            int temp = 3 * i + 5 * j;
+            temp = n - temp;
+            if (temp >= 0 and temp % 7 == 0)
+            {
+                prsp(i);
+                prsp(j);
+                prln(temp / 7);
+                return;
+            }
+        }
+    }
+    prln(-1);
     return;
 }
 

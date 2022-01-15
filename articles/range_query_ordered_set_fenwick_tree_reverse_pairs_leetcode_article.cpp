@@ -121,36 +121,28 @@ void _print(map<T, V> v)
 #else
 #define debug(x...)
 #endif
-//only for prime m
-//DEBUG TEMPLATE ENDS HERE
-// void compress(vi &a)
-// {
-//     //for fenwick tree
-//     int n = sz(a);
-//     map<ii> mpp, back;
-//     int idx = 1;
-//     rep(i, n)
-//     {
-//         if (mpp.find(a[i]) == mpp.end())
-//         {
-//             mpp.insert({a[i], idx});
-//             back.insert({idx, a[i]}); //to get back original values
-//             idx++;
-//         }
-//     }
-//     rep(i, n)
-//     {
-//         a[i] = mpp[a[i]];
-//     }
-// }
-// -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+// only for prime m
+// DEBUG TEMPLATE ENDS HERE
+//  void compress(vi &a)
+//  {
+//      //for fenwick tree
+//      int n = sz(a);
+//      map<ii> mpp, back;
+//      int idx = 1;
+//      rep(i, n)
+//      {
+//          if (mpp.find(a[i]) == mpp.end())
+//          {
+//              mpp.insert({a[i], idx});
+//              back.insert({idx, a[i]}); //to get back original values
+//              idx++;
+//          }
+//      }
+//      rep(i, n)
+//      {
+//          a[i] = mpp[a[i]];
+//      }
+//  }
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -263,6 +255,16 @@ int mod_div(int a, int b, int m)
 //     }
 //     // umap<lli, lli, custom_hash> mp;
 // };
+
+// -----------POLICY BASED DATA STRUCTURES------------------------
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+template <class T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+template <class K, class V>
+using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
@@ -281,51 +283,40 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
-3- dont get stuck on only one approach
-4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
+3-dont get stuck on only one approach
+4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
+5-calculate contributtion of each element towards our answer
+6-graph=tree + back edges (edges that connect to current node's ancestors)
+7-insert duplicate values in set like pair<int,int> = <value, -index>
 */
 #define int long long int
 const int mod = 1000000007;
 
-int n, l, r, dp[200005][3];
-int freq[3];
-
-int getAns(int i, int rem)
+int reversePairs(vector<int> &nums)
 {
-    if (i == n)
-        return rem == 0;
-    if (dp[i][rem] != -1)
-        return dp[i][rem];
-
-    int ans = 0;
-
-    for (int j = 0; j <= 2; j++)
+    int ans = 0, id = 0;
+    ordered_set<pair<int, int>> s;
+    // for each a[j] find in the left part,count of elements such that they are >= 2* a[j] + 1
+    for (auto &j : nums)
     {
-        ans += freq[j] * getAns(i + 1, (rem + j) % 3);
-        ans %= mod;
+        int cnt_of_smaller_elements = s.order_of_key({(int)2 * j + 1, 0});
+        ans += s.size() - cnt_of_smaller_elements;
+        s.insert({(int)j, id++});
     }
-    return dp[i][rem] = ans;
+    return ans;
 }
+
 void solve()
 {
-    memset(dp, -1, sizeof(dp));
-    cin >> n >> l >> r;
-
-    while ((r - l + 1) % 3 > 0)
-    {
-        freq[l % 3]++;
-        l++;
-    }
-    int len = (r - l + 1) / 3;
-    freq[0] += len, freq[1] += len, freq[2] += len;
-
-    cout << getAns(0, 0) << endl;
+    int n;
+    cin >> n;
     return;
 }
 int32_t main()
 {
     fastio;
     int t = 1;
+    cin >> t;
     while (t--)
     {
         solve();

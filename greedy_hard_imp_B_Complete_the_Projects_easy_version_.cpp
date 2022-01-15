@@ -329,27 +329,70 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
  * -long to int/int overflow
  * -division by 0
  * -edge case for empty list/data structure/N=1
+ *
+ *
+ *
+ *
+ *
+ *negative projects can dominate each other: for negative projects (a1, b1) and (a2, b2) with a1 > a2 and b1 > b2, we always prefer attempting (a1, b1) first. So we can prove that wolog we should consider the projects in that order. So, sort the negative projects from highest a+b to lowest a+b.
+
+ * First, let me tell you why we are setting ai = max(ai, -bi):let's talk both the situations: ai >= -bi and ai < -bi , if ai >= -bi, that means ai doesn't change, when ai < -bi, the problem let us ensure r > 0, when we do this project i, r will be r + bi(bi if negative), so it's obviously why we let ai be max(ai, -bi), we must ensure r+bi > 0, that means we let ai = -bi(the case 2), we can decrease the judgement.Second, why sorting in the order of ai + bi can work? This problem trouble me for a long time at first, when we let ai be max(ai, -bi), we can ensure ai >= -bi, that means ai + bi is not negative, but it can be zero, if we can't do project i, for j (aj + bj < ai + bi) we must can't do all of this, too.That is because aj is greater than ai or not, if aj >= bi , we can't do project j, if aj is smaller than ai, and aj + bj < ai + bi, we can't do project i that means r < ai, when we do the left thing, r will be smaller, that means we can't do project i, either. So this can work.
+ *
  */
 // #define int long long int
 const int mod = 1000000007;
 
+bool cmp(pii &a, pii &b)
+{
+    return a.ff + a.ss >= b.ff + b.ss;
+}
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, cur_rating;
+    cin >> n >> cur_rating;
+    vpii pos, neg;
+    rep(i, n)
+    {
+        int a, b;
+        cin >> a >> b;
+        if (b >= 0)
+            pos.push_back({a, b});
+        else
+            neg.push_back({max(a, -b), b});
+    }
 
+    sort(all(pos));
+    sort(all(neg), cmp);
+    for (auto it : pos)
+    {
+        int req_rating = it.ff;
+        int boost_rating = it.ss;
+        if (cur_rating < req_rating)
+        {
+            no;
+            return;
+        }
+        cur_rating += boost_rating;
+    }
+    for (auto it : neg)
+    {
+        int req_rating = it.ff;
+        int decrease_rating = it.ss;
+        if (cur_rating < req_rating)
+        {
+            no;
+            return;
+        }
+        cur_rating += decrease_rating;
+    }
+    yes;
     return;
 }
 
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
+    solve();
 
     // #ifndef ONLINE_JUDGE
     //     TIME;

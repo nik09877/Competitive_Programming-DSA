@@ -121,29 +121,29 @@ void _print(map<T, V> v)
 #else
 #define debug(x...)
 #endif
-// only for prime m
-// DEBUG TEMPLATE ENDS HERE
-//  void compress(vi &a)
-//  {
-//      //for fenwick tree
-//      int n = sz(a);
-//      map<ii> mpp, back;
-//      int idx = 1;
-//      rep(i, n)
-//      {
-//          if (mpp.find(a[i]) == mpp.end())
-//          {
-//              mpp.insert({a[i], idx});
-//              back.insert({idx, a[i]}); //to get back original values
-//              idx++;
-//          }
-//      }
-//      rep(i, n)
-//      {
-//          a[i] = mpp[a[i]];
-//      }
-//  }
-//  -----------POLICY BASED DATA STRUCTURES------------------------
+//only for prime m
+//DEBUG TEMPLATE ENDS HERE
+// void compress(vi &a)
+// {
+//     //for fenwick tree
+//     int n = sz(a);
+//     map<ii> mpp, back;
+//     int idx = 1;
+//     rep(i, n)
+//     {
+//         if (mpp.find(a[i]) == mpp.end())
+//         {
+//             mpp.insert({a[i], idx});
+//             back.insert({idx, a[i]}); //to get back original values
+//             idx++;
+//         }
+//     }
+//     rep(i, n)
+//     {
+//         a[i] = mpp[a[i]];
+//     }
+// }
+// -----------POLICY BASED DATA STRUCTURES------------------------
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
@@ -281,77 +281,125 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
-3-dont get stuck on only one approach
-4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer
-6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index>
-8-in multi source bfs think in reverse direction
-9-bigger length can be divided into length of 2 and 3
+3- dont get stuck on only one approach
+4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
 */
-
-// input shenanigans
-/*
- * Random stuff to try when stuck:
- * -if it's Div-2C then it's dp
- * -for combo/probability problems, expand the given form we're interested in
- * -make everything the same then build an answer (constructive, make everything 0 then do something)
- * -something appears in parts of 2 --> model as graph
- * -assume a greedy then try to show why it works
- * -find way to simplify into one variable if multiple exist
- * -treat it like fmc (note any passing thoughts/algo that could be used so you can revisit them)
- * -find lower and upper bounds on answer
- * -figure out what ur trying to find and isolate it
- * -see what observations you have and come up with more continuations
- * -work backwards (in constructive, go from the goal to the start)
- * -turn into prefix/suffix sum argument (often works if problem revolves around
- * adjacent array elements)
- * -instead of solving for answer, try solving for complement (ex, find n-(min)
- * instead of max)
- * -draw something
- * -simulate a process
- * -dont implement something unless if ur fairly confident its correct
- * -after 3 bad submissions move on to next problem if applicable
- * -do something instead of nothing and stay organized
- * -write stuff down
- * Random stuff to check when wa:
- * -if code is way too long/cancer then reassess
- * -switched N/M
- * -int overflow
- * -switched variables
- * -wrong MOD
- * -hardcoded edge case incorrectly
- * Random stuff to check when tle:
- * -continue instead of break
- * -condition in for/while loop bad
- * Random stuff to check when rte:
- * -switched N/M
- * -long to int/int overflow
- * -division by 0
- * -edge case for empty list/data structure/N=1
- */
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+/*
 
+It can be proved that the answer looks like this: from the start of the array the heights are non-decreasing, and starting from the certain skyscraper the heights are non-increasing. Let's call a skyscraper "peak" if there is the change of direction on this skyscraper. We are to find the optimal "peak".
+
+We can build arrays l
+and r of length n. Let's iterate positions from left to right. Let we are on the i-th position. If mi is the smallest element among m1,…,mi, then li=i×mi. Otherwise, let's look at m1,m2,…,mi−1 and take the rightest number smaller than mi, let it be mj on the j-th position. Then li=lj+(i−j)×mi. Similarly, we build r (but changing the direction from right to left). The "peak" is the skyscraper t such that lt+rt−mt
+
+is maximal.
+
+The complexity of this solution can be O(n2)
+, O(nlogn), O(n) depending on the approach of finding "nearest" numbers to the right and to the left that are smaller than the current one.
+
+*/
+int n;
+vi a;
+void find_nearest_smaller(vi &l_less, vi &r_less)
+{
+    stack<int> s;
+    l_less[0] = -1;
+    s.push(0);
+    for (int i = 1; i < n; i++)
+    {
+        while (s.size() and a[s.top()] >= a[i])
+            s.pop();
+        s.empty() ? l_less[i] = -1 : l_less[i] = s.top();
+        s.push(i);
+    }
+
+    s = stack<int>();
+    s.push(n - 1);
+    r_less[n - 1] = n;
+    for (int i = n - 2; i >= 0; i--)
+    {
+        while (s.size() and a[s.top()] >= a[i])
+            s.pop();
+        s.empty() ? r_less[i] = n : r_less[i] = s.top();
+        s.push(i);
+    }
+}
+
+void calc_left(vi &left, vi &l_less)
+{
+    left[0] = a[0];
+    fo(i, 1, n - 1)
+    {
+        left[i] = (i - l_less[i]) * a[i] + (l_less[i] == -1 ? 0 : left[l_less[i]]);
+    }
+}
+void calc_right(vi &right, vi &r_less)
+{
+    right[n - 1] = a[n - 1];
+    rrep(i, n - 2, 0)
+    {
+        right[i] = (r_less[i] - i) * a[i] + (r_less[i] == n ? 0 : right[r_less[i]]);
+    }
+}
+
+void print_config(vi &ans, int idx)
+{
+    ans[idx] = a[idx];
+    int pre = a[idx];
+
+    for (int j = idx - 1; j >= 0; j--)
+    {
+        int cur = min(a[j], pre);
+        ans[j] = cur;
+        pre = cur;
+    }
+    pre = a[idx];
+    for (int j = idx + 1; j < n; j++)
+    {
+        int cur = min(a[j], pre);
+        ans[j] = cur;
+        pre = cur;
+    }
+
+    for (auto x : ans)
+        prsp(x);
+}
 void solve()
 {
-    int n;
+    int mx = 0, idx = -1;
     cin >> n;
+    a.resize(n);
+    re(a, n);
+
+    //find nearest smaller element from left and right side
+    vector<int> l_less(n), r_less(n);
+    find_nearest_smaller(l_less, r_less);
+
+    //left[i] denotes if ith tower is the peak ,what is the value of left part
+    //right[i] denotes if ith tower is the peak ,what is the value of right part
+    //ans = max(ans,left[i]+right[i]-a[i]);
+    vector<int> left(n, 0), right(n, 0);
+
+    calc_left(left, l_less);
+    calc_right(right, r_less);
+
+    rep(i, n)
+    {
+        int temp_ans = left[i] + right[i] - a[i];
+        if (temp_ans > mx)
+        {
+            mx = temp_ans;
+            idx = i;
+        }
+    }
+    vi ans(n);
+    print_config(ans, idx);
 
     return;
 }
-
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

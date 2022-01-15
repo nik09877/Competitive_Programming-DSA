@@ -144,13 +144,13 @@ void _print(map<T, V> v)
 //      }
 //  }
 //  -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+//  #include <ext/pb_ds/assoc_container.hpp>
+//  #include <ext/pb_ds/tree_policy.hpp>
+//  using namespace __gnu_pbds;
+//  template <class T>
+//  using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+//  template <class K, class V>
+//  using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -286,72 +286,60 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 5-calculate contributtion of each element towards our answer
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
-8-in multi source bfs think in reverse direction
-9-bigger length can be divided into length of 2 and 3
 */
-
-// input shenanigans
-/*
- * Random stuff to try when stuck:
- * -if it's Div-2C then it's dp
- * -for combo/probability problems, expand the given form we're interested in
- * -make everything the same then build an answer (constructive, make everything 0 then do something)
- * -something appears in parts of 2 --> model as graph
- * -assume a greedy then try to show why it works
- * -find way to simplify into one variable if multiple exist
- * -treat it like fmc (note any passing thoughts/algo that could be used so you can revisit them)
- * -find lower and upper bounds on answer
- * -figure out what ur trying to find and isolate it
- * -see what observations you have and come up with more continuations
- * -work backwards (in constructive, go from the goal to the start)
- * -turn into prefix/suffix sum argument (often works if problem revolves around
- * adjacent array elements)
- * -instead of solving for answer, try solving for complement (ex, find n-(min)
- * instead of max)
- * -draw something
- * -simulate a process
- * -dont implement something unless if ur fairly confident its correct
- * -after 3 bad submissions move on to next problem if applicable
- * -do something instead of nothing and stay organized
- * -write stuff down
- * Random stuff to check when wa:
- * -if code is way too long/cancer then reassess
- * -switched N/M
- * -int overflow
- * -switched variables
- * -wrong MOD
- * -hardcoded edge case incorrectly
- * Random stuff to check when tle:
- * -continue instead of break
- * -condition in for/while loop bad
- * Random stuff to check when rte:
- * -switched N/M
- * -long to int/int overflow
- * -division by 0
- * -edge case for empty list/data structure/N=1
- */
 // #define int long long int
 const int mod = 1000000007;
 
+bool good(int *arr, int &n, int &k, int median)
+{
+    int pre[n];
+    for (int i = 0; i < n; i++)
+    {
+        if (arr[i] >= median)
+            pre[i] = 1;
+        else
+            pre[i] = -1;
+
+        if (i > 0)
+            pre[i] += pre[i - 1];
+    }
+
+    int mx = pre[k - 1];
+    int mn = 0;
+    for (int i = k; i < n; i++)
+    {
+        mn = min(mn, pre[i - k]);
+        mx = max(mx, pre[i] - mn);
+    }
+    if (mx > 0)
+        return true;
+    return false;
+}
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, k;
+    cin >> n >> k;
+    int *arr = new int[n];
+    rep(i, n) cin >> arr[i];
 
+    int l = 1, r = n + 1;
+    int mx_median = -1;
+    while (l <= r)
+    {
+        int mid = (l + r) / 2;
+        if (good(arr, n, k, mid))
+        {
+            mx_median = mid;
+            l = mid + 1;
+        }
+        else
+            r = mid - 1;
+    }
+    cout << mx_median;
     return;
 }
-
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

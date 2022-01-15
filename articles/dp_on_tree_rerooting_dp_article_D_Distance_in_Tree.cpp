@@ -121,29 +121,29 @@ void _print(map<T, V> v)
 #else
 #define debug(x...)
 #endif
-// only for prime m
-// DEBUG TEMPLATE ENDS HERE
-//  void compress(vi &a)
-//  {
-//      //for fenwick tree
-//      int n = sz(a);
-//      map<ii> mpp, back;
-//      int idx = 1;
-//      rep(i, n)
-//      {
-//          if (mpp.find(a[i]) == mpp.end())
-//          {
-//              mpp.insert({a[i], idx});
-//              back.insert({idx, a[i]}); //to get back original values
-//              idx++;
-//          }
-//      }
-//      rep(i, n)
-//      {
-//          a[i] = mpp[a[i]];
-//      }
-//  }
-//  -----------POLICY BASED DATA STRUCTURES------------------------
+//only for prime m
+//DEBUG TEMPLATE ENDS HERE
+// void compress(vi &a)
+// {
+//     //for fenwick tree
+//     int n = sz(a);
+//     map<ii> mpp, back;
+//     int idx = 1;
+//     rep(i, n)
+//     {
+//         if (mpp.find(a[i]) == mpp.end())
+//         {
+//             mpp.insert({a[i], idx});
+//             back.insert({idx, a[i]}); //to get back original values
+//             idx++;
+//         }
+//     }
+//     rep(i, n)
+//     {
+//         a[i] = mpp[a[i]];
+//     }
+// }
+// -----------POLICY BASED DATA STRUCTURES------------------------
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
@@ -281,77 +281,99 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
-3-dont get stuck on only one approach
-4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer
-6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index>
-8-in multi source bfs think in reverse direction
-9-bigger length can be divided into length of 2 and 3
+3- dont get stuck on only one approach
+4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
 */
-
-// input shenanigans
 /*
- * Random stuff to try when stuck:
- * -if it's Div-2C then it's dp
- * -for combo/probability problems, expand the given form we're interested in
- * -make everything the same then build an answer (constructive, make everything 0 then do something)
- * -something appears in parts of 2 --> model as graph
- * -assume a greedy then try to show why it works
- * -find way to simplify into one variable if multiple exist
- * -treat it like fmc (note any passing thoughts/algo that could be used so you can revisit them)
- * -find lower and upper bounds on answer
- * -figure out what ur trying to find and isolate it
- * -see what observations you have and come up with more continuations
- * -work backwards (in constructive, go from the goal to the start)
- * -turn into prefix/suffix sum argument (often works if problem revolves around
- * adjacent array elements)
- * -instead of solving for answer, try solving for complement (ex, find n-(min)
- * instead of max)
- * -draw something
- * -simulate a process
- * -dont implement something unless if ur fairly confident its correct
- * -after 3 bad submissions move on to next problem if applicable
- * -do something instead of nothing and stay organized
- * -write stuff down
- * Random stuff to check when wa:
- * -if code is way too long/cancer then reassess
- * -switched N/M
- * -int overflow
- * -switched variables
- * -wrong MOD
- * -hardcoded edge case incorrectly
- * Random stuff to check when tle:
- * -continue instead of break
- * -condition in for/while loop bad
- * Random stuff to check when rte:
- * -switched N/M
- * -long to int/int overflow
- * -division by 0
- * -edge case for empty list/data structure/N=1
- */
-// #define int long long int
+dp1(u,x) = number of nodes that have a distance x from u.
+dp2(u,x) = number of nodes that have a distance x from u and lie in the subtree rooted at node u.
+
+Now our ans is simply going to be sum of dp1(i, k) where i = 1 to N.
+for distinct pairs answer = ans/2;
+
+Calculating dp2(u,x) should be trivial.
+dp2(u,x) = summation dp2(c, x-1) where c is a child of u.
+dp2(u,0) = 1.
+
+Now comparatively harder part is calculating dp1.
+
+For the root node : dp1(root, x) = dp2(root, x).
+Now For node u (u is not the root): dp1(u, x) = dp2(u,x) + {dp1(parent[u], x-1) — dp2(u, x-2)}
+
+Explanation :
+dp1(u, x) is obvious when u = root. dp1(u, x) will be the number of nodes in the tree that are at distance x from u. dp1(u, x) consists of nodes that may be in the subtree rooted at node u or may not be. dp2(u, x) gets us all nodes at dis x from u and in subtree of u. now we now only need to add nodes at distance x but not in subtree of u. we know number of nodes at dis x-1 from parent of u and u is at dis 1 from par[u]. all these nodes need to be counted except for those nodes which are in the subtree rooted at u, so take all these but subtract dp2(u, x-2) as dp1(parent[u], x-1) = sum dp1(c, x-2) over all c.
+*/
 const int mod = 1000000007;
+const int N = 50004;
+int n, k;
+int dp1[N][505], dp2[N][505];
+vi g[N];
 
-void solve()
+void dfs1(int u, int parent = -1)
 {
-    int n;
-    cin >> n;
+    dp2[u][0] = 1;
+    for (int v : g[u])
+    {
+        if (v == parent)
+            continue;
 
+        dfs1(v, u);
+
+        fo(i, 1, k)
+            dp2[u][i] += dp2[v][i - 1];
+    }
     return;
 }
 
+void dfs2(int u, int parent = -1)
+{
+    if (parent != -1)
+    {
+        fo(i, 1, k)
+            dp1[u][i] += (dp1[parent][i - 1] - (i >= 2 ? dp2[u][i - 2] : 0));
+    }
+
+    for (int v : g[u])
+    {
+        if (v == parent)
+            continue;
+
+        dfs2(v, u);
+    }
+    return;
+}
+
+void solve()
+{
+    cin >> n >> k;
+
+    fo(i, 1, n - 1)
+    {
+        int x, y;
+        cin >> x >> y;
+        g[x].pb(y);
+        g[y].pb(x);
+    }
+
+    dfs1(1);
+
+    fo(i, 1, n)
+    {
+        fo(j, 0, k)
+            dp1[i][j] = dp2[i][j];
+    }
+
+    dfs2(1);
+
+    ll ans = 0;
+    fo(i, 1, n)
+        ans += dp1[i][k];
+
+    cout << ans / 2;
+    return;
+}
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

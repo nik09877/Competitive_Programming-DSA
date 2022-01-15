@@ -287,7 +287,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
 8-in multi source bfs think in reverse direction
-9-bigger length can be divided into length of 2 and 3
 */
 
 // input shenanigans
@@ -337,7 +336,30 @@ void solve()
 {
     int n;
     cin >> n;
-
+    vi a(n);
+    re(a, n);
+    vector<bool> vis(n + 1, false);
+    rep(i, n)
+    {
+        while (a[i])
+        {
+            if (a[i] <= n and !vis[a[i]])
+            {
+                vis[a[i]] = true;
+                break;
+            }
+            a[i] /= 2;
+        }
+    }
+    fo(i, 1, n)
+    {
+        if (!vis[i])
+        {
+            no;
+            return;
+        }
+    }
+    yes;
     return;
 }
 

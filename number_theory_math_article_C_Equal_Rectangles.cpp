@@ -337,7 +337,33 @@ void solve()
 {
     int n;
     cin >> n;
-
+    vi a;
+    map<int, int> mp;
+    rep(i, 4 * n)
+    {
+        int x;
+        cin >> x;
+        mp[x]++;
+    }
+    for (auto it : mp)
+    {
+        if (it.ss & 1)
+        {
+            no;
+            return;
+        }
+        a.pb(it.ff);
+    }
+    int area = a[0] * a.back();
+    for (auto x : a)
+    {
+        if (area % x or mp.find(area / x) == mp.end() or mp[x] != mp[area / x])
+        {
+            no;
+            return;
+        }
+    }
+    yes;
     return;
 }
 

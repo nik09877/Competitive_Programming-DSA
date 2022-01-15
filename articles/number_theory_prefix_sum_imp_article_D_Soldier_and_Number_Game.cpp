@@ -18,7 +18,6 @@
 #define vpii vector<pair<int, int>>
 #define MAXLL 1e18
 #define endl '\n'
-#define sp ' '
 #define dsort(v) sort(v.begin(), v.end(), greater<int>())
 #define asort(v) sort(v.begin(), v.end())
 #define uniq(v) v.erase(unique(v.begin(), v.end()), v.end())
@@ -121,29 +120,29 @@ void _print(map<T, V> v)
 #else
 #define debug(x...)
 #endif
-// only for prime m
-// DEBUG TEMPLATE ENDS HERE
-//  void compress(vi &a)
-//  {
-//      //for fenwick tree
-//      int n = sz(a);
-//      map<ii> mpp, back;
-//      int idx = 1;
-//      rep(i, n)
-//      {
-//          if (mpp.find(a[i]) == mpp.end())
-//          {
-//              mpp.insert({a[i], idx});
-//              back.insert({idx, a[i]}); //to get back original values
-//              idx++;
-//          }
-//      }
-//      rep(i, n)
-//      {
-//          a[i] = mpp[a[i]];
-//      }
-//  }
-//  -----------POLICY BASED DATA STRUCTURES------------------------
+//only for prime m
+//DEBUG TEMPLATE ENDS HERE
+// void compress(vi &a)
+// {
+//     //for fenwick tree
+//     int n = sz(a);
+//     map<ii> mpp, back;
+//     int idx = 1;
+//     rep(i, n)
+//     {
+//         if (mpp.find(a[i]) == mpp.end())
+//         {
+//             mpp.insert({a[i], idx});
+//             back.insert({idx, a[i]}); //to get back original values
+//             idx++;
+//         }
+//     }
+//     rep(i, n)
+//     {
+//         a[i] = mpp[a[i]];
+//     }
+// }
+// -----------POLICY BASED DATA STRUCTURES------------------------
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
@@ -281,77 +280,65 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
-3-dont get stuck on only one approach
-4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer
-6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index>
-8-in multi source bfs think in reverse direction
-9-bigger length can be divided into length of 2 and 3
+3- dont get stuck on only one approach
+4- if given find substring ,go for hashing , prefix sum ,bit mask techniques
 */
-
-// input shenanigans
-/*
- * Random stuff to try when stuck:
- * -if it's Div-2C then it's dp
- * -for combo/probability problems, expand the given form we're interested in
- * -make everything the same then build an answer (constructive, make everything 0 then do something)
- * -something appears in parts of 2 --> model as graph
- * -assume a greedy then try to show why it works
- * -find way to simplify into one variable if multiple exist
- * -treat it like fmc (note any passing thoughts/algo that could be used so you can revisit them)
- * -find lower and upper bounds on answer
- * -figure out what ur trying to find and isolate it
- * -see what observations you have and come up with more continuations
- * -work backwards (in constructive, go from the goal to the start)
- * -turn into prefix/suffix sum argument (often works if problem revolves around
- * adjacent array elements)
- * -instead of solving for answer, try solving for complement (ex, find n-(min)
- * instead of max)
- * -draw something
- * -simulate a process
- * -dont implement something unless if ur fairly confident its correct
- * -after 3 bad submissions move on to next problem if applicable
- * -do something instead of nothing and stay organized
- * -write stuff down
- * Random stuff to check when wa:
- * -if code is way too long/cancer then reassess
- * -switched N/M
- * -int overflow
- * -switched variables
- * -wrong MOD
- * -hardcoded edge case incorrectly
- * Random stuff to check when tle:
- * -continue instead of break
- * -condition in for/while loop bad
- * Random stuff to check when rte:
- * -switched N/M
- * -long to int/int overflow
- * -division by 0
- * -edge case for empty list/data structure/N=1
- */
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+int ans[maxN];
+const int maxN = 5e6 + 1;
+int sp[maxN];
+bitset<5000001> vis;
+void sieve()
+{
+    for (int i = 2; i < maxN; i += 2)
+        sp[i] = 2;
+    for (int i = 3; i < maxN; i += 2)
+    {
+        if (!vis[i])
+        {
+            sp[i] = i;
+            for (int j = i; (j * i) < maxN; j += 2)
+            {
+                if (!vis[j * i])
+                    vis[j * i] = true, sp[j * i] = i;
+            }
+        }
+    }
+}
+int factorize(int n)
+{
+    int cnt = 0;
+    while (n > 1)
+    {
+        cnt++;
+        n /= sp[n];
+    }
+    return cnt;
+}
 
 void solve()
 {
-    int n;
-    cin >> n;
-
+    int a, b;
+    cin >> a >> b;
+    int res = 0;
+    res = ans[a] - ans[b];
+    cout << res << endl;
     return;
 }
-
 int32_t main()
 {
     fastio;
+    sieve();
+    for (int i = 2; i < maxN; i++)
+    {
+        ans[i] += ans[i - 1];
+        ans[i] += factorize(i);
+    }
     int t = 1;
     cin >> t;
     while (t--)
     {
         solve();
     }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
 }

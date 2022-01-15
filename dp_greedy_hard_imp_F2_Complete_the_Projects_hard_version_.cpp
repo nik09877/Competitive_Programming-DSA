@@ -7,7 +7,7 @@
 #define rep1(i, n) for (int i = 1; i <= n; i++)
 #define fo(i, a, n) for (int i = a; i <= n; i++)
 #define mkp make_pair
-#define pb emplace_back
+#define pb push_back
 #define ff first
 #define ss second
 #define ll long long
@@ -288,70 +288,79 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 7-insert duplicate values in set like pair<int,int> = <value, -index>
 8-in multi source bfs think in reverse direction
 9-bigger length can be divided into length of 2 and 3
+
+dp patterns
+1-dp[i] ->answer ending at i or using first i elements what is the answer
+2-dp[i][j] -> using first i elements if current weight is j what is the answer
+  here u can include ith element or not
+3-unbounded knapsack,can include current element again or move to next element
+4-dp(i,j) -> using first i and j elements of X and Y what is the answer (LCS)
+5-for base case think if there is only one element or no element at all
+6-to do an iterative version of recursive dp start iterating from back
 */
 
-// input shenanigans
-/*
- * Random stuff to try when stuck:
- * -if it's Div-2C then it's dp
- * -for combo/probability problems, expand the given form we're interested in
- * -make everything the same then build an answer (constructive, make everything 0 then do something)
- * -something appears in parts of 2 --> model as graph
- * -assume a greedy then try to show why it works
- * -find way to simplify into one variable if multiple exist
- * -treat it like fmc (note any passing thoughts/algo that could be used so you can revisit them)
- * -find lower and upper bounds on answer
- * -figure out what ur trying to find and isolate it
- * -see what observations you have and come up with more continuations
- * -work backwards (in constructive, go from the goal to the start)
- * -turn into prefix/suffix sum argument (often works if problem revolves around
- * adjacent array elements)
- * -instead of solving for answer, try solving for complement (ex, find n-(min)
- * instead of max)
- * -draw something
- * -simulate a process
- * -dont implement something unless if ur fairly confident its correct
- * -after 3 bad submissions move on to next problem if applicable
- * -do something instead of nothing and stay organized
- * -write stuff down
- * Random stuff to check when wa:
- * -if code is way too long/cancer then reassess
- * -switched N/M
- * -int overflow
- * -switched variables
- * -wrong MOD
- * -hardcoded edge case incorrectly
- * Random stuff to check when tle:
- * -continue instead of break
- * -condition in for/while loop bad
- * Random stuff to check when rte:
- * -switched N/M
- * -long to int/int overflow
- * -division by 0
- * -edge case for empty list/data structure/N=1
- */
 // #define int long long int
 const int mod = 1000000007;
 
+/*
+EDITORIAL
+
+Separate the projects (a, b) into 'positive' ones that give rating [b >= 0], or 'negative' ones [b < 0]. We clearly try all the positive ones first, in order from lowest a to highest a.
+
+Now, negative projects can dominate each other: for negative projects (a1, b1) and (a2, b2) with a1 > a2 and b1 > b2, we always prefer attempting (a1, b1) first. So we can prove that wolog we should consider the projects in that order. So, sort the negative projects from highest a+b to lowest a+b, and do DP: dp[i][r] is how many projects we can take from neg[i:] with rating r.
+
+*/
+bool compare1(pair<int, int> &p1, pair<int, int> &p2)
+{
+    return p1.ff < p2.ff;
+}
+bool compare2(pair<int, int> &p1, pair<int, int> &p2)
+{
+    return p1.ff + p1.ss > p2.ff + p2.ss;
+}
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, a;
+    cin >> n >> a;
+    vector<pair<int, int>> v1;
+    vector<pair<int, int>> v2;
+    for (int i = 0; i < n; i++)
+    {
+        int a, b;
+        cin >> a >> b;
+        if (b >= 0)
+        {
+            v1.pb({a, b});
+        }
+        else
+        {
+            v2.pb({max(a, -b), b});
+        }
+    }
+    sort(all(v1), compare1);
+    sort(all(v2), compare2);
+    for (auto i : v2)
+        v1.pb(i);
 
-    return;
+    vector<vector<int>> dp(n + 1, vector<int>(60305));
+    for (int i = n - 1; i >= 0; i--)
+    {
+        for (int j = 0; j <= 60000; j++)
+        {
+            // choose this element if cur_rating >= req_rating and cur_rating+b[i]>=0 for index out of bound error
+            if (j >= v1[i].ff)
+            {
+                dp[i][j] = 1 + dp[i + 1][j + v1[i].ss];
+            }
+
+            // dont choose this element
+            dp[i][j] = max(dp[i][j], dp[i + 1][j]);
+        }
+    }
+    cout << dp[0][a] << endl;
 }
-
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

@@ -335,9 +335,27 @@ const int mod = 1000000007;
 
 void solve()
 {
-    int n;
-    cin >> n;
-
+    int n, k;
+    string s;
+    cin >> n >> k >> s;
+    vi cnt(26, 0);
+    for (char c : s)
+    {
+        cnt[c - 'a']++;
+    }
+    int even_pairs = 0, odd_chars_left = 0;
+    rep(i, 26)
+    {
+        if (cnt[i] == 0)
+            continue;
+        even_pairs += (cnt[i] / 2);
+        odd_chars_left += (cnt[i] % 2); // odd_chars_left += ((cnt[i]%2) == 0 ? 0 : 1);
+    }
+    int mnLen = even_pairs / k * 2;
+    odd_chars_left += (even_pairs % k) * 2;
+    if (odd_chars_left >= k)
+        mnLen++;
+    prln(mnLen);
     return;
 }
 

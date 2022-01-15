@@ -121,29 +121,29 @@ void _print(map<T, V> v)
 #else
 #define debug(x...)
 #endif
-// only for prime m
-// DEBUG TEMPLATE ENDS HERE
-//  void compress(vi &a)
-//  {
-//      //for fenwick tree
-//      int n = sz(a);
-//      map<ii> mpp, back;
-//      int idx = 1;
-//      rep(i, n)
-//      {
-//          if (mpp.find(a[i]) == mpp.end())
-//          {
-//              mpp.insert({a[i], idx});
-//              back.insert({idx, a[i]}); //to get back original values
-//              idx++;
-//          }
-//      }
-//      rep(i, n)
-//      {
-//          a[i] = mpp[a[i]];
-//      }
-//  }
-//  -----------POLICY BASED DATA STRUCTURES------------------------
+//only for prime m
+//DEBUG TEMPLATE ENDS HERE
+// void compress(vi &a)
+// {
+//     //for fenwick tree
+//     int n = sz(a);
+//     map<ii> mpp, back;
+//     int idx = 1;
+//     rep(i, n)
+//     {
+//         if (mpp.find(a[i]) == mpp.end())
+//         {
+//             mpp.insert({a[i], idx});
+//             back.insert({idx, a[i]}); //to get back original values
+//             idx++;
+//         }
+//     }
+//     rep(i, n)
+//     {
+//         a[i] = mpp[a[i]];
+//     }
+// }
+// -----------POLICY BASED DATA STRUCTURES------------------------
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
@@ -281,76 +281,95 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
-3-dont get stuck on only one approach
-4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer
-6-graph=tree + back edges (edges that connect to current node's ancestors)
-7-insert duplicate values in set like pair<int,int> = <value, -index>
-8-in multi source bfs think in reverse direction
-9-bigger length can be divided into length of 2 and 3
+3- dont get stuck on only one approach
 */
-
-// input shenanigans
-/*
- * Random stuff to try when stuck:
- * -if it's Div-2C then it's dp
- * -for combo/probability problems, expand the given form we're interested in
- * -make everything the same then build an answer (constructive, make everything 0 then do something)
- * -something appears in parts of 2 --> model as graph
- * -assume a greedy then try to show why it works
- * -find way to simplify into one variable if multiple exist
- * -treat it like fmc (note any passing thoughts/algo that could be used so you can revisit them)
- * -find lower and upper bounds on answer
- * -figure out what ur trying to find and isolate it
- * -see what observations you have and come up with more continuations
- * -work backwards (in constructive, go from the goal to the start)
- * -turn into prefix/suffix sum argument (often works if problem revolves around
- * adjacent array elements)
- * -instead of solving for answer, try solving for complement (ex, find n-(min)
- * instead of max)
- * -draw something
- * -simulate a process
- * -dont implement something unless if ur fairly confident its correct
- * -after 3 bad submissions move on to next problem if applicable
- * -do something instead of nothing and stay organized
- * -write stuff down
- * Random stuff to check when wa:
- * -if code is way too long/cancer then reassess
- * -switched N/M
- * -int overflow
- * -switched variables
- * -wrong MOD
- * -hardcoded edge case incorrectly
- * Random stuff to check when tle:
- * -continue instead of break
- * -condition in for/while loop bad
- * Random stuff to check when rte:
- * -switched N/M
- * -long to int/int overflow
- * -division by 0
- * -edge case for empty list/data structure/N=1
- */
 // #define int long long int
 const int mod = 1000000007;
+int n, q;
+/*
+short version (for each permutation calculate)
+
+vector<vector<int>> pr(6, vector<int>(n + 1));
+  string t = "abc";
+  int cur = 0;
+  do {
+    for (int i = 0; i < n; ++i)
+      pr[cur][i + 1] = pr[cur][i] + (s[i] != t[i % 3]);
+    ++cur;
+  } while (next_permutation(t.begin(), t.end()));
+*/
+
+void transform(string &s)
+{
+    while (s.length() < n)
+        s += s;
+    s = s.substr(0, n);
+}
 
 void solve()
 {
-    int n;
-    cin >> n;
+    string s;
+    string op1 = "abc";
+    string op2 = "acb";
+    string op3 = "bac";
+    string op4 = "bca";
+    string op5 = "cab";
+    string op6 = "cba";
+    cin >> n >> q >> s;
+    transform(op1);
+    transform(op2);
+    transform(op3);
+    transform(op4);
+    transform(op5);
+    transform(op6);
+    vi pre1(n + 1, 0);
+    vi pre2(n + 1, 0);
+    vi pre3(n + 1, 0);
+    vi pre4(n + 1, 0);
+    vi pre5(n + 1, 0);
+    vi pre6(n + 1, 0);
+    rep1(i, n)
+    {
+        pre1[i] += pre1[i - 1];
+        pre2[i] += pre2[i - 1];
+        pre3[i] += pre3[i - 1];
+        pre4[i] += pre4[i - 1];
+        pre5[i] += pre5[i - 1];
+        pre6[i] += pre6[i - 1];
 
+        if (s[i - 1] != op1[i - 1])
+            pre1[i]++;
+        if (s[i - 1] != op2[i - 1])
+            pre2[i]++;
+        if (s[i - 1] != op3[i - 1])
+            pre3[i]++;
+        if (s[i - 1] != op4[i - 1])
+            pre4[i]++;
+        if (s[i - 1] != op5[i - 1])
+            pre5[i]++;
+        if (s[i - 1] != op6[i - 1])
+            pre6[i]++;
+    }
+    while (q--)
+    {
+        int l, r;
+        cin >> l >> r;
+        int ans = min({
+            pre1[r] - pre1[l - 1],
+            pre2[r] - pre2[l - 1],
+            pre3[r] - pre3[l - 1],
+            pre4[r] - pre4[l - 1],
+            pre5[r] - pre5[l - 1],
+            pre6[r] - pre6[l - 1],
+        });
+        prln(ans);
+    }
     return;
 }
-
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
+    solve();
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

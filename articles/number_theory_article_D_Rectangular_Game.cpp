@@ -337,7 +337,27 @@ void solve()
 {
     int n;
     cin >> n;
-
+    int ans = n;
+    while (true)
+    {
+        bool used = false;
+        for (int i = 2; i * i <= n; i++)
+        {
+            if (n % i == 0)
+            {
+                used = true;
+                ans += (n / i);
+                n /= i;
+                break;
+            }
+        }
+        if (!used)
+        {
+            ans++;
+            break;
+        }
+    }
+    prln(ans);
     return;
 }
 
@@ -345,11 +365,7 @@ int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
+    solve();
 
     // #ifndef ONLINE_JUDGE
     //     TIME;

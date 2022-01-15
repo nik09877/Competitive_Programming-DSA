@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <stdio.h>
 #define rep(i, n) for (int i = 0; i < n; i++)
 #define rrep(i, a, b) for (int i = a; i >= b; i--)
 #define rep1(i, n) for (int i = 1; i <= n; i++)
@@ -35,43 +36,60 @@
 #define pr(x) cout << x
 #define prsp(x) cout << x << sp
 #define prln(x) cout << x << endl
-#define fastio ios_base::sync_with_stdio(0), cin.tie(0)
-#define re(a, n)   \
+#define fastio ios_base::sync_with_stdio(0), cout.tie(0), cin.tie(0)
+#define read(a, n) \
     rep(i, n)      \
             cin >> \
         a[i];
 using namespace std;
-#define int long long
-const int mod = 1000000007;
+
+class Solution
+{
+public:
+    //keep in mind even and odd case
+    //mask[0,R] = 0 or power of 2
+    //mask[0,R]-mask[0,L-1] = 0 (even case)
+    /*
+    Update the answer if:
+    a. We have seen similar mask before.
+    b. We have seen a mask such that it differs from the current mask by one bit     being different.
+    c. update mask pos to minimum ie dp[mask]=min(dp[mask],i)
+    */
+    int longestAwesome(string s)
+    {
+        int mask = 0, ans = 0, n = s.size();
+        //initialized with n because i dont want to check everytime if mask existed or not to update answer,if mask does not exist ,then our current answer will be -ve ,so it wont affect our answer
+        vector<int> dp(1 << 11, n);
+        dp[0] = -1;
+
+        for (int i = 0; i < n; i++)
+        {
+            int pos = s[i] - '0';
+            mask ^= (1 << pos);
+            ans = max(ans, i - dp[mask]);
+
+            for (int j = 0; j < 10; j++)
+            {
+                int new_mask = mask ^ (1 << j);
+                ans = max(ans, i - dp[new_mask]);
+            }
+
+            //update pos of mask to min pos
+            dp[mask] = min(dp[mask], i);
+        }
+
+        return ans;
+    }
+};
+
 int32_t main()
 {
     fastio;
-    int n, a, b;
-    cin >> a >> b >> n;
-    int gcd = __gcd(a, b);
-    vi div;
-    for (int i = 1; i * i <= gcd; i++)
+    int t = 1;
+    cin >> t;
+    while (t--)
     {
-        if (gcd % i == 0)
-        {
-            div.pb(i);
-            if ((gcd / i) != i)
-                div.pb(gcd / i);
-        }
-    }
-    asort(div);
-    while (n--)
-    {
-        int L, R, ans = -1;
-        cin >> L >> R;
-        rrep(i, sz(div) - 1, 0)
-        {
-            if (div[i] >= L and div[i] <= R)
-            {
-                ans = div[i];
-                break;
-            }
-        }
-        prln(ans);
+        int n;
+        cin >> n;
     }
 }

@@ -333,24 +333,50 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 // #define int long long int
 const int mod = 1000000007;
 
+int extended_gcd(int a, int b, int &x, int &y)
+{
+    if (b == 0)
+    {
+        x = 1;
+        y = 0;
+        return a;
+    }
+    int x1, y1;
+    int g = extended_gcd(b, a % b, x1, y1);
+    x = y1;
+    y = x1 - ((a / b) * y1);
+    return g;
+}
+
 void solve()
 {
-    int n;
-    cin >> n;
-
+    int n, c, a, b;
+    cin >> n >> c >> a >> b;
+    int x0, y0;
+    int g = extended_gcd(a, b, x0, y0);
+    if (c % g)
+    {
+        prln(-1);
+        return;
+    }
+    int x = x0 * (c / g);
+    int y = y0 * (c / g);
+    int z = n - (x + y);
+    // if (x < 0 or y < 0 or z < 0)
+    // {
+    //     prln(-1);
+    //     return;
+    // }
+    prsp(x);
+    prsp(y);
+    prln(z);
     return;
 }
 
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
+    solve();
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif
