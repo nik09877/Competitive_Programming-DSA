@@ -118,28 +118,28 @@ void _print(map<T, V> v)
 #else
 #define debug(x...)
 #endif
-//only for prime m
-//DEBUG TEMPLATE ENDS HERE
-// void compress(vi &a)
-// {
-//     //for fenwick tree
-//     int n = sz(a);
-//     map<ii> mpp, back;
-//     int idx = 1;
-//     rep(i, n)
-//     {
-//         if (mpp.find(a[i]) == mpp.end())
-//         {
-//             mpp.insert({a[i], idx});
-//             back.insert({idx, a[i]}); //to get back original values
-//             idx++;
-//         }
-//     }
-//     rep(i, n)
-//     {
-//         a[i] = mpp[a[i]];
-//     }
-// }
+// only for prime m
+// DEBUG TEMPLATE ENDS HERE
+//  void compress(vi &a)
+//  {
+//      //for fenwick tree
+//      int n = sz(a);
+//      map<ii> mpp, back;
+//      int idx = 1;
+//      rep(i, n)
+//      {
+//          if (mpp.find(a[i]) == mpp.end())
+//          {
+//              mpp.insert({a[i], idx});
+//              back.insert({idx, a[i]}); //to get back original values
+//              idx++;
+//          }
+//      }
+//      rep(i, n)
+//      {
+//          a[i] = mpp[a[i]];
+//      }
+//  }
 ///---------------custom_hash---------------------///
 // class chash
 // {
@@ -285,23 +285,23 @@ void solve()
         }
     }
     // pre[j] -> len of subsegment having only 1 in ith row and upto jth column
-    //col[j] vector denotes at jth column store all the value of pre[j] for all rows
+    // col[j] vector denotes at jth column store all the value of pre[j] for all rows
     int ans = 0;
     rep1(j, m)
     {
-        //sort the rows based on consecutive 1's ending in jth column
-        // col[j] col[j+1] col[j+2] ... col[m]
-        // 5
-        // 4
-        // 4
-        // 3
-        // 2
+        // sort the rows based on consecutive 1's ending in jth column
+        //  col[j] col[j+1] col[j+2] ... col[m]
+        //  5
+        //  4
+        //  4
+        //  3
+        //  2
 
         dsort(col[j]);
-        //after sorting the rows we have the width of the submatrix we just need height
+        // after sorting the rows we have the width of the submatrix we just need height
 
-        //here hieght is the row ie 1 then 2 then 3 then 4 then .... sz(col[j])
-        //max area = height * (total no of 1's ending at jth col and ith row);
+        // here hieght is the row ie 1 then 2 then 3 then 4 then .... sz(col[j])
+        // max area = height * (total no of 1's ending at jth col and ith row);
         rep(i, sz(col[j]))
         {
             ans = max(ans, (i + 1) * col[j][i]);

@@ -7,7 +7,7 @@
 #define rep1(i, n) for (int i = 1; i <= n; i++)
 #define fo(i, a, n) for (int i = a; i <= n; i++)
 #define mkp make_pair
-#define pb emplace_back
+#define pb push_back
 #define ff first
 #define ss second
 #define ll long long
@@ -143,14 +143,6 @@ void _print(map<T, V> v)
 //          a[i] = mpp[a[i]];
 //      }
 //  }
-//  -----------POLICY BASED DATA STRUCTURES------------------------
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-// template <class K, class V>
-// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -263,11 +255,31 @@ int mod_div(int a, int b, int m)
 //     }
 //     // umap<lli, lli, custom_hash> mp;
 // };
+
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
 // const int dy[4] = {0, 0, -1, 1};
 // int XX[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+//  -----------POLICY BASED DATA STRUCTURES------------------------ ///
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+// template <class T>
+// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+// template <class K, class V>
+// using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
+
+// ordered_multiset
+// #include <ext/pb_ds/assoc_container.hpp>
+// using namespace __gnu_pbds;
+// template <class T>
+// using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+// NOTE
+// find_by_order and order_of_key work the same as for a set.
+// However for searching, lower_bound and upper_bound work oppositely. Also, let's say you want to erase x, use s.erase(s.upper_bound(x)) (as upper bound is considered as lower bound)
 
 /*
 If you do not sacrifice for what you want, What you want becomes the sacrifice.
@@ -288,83 +300,43 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 7-insert duplicate values in set like pair<int,int> = <value, -index>
 8-in multi source bfs think in reverse direction
 9-bigger length can be divided into length of 2 and 3
+
+dp patterns
+1-dp[i] ->answer ending at i or using first i elements what is the answer
+2-dp[i][j] -> using first i elements if current weight is j what is the answer
+  here u can include ith element or not
+3-unbounded knapsack,can include current element again or move to next element
+4-dp(i,j) -> using first i and j elements of X and Y what is the answer (LCS)
+5-for base case think if there is only one element or no element at all
+6-to do an iterative version of recursive dp start iterating from back
 */
 
-// input shenanigans
-/*
- * Random stuff to try when stuck:
- * -if it's Div-2C then it's dp
- * -for combo/probability problems, expand the given form we're interested in
- * -make everything the same then build an answer (constructive, make everything 0 then do something)
- * -something appears in parts of 2 --> model as graph
- * -assume a greedy then try to show why it works
- * -find way to simplify into one variable if multiple exist
- * -treat it like fmc (note any passing thoughts/algo that could be used so you can revisit them)
- * -find lower and upper bounds on answer
- * -figure out what ur trying to find and isolate it
- * -see what observations you have and come up with more continuations
- * -work backwards (in constructive, go from the goal to the start)
- * -turn into prefix/suffix sum argument (often works if problem revolves around
- * adjacent array elements)
- * -instead of solving for answer, try solving for complement (ex, find n-(min)
- * instead of max)
- * -draw something
- * -simulate a process
- * -dont implement something unless if ur fairly confident its correct
- * -after 3 bad submissions move on to next problem if applicable
- * -do something instead of nothing and stay organized
- * -write stuff down
- * Random stuff to check when wa:
- * -if code is way too long/cancer then reassess
- * -switched N/M
- * -int overflow
- * -switched variables
- * -wrong MOD
- * -hardcoded edge case incorrectly
- * Random stuff to check when tle:
- * -continue instead of break
- * -condition in for/while loop bad
- * Random stuff to check when rte:
- * -switched N/M
- * -long to int/int overflow
- * -division by 0
- * -edge case for empty list/data structure/N=1
- */
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
     int n;
     cin >> n;
-    int ans = n;
-    while (true)
+    vi a(n);
+    re(a, n);
+    map<int, int> dp[2];
+    int cur_xor = 0, ans = 0;
+    for (int i = 0; i < n; i++)
     {
-        bool used = false;
-        for (int i = 2; i * i <= n; i++)
-        {
-            if (n % i == 0)
-            {
-                used = true;
-                ans += (n / i);
-                n /= i;
-                break;
-            }
-        }
-        if (!used)
-        {
+        cur_xor ^= a[i];
+        if (cur_xor == 0 and (i + 1) % 2 == 0)
             ans++;
-            break;
-        }
+        ans += dp[i % 2][cur_xor];
+        dp[i % 2][cur_xor]++;
     }
-    prln(ans);
+    cout << ans << endl;
     return;
 }
 
 int32_t main()
 {
     fastio;
-    int t = 1;
     solve();
 
     // #ifndef ONLINE_JUDGE
