@@ -330,7 +330,7 @@ int ans[N][26];
 
 // dp[i][j][k] denotes maximum length of subarray ending at i such that we can change at most j characters and our favourite character is k
 
-// ans[i][j] holds the answer for length i such that favourite character is j.
+// ans[i][j] holds the answer such that we can change at most i characters and the favourite character is j.
 
 void solve()
 {
