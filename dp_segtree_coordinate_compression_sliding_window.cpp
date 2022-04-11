@@ -123,26 +123,7 @@ void _print(map<T, V> v)
 #endif
 // only for prime m
 // DEBUG TEMPLATE ENDS HERE
-//  void compress(vi &a)
-//  {
-//      //for fenwick tree
-//      int n = sz(a);
-//      map<ii> mpp, back;
-//      int idx = 1;
-//      rep(i, n)
-//      {
-//          if (mpp.find(a[i]) == mpp.end())
-//          {
-//              mpp.insert({a[i], idx});
-//              back.insert({idx, a[i]}); //to get back original values
-//              idx++;
-//          }
-//      }
-//      rep(i, n)
-//      {
-//          a[i] = mpp[a[i]];
-//      }
-//  }
+
 ///---------------Functions---------------------///
 template <class T>
 T gcd(T a, T b)
@@ -323,143 +304,115 @@ dp patterns
 
 // #define int long long int
 const int mod = 1000000007;
+// problem
+//  Find maximum number of indices such that
+//  1- (idx+1) - idx <= k
+//  2- 2 * a[idx] <= a[idx+1]
 
-/*
-First of all, for each closing bracket in our string let's define 2 values:
+// dp + segtree + coordinate compression + sliding window
+// dp[i] denotes maximum answer ending at i
+// dp[i] = max(dp[j]) + 1;
 
-    d[j] = position of corresponding open bracket, or -1 if closing bracket doesn't belong to any regular bracket sequence.
-     c[j] = position of earliest opening bracket, such that substring s(c[j], j) (both boundaries are inclusive) is a regular bracket sequence. Let's consider c[j] to be -1 if closing bracket doesn't belong to any regular bracket sequence.
+int st[400005], a[100005];
+map<ii> mp;
 
-It can be seen, that c[j] defines the beginning position of the longest regular bracket sequence, which will end in position j. So, having c[j] answer for the problem can be easily calculated.
+int query(int i, int l, int r, int qs, int qe)
+{
+    if (qs > r or qe < l)
+        return 0;
+    if (qs <= l and qe >= r)
+        return st[i];
 
-Both d[j] and c[j] can be found with following algorithm, which uses stack.
+    int m = (l + r) / 2;
+    int left = query(2 * i, l, m, qs, qe);
+    int right = query(2 * i + 1, m + 1, r, qs, qe);
+    return max(left, right);
+}
+void update(int i, int l, int r, int qi, int v)
+{
+    if (l == r)
+    {
+        st[i] = v;
+        return;
+    }
+    int m = (l + r) / 2;
+    if (qi <= m)
+        update(2 * i, l, m, qi, v);
+    else
+        update(2 * i + 1, m + 1, r, qi, v);
 
-    Iterate through the characters of the string.
-    If current character is opening bracket, put its position into the stack.
-    If current character is closing bracket, there are 2 subcases:
-
-    Stack is empty - this means that current closing bracket doesn't have corresponding open one. Hence, both d[j] and c[j] are equal to -1.
-    Stack is not empty - we will have position of the corresponding open bracket on the top of the stack - let's put it to d[j] and remove this position from the stack. Now it is obvious, that c[j] is equal at least to d[j]. But probably, there is a better value for c[j]. To find this out, we just need to look at the position d[j] - 1. If there is a closing bracket at this position, and c[d[j] - 1] is not -1, than we have 2 regular bracket sequences s(c[d[j] - 1], d[j] - 1) and s(d[j], j), which can be concatenated into one larger regular bracket sequence. So we put c[j] to be c[d[j] - 1] for this case.
-
-    ANOTHER IDEA
-    My solution uses DP. The main idea is as follows: I construct a array longest[], for any longest[i], it stores the longest length of valid parentheses which is end at i.
-
-    And the DP idea is :
-
-    If s[i] is '(', set longest[i] to 0,because any string end with '(' cannot be a valid one.
-
-    Else if s[i] is ')'
-
-        If s[i-1] is '(', longest[i] = longest[i-2] + 2
-
-        Else if s[i-1] is ')' and s[i-longest[i-1]-1] == '(', longest[i] = longest[i-1] + 2 + longest[i-longest[i-1]-2]
-
-    For example, input "()(())", at i = 5, longest array is [0,2,0,0,2,0], longest[5] = longest[4] + 2 + longest[1] = 6.
-*/
-
-// dp[i] denotes Longest Regular Bracket Sequence ending at i
-// try to extend the bracket sequence
+    st[i] = max(st[2 * i], st[2 * i + 1]);
+}
 
 void solve()
 {
-    int n, mx = 0, cnt = 0;
-    string s;
-    cin >> s;
-    n = sz(s);
+    memset(st, 0, sizeof(st));
+    memset(a, 0, sizeof(a));
+    mp.clear();
 
-    vi dp(n);
-    stack<int> st;
-    st.push(0);
-    dp[0] = 0;
-    fo(i, 1, n - 1)
+    int n, k, ans = 1;
+    cin >> n >> k;
+    int b[n + 1];
+    for (int i = 1; i <= n; i++)
+        cin >> a[i], b[i] = a[i];
+
+    // compress
+    int id = 1;
+    sort(b + 1, b + n + 1);
+    for (int i = 1; i <= n; i++)
+        mp[b[i]] = id, id++;
+
+    int l = 1 - k;
+
+    // base case
+    l++;
+    update(1, 1, n, mp[a[1]], 1);
+    for (int i = 2; i <= n; i++)
     {
-        if (s[i] == '(')
+        int key = a[i] / 2;
+        auto id = mp.upper_bound(key);
+        if (id == mp.begin())
         {
-            st.push(i);
-            dp[i] = 0;
+            // remove then l++
+            if (l >= 1)
+                update(1, 1, n, mp[a[l]], 0);
+            l++;
+
+            //  then add
+            update(1, 1, n, mp[a[i]], 1);
         }
         else
         {
-            if (not st.empty())
-            {
-                if (s[st.top()] != '(')
-                {
-                    st.push(i);
-                    dp[i] = 0;
-                    continue;
-                }
 
-                int l = st.top();
-                st.pop();
-                int r = i;
-                int len = r - l + 1;
+            id--;
+            int idx = id->second;
+            int dp_j = query(1, 1, n, 1, idx);
 
-                if (l - 1 >= 0 and s[l - 1] == ')' and dp[l - 1])
-                    len += dp[l - 1];
+            // remove then l++
+            if (l >= 1)
+                update(1, 1, n, mp[a[l]], 0);
+            l++;
 
-                dp[i] = len;
-                mx = max(mx, dp[i]);
-            }
+            //  then add
+            update(1, 1, n, mp[a[i]], 1 + dp_j);
+            ans = max(ans, 1 + dp_j);
         }
     }
-    if (mx == 0)
-    {
-        prsp(0);
-        prln(1);
-        return;
-    }
-    cnt = count(all(dp), mx);
-    prsp(mx);
-    prln(cnt);
+    cout << ans << endl;
     return;
 }
 
-// void solve()
-// {
-//     int n, mx = 0;
-//     string st;
-//     umap<ii, custom_hash> S, E, F;
-//     F[0] = 1;
-//     cin >> st;
-//     n = sz(st);
-//     stack<int> stk;
-//     rep(i, n)
-//     {
-//         char c = st[i];
-//         if (c == '(')
-//         {
-//             stk.push(i);
-//         }
-//         else
-//         {
-//             if (stk.empty())
-//             {
-//                 S[i] = E[i] = -1;
-//             }
-//             else
-//             {
-//                 int idx = stk.top();
-//                 stk.pop();
-//                 S[i] = E[i] = idx;
-//                 if (idx > 0 && S[idx - 1] >= 0 && st[idx - 1] == ')')
-//                 {
-//                     E[i] = E[idx - 1];
-//                 }
-//                 int len = i - E[i] + 1;
-//                 F[len]++;
-//                 mx = max(mx, len);
-//             }
-//         }
-//     }
-//     cout << mx << sp << F[mx] << endl;
-//     return;
-// }
 int32_t main()
 {
     fastio;
     int t = 1;
+    cin >> t;
     while (t--)
     {
         solve();
     }
+
+    // #ifndef ONLINE_JUDGE
+    //     TIME;
+    // #endif
 }

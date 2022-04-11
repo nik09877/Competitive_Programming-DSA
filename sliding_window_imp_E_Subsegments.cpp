@@ -317,149 +317,61 @@ dp patterns
    then use OFFSET technique where we need only dp[n][2*300] because we can calculate dp[i][original_x] as dp[i][original_x - OFFSET] where OFFSET = x-300
 10- chceck if [continuous range from prev state is required],so [prefix sum] can be used for transition optimization,along with transition do prefix sum,take care of the order of execution.
 11- If you see n<=500 it is dp on contiguous segment.
-12- you can use map as dp table example -: vector<vector<map<ii>>>dp;
-13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
 // #define int long long int
 const int mod = 1000000007;
 
-/*
-First of all, for each closing bracket in our string let's define 2 values:
-
-    d[j] = position of corresponding open bracket, or -1 if closing bracket doesn't belong to any regular bracket sequence.
-     c[j] = position of earliest opening bracket, such that substring s(c[j], j) (both boundaries are inclusive) is a regular bracket sequence. Let's consider c[j] to be -1 if closing bracket doesn't belong to any regular bracket sequence.
-
-It can be seen, that c[j] defines the beginning position of the longest regular bracket sequence, which will end in position j. So, having c[j] answer for the problem can be easily calculated.
-
-Both d[j] and c[j] can be found with following algorithm, which uses stack.
-
-    Iterate through the characters of the string.
-    If current character is opening bracket, put its position into the stack.
-    If current character is closing bracket, there are 2 subcases:
-
-    Stack is empty - this means that current closing bracket doesn't have corresponding open one. Hence, both d[j] and c[j] are equal to -1.
-    Stack is not empty - we will have position of the corresponding open bracket on the top of the stack - let's put it to d[j] and remove this position from the stack. Now it is obvious, that c[j] is equal at least to d[j]. But probably, there is a better value for c[j]. To find this out, we just need to look at the position d[j] - 1. If there is a closing bracket at this position, and c[d[j] - 1] is not -1, than we have 2 regular bracket sequences s(c[d[j] - 1], d[j] - 1) and s(d[j], j), which can be concatenated into one larger regular bracket sequence. So we put c[j] to be c[d[j] - 1] for this case.
-
-    ANOTHER IDEA
-    My solution uses DP. The main idea is as follows: I construct a array longest[], for any longest[i], it stores the longest length of valid parentheses which is end at i.
-
-    And the DP idea is :
-
-    If s[i] is '(', set longest[i] to 0,because any string end with '(' cannot be a valid one.
-
-    Else if s[i] is ')'
-
-        If s[i-1] is '(', longest[i] = longest[i-2] + 2
-
-        Else if s[i-1] is ')' and s[i-longest[i-1]-1] == '(', longest[i] = longest[i-1] + 2 + longest[i-longest[i-1]-2]
-
-    For example, input "()(())", at i = 5, longest array is [0,2,0,0,2,0], longest[5] = longest[4] + 2 + longest[1] = 6.
-*/
-
-// dp[i] denotes Longest Regular Bracket Sequence ending at i
-// try to extend the bracket sequence
-
 void solve()
 {
-    int n, mx = 0, cnt = 0;
-    string s;
-    cin >> s;
-    n = sz(s);
-
-    vi dp(n);
-    stack<int> st;
-    st.push(0);
-    dp[0] = 0;
-    fo(i, 1, n - 1)
+    int n, k;
+    cin >> n >> k;
+    vi a(n);
+    re(a, n);
+    map<ii> mp;
+    set<int> st;
+    int l = 0, r = 0;
+    for (; r < k; r++)
     {
-        if (s[i] == '(')
-        {
-            st.push(i);
-            dp[i] = 0;
-        }
+        mp[a[r]]++;
+        if (mp[a[r]] == 1)
+            st.insert(a[r]);
         else
-        {
-            if (not st.empty())
-            {
-                if (s[st.top()] != '(')
-                {
-                    st.push(i);
-                    dp[i] = 0;
-                    continue;
-                }
-
-                int l = st.top();
-                st.pop();
-                int r = i;
-                int len = r - l + 1;
-
-                if (l - 1 >= 0 and s[l - 1] == ')' and dp[l - 1])
-                    len += dp[l - 1];
-
-                dp[i] = len;
-                mx = max(mx, dp[i]);
-            }
-        }
+            st.erase(a[r]);
     }
-    if (mx == 0)
+    for (; r <= n; r++, l++)
     {
-        prsp(0);
-        prln(1);
-        return;
+        if (st.size())
+            prln(*st.rbegin());
+        else
+            prln("Nothing");
+
+        if (r == n)
+            break;
+
+        // remove a[l]
+        mp[a[l]]--;
+        if (mp[a[l]] == 1)
+            st.insert(a[l]);
+        else
+            st.erase(a[l]);
+
+        // add a[r]
+        mp[a[r]]++;
+        if (mp[a[r]] == 1)
+            st.insert(a[r]);
+        else
+            st.erase(a[r]);
     }
-    cnt = count(all(dp), mx);
-    prsp(mx);
-    prln(cnt);
     return;
 }
 
-// void solve()
-// {
-//     int n, mx = 0;
-//     string st;
-//     umap<ii, custom_hash> S, E, F;
-//     F[0] = 1;
-//     cin >> st;
-//     n = sz(st);
-//     stack<int> stk;
-//     rep(i, n)
-//     {
-//         char c = st[i];
-//         if (c == '(')
-//         {
-//             stk.push(i);
-//         }
-//         else
-//         {
-//             if (stk.empty())
-//             {
-//                 S[i] = E[i] = -1;
-//             }
-//             else
-//             {
-//                 int idx = stk.top();
-//                 stk.pop();
-//                 S[i] = E[i] = idx;
-//                 if (idx > 0 && S[idx - 1] >= 0 && st[idx - 1] == ')')
-//                 {
-//                     E[i] = E[idx - 1];
-//                 }
-//                 int len = i - E[i] + 1;
-//                 F[len]++;
-//                 mx = max(mx, len);
-//             }
-//         }
-//     }
-//     cout << mx << sp << F[mx] << endl;
-//     return;
-// }
 int32_t main()
 {
     fastio;
-    int t = 1;
-    while (t--)
-    {
-        solve();
-    }
+    solve();
+
+    // #ifndef ONLINE_JUDGE
+    //     TIME;
+    // #endif
 }

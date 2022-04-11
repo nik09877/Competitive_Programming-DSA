@@ -43,7 +43,7 @@
 using namespace std;
 // #define int long long
 const int INF = 1000000007;
-ll dp[2][100005]; //here taking size 2 means even and odd indices which is done for space optimization
+ll dp[2][100005]; // here taking size 2 means even and odd indices which is done for space optimization
 int w[110];
 int val[110];
 void solve()
@@ -55,7 +55,8 @@ void solve()
         cin >> w[i];
         cin >> val[i];
     }
-    //dp[i][j]denotes minimum weight achieved using i elements and j is the maximum value possible such that dp[i][j]<=W
+    // dp[i][j]denotes minimum weight achieved using i elements and j is the maximum value possible such that dp[i][j]<=W
+    dp[0][0] = 0;
     for (int i = 1; i <= 100004; i++)
     {
         dp[0][i] = INF;
@@ -73,6 +74,7 @@ void solve()
             }
         }
     }
+
     int ans = 0;
     for (int j = 0; j < 100001; j++)
     {

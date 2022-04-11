@@ -315,7 +315,10 @@ dp patterns
 8- state optimization for even odd indices dp[n][m] -> dp[2][m] , do this, if    you only need previous row of dp
 9- lets say u have parameter x in dp and its value can vary between [x-300,x+300]
    then use OFFSET technique where we need only dp[n][2*300] because we can calculate dp[i][original_x] as dp[i][original_x - OFFSET] where OFFSET = x-300
-10- chceck if [continuous range from prev state is required],so [prefix sum] can be used for transition optimization,along with transition do prefix sum
+10- chceck if [continuous range from prev state is required],so [prefix sum] can be used for transition optimization,along with transition do prefix sum,take care of the order of execution.
+11- If you see n<=500 it is dp on contiguous segment.
+12- you can use map as dp table example -: vector<vector<map<ii>>>dp;
+13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
 // #define int long long int
