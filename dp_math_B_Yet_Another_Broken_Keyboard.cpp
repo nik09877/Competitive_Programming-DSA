@@ -45,24 +45,77 @@ using namespace std;
 typedef unsigned long long ull;
 typedef long double lld;
 // typedef tree<pair<int, int>, null_type, less<pair<int, int>>, rb_tree_tag, tree_order_statistics_node_update > pbds; // find_by_order, order_of_key
-void _print(ll t) {cerr << t;}
-void _print(int t) {cerr << t;}
-void _print(string t) {cerr << t;}
-void _print(char t) {cerr << t;}
-void _print(lld t) {cerr << t;}
-void _print(double t) {cerr << t;}
-void _print(ull t) {cerr << t;}
+void _print(ll t) { cerr << t; }
+void _print(int t) { cerr << t; }
+void _print(string t) { cerr << t; }
+void _print(char t) { cerr << t; }
+void _print(lld t) { cerr << t; }
+void _print(double t) { cerr << t; }
+void _print(ull t) { cerr << t; }
 
-template <class T, class V> void _print(pair <T, V> p);
-template <class T> void _print(vector <T> v);
-template <class T> void _print(set <T> v);
-template <class T, class V> void _print(map <T, V> v);
-template <class T> void _print(multiset <T> v);
-template <class T, class V> void _print(pair <T, V> p) {cerr << "{"; _print(p.ff); cerr << ","; _print(p.ss); cerr << "}";}
-template <class T> void _print(vector <T> v) {cerr << "[ "; for (T i : v) {_print(i); cerr << " ";} cerr << "]";}
-template <class T> void _print(set <T> v) {cerr << "[ "; for (T i : v) {_print(i); cerr << " ";} cerr << "]";}
-template <class T> void _print(multiset <T> v) {cerr << "[ "; for (T i : v) {_print(i); cerr << " ";} cerr << "]";}
-template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
+template <class T, class V>
+void _print(pair<T, V> p);
+template <class T>
+void _print(vector<T> v);
+template <class T>
+void _print(set<T> v);
+template <class T, class V>
+void _print(map<T, V> v);
+template <class T>
+void _print(multiset<T> v);
+template <class T, class V>
+void _print(pair<T, V> p)
+{
+    cerr << "{";
+    _print(p.ff);
+    cerr << ",";
+    _print(p.ss);
+    cerr << "}";
+}
+template <class T>
+void _print(vector<T> v)
+{
+    cerr << "[ ";
+    for (T i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]";
+}
+template <class T>
+void _print(set<T> v)
+{
+    cerr << "[ ";
+    for (T i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]";
+}
+template <class T>
+void _print(multiset<T> v)
+{
+    cerr << "[ ";
+    for (T i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]";
+}
+template <class T, class V>
+void _print(map<T, V> v)
+{
+    cerr << "[ ";
+    for (auto i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]";
+}
 // void _print(pbds v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
 #ifndef ONLINE_JUDGE
 #define debug(x...)               \
@@ -71,28 +124,28 @@ template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i
 #else
 #define debug(x...)
 #endif
-  //only for prime m
-//DEBUG TEMPLATE ENDS HERE
-// void compress(vi &a)
-// {
-//     //for fenwick tree
-//     int n = sz(a);
-//     map<ii> mpp, back;
-//     int idx = 1;
-//     rep(i, n)
-//     {
-//         if (mpp.find(a[i]) == mpp.end())
-//         {
-//             mpp.insert({a[i], idx});
-//             back.insert({idx, a[i]}); //to get back original values
-//             idx++;
-//         }
-//     }
-//     rep(i, n)
-//     {
-//         a[i] = mpp[a[i]];
-//     }
-// }
+// only for prime m
+// DEBUG TEMPLATE ENDS HERE
+//  void compress(vi &a)
+//  {
+//      //for fenwick tree
+//      int n = sz(a);
+//      map<ii> mpp, back;
+//      int idx = 1;
+//      rep(i, n)
+//      {
+//          if (mpp.find(a[i]) == mpp.end())
+//          {
+//              mpp.insert({a[i], idx});
+//              back.insert({idx, a[i]}); //to get back original values
+//              idx++;
+//          }
+//      }
+//      rep(i, n)
+//      {
+//          a[i] = mpp[a[i]];
+//      }
+//  }
 ///---------------custom_hash---------------------///
 // class chash
 // {
@@ -122,24 +175,96 @@ template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i
 // using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 ///---------------Functions---------------------///
 template <class T>
-T gcd(T a, T b){if (b == 0)return a;return gcd(b % a, a);}
+T gcd(T a, T b)
+{
+    if (b == 0)
+        return a;
+    return gcd(b % a, a);
+}
 template <class T>
-T lcm(T a, T b){return (a * b) / __gcd(a, b);}
+T lcm(T a, T b) { return (a * b) / __gcd(a, b); }
 template <class T>
-T ceil(T numerator, T denominator){return (numerator + denominator - 1) / denominator;}
+T ceil(T numerator, T denominator) { return (numerator + denominator - 1) / denominator; }
 template <class T>
-bool isPrime(T N){for (T i = 2; i * i <= N; ++i){if (N % i == 0)return false;}return true;}
+bool isPrime(T N)
+{
+    for (T i = 2; i * i <= N; ++i)
+    {
+        if (N % i == 0)
+            return false;
+    }
+    return true;
+}
 template <class T>
-T cbrt(T x){T lo = 1, hi = min(2000000ll, x);while (hi - lo > 1){T mid = (lo + hi) / 2;if (mid * mid * mid < x){lo = mid;}else    hi = mid;}if (hi * hi * hi <= x)return hi;else  return lo;}
+T cbrt(T x)
+{
+    T lo = 1, hi = min(2000000ll, x);
+    while (hi - lo > 1)
+    {
+        T mid = (lo + hi) / 2;
+        if (mid * mid * mid < x)
+        {
+            lo = mid;
+        }
+        else
+            hi = mid;
+    }
+    if (hi * hi * hi <= x)
+        return hi;
+    else
+        return lo;
+}
 template <class T>
 T sqrt(T target)
-{T l = 1, r = target;while (r > l + 1){T m = (l + r) / 2;if (m * m <= target)l = m;else r = m;}return l;}
-ll expo(ll a, ll b, ll mod) {ll res = 1; while (b > 0) {if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1;} return res;}
-ll mminvprime(ll a, ll b) {return expo(a, b - 2, b);}
-ll mod_add(ll a, ll b, ll m) {a = a % m; b = b % m; return (((a + b) % m) + m) % m;}
-ll mod_mul(ll a, ll b, ll m) {a = a % m; b = b % m; return (((a * b) % m) + m) % m;}
-ll mod_sub(ll a, ll b, ll m) {a = a % m; b = b % m; return (((a - b) % m) + m) % m;}
-ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m)%m;}
+{
+    T l = 1, r = target;
+    while (r > l + 1)
+    {
+        T m = (l + r) / 2;
+        if (m * m <= target)
+            l = m;
+        else
+            r = m;
+    }
+    return l;
+}
+ll expo(ll a, ll b, ll mod)
+{
+    ll res = 1;
+    while (b > 0)
+    {
+        if (b & 1)
+            res = (res * a) % mod;
+        a = (a * a) % mod;
+        b = b >> 1;
+    }
+    return res;
+}
+ll mminvprime(ll a, ll b) { return expo(a, b - 2, b); }
+ll mod_add(ll a, ll b, ll m)
+{
+    a = a % m;
+    b = b % m;
+    return (((a + b) % m) + m) % m;
+}
+ll mod_mul(ll a, ll b, ll m)
+{
+    a = a % m;
+    b = b % m;
+    return (((a * b) % m) + m) % m;
+}
+ll mod_sub(ll a, ll b, ll m)
+{
+    a = a % m;
+    b = b % m;
+    return (((a - b) % m) + m) % m;
+}
+ll mod_div(ll a, ll b, ll m)
+{
+    a = a % m;
+    b = b % m;
+    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
+}
 //------------------------------------------------------------------------------------------------//
 // ---------------variables-- ------------------- ///
 // const int dx[4] = {-1, 1, 0, 0};
@@ -148,29 +273,34 @@ ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprim
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
 const int mod = 1000000007;
 
+// use two pointer
 void solve()
 {
-    int n,k;
-    cin >> n>>k;
+    int n, k;
+    cin >> n >> k;
     string s;
-    cin>>s;
-    uset<char>st;
-    rep(i,k){
+    cin >> s;
+    uset<char> st;
+    rep(i, k)
+    {
         char ch;
-        cin>>ch;
+        cin >> ch;
         st.insert(ch);
     }
-    ll ans=0,cnt=0;
-    rep(i,n){
-        if(st.find(s[i])!=st.end()){
+    ll ans = 0, cnt = 0;
+    rep(i, n)
+    {
+        if (st.find(s[i]) != st.end())
+        {
             cnt++;
         }
-        else{
-            ans+=(cnt*(cnt+1))/2;
-            cnt=0;
+        else
+        {
+            ans += (cnt * (cnt + 1)) / 2;
+            cnt = 0;
         }
     }
-    ans+=(cnt*(cnt+1))/2;
+    ans += (cnt * (cnt + 1)) / 2;
     pr(ans);
     return;
 }

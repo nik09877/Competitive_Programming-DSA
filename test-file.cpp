@@ -19,7 +19,7 @@
 #define MAXLL 1e18
 #define endl '\n'
 #define sp ' '
-#define dsort(v) sort(v.begin(), v.end(), greater<int>())
+#define dsort(v) sort(v.rbegin(), v.rend())
 #define asort(v) sort(v.begin(), v.end())
 #define uniq(v) v.erase(unique(v.begin(), v.end()), v.end())
 #define all(v) v.begin(), v.end()
@@ -295,11 +295,16 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 2-try out small test cases or do brute force solutions to find pattern
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
-5-calculate contributtion of each element towards our answer
+5-calculate contribution of each element towards our answer
 6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
 8-in multi source bfs think in reverse direction
 9-bigger length can be divided into length of 2 and 3
+10-divide the array into left part and right part,maybe for each i from [0,n-1] check if we can get answer from right part which we can store in map, or prefix array
+11-For counting pairs use:-
+    1-> use merge sort
+    2-> use ordered_set
+    3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
