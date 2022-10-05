@@ -306,8 +306,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -329,28 +327,85 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+const int N = 1e5 + 5;
 
+int a[N], cost = 0, ans = 1;
+vi g[N], rev_g[N], order, scc;
+bool vis[N];
+
+void dfs(int node)
+{
+    vis[node] = true;
+    for (auto child : g[node])
+    {
+        if (!vis[child])
+            dfs(child);
+    }
+    order.pb(node);
+}
+void dfs2(int node)
+{
+    vis[node] = true;
+    scc.push_back(node);
+    for (auto child : rev_g[node])
+    {
+        if (!vis[child])
+            dfs2(child);
+    }
+}
 void solve()
 {
-    int n;
+    int n, m;
     cin >> n;
+    fo(i, 1, n) cin >> a[i];
+    cin >> m;
+    rep(i, m)
+    {
+        int u, v;
+        cin >> u >> v;
+        g[u].pb(v);
+        rev_g[v].pb(u);
+    }
+    fo(i, 1, n)
+    {
+        if (vis[i])
+            continue;
+        dfs(i);
+    }
 
+    memset(vis, 0, sizeof(vis));
+    reverse(all(order));
+    for (auto i : order)
+    {
+        if (vis[i])
+            continue;
+        scc.clear();
+        dfs2(i);
+
+        int mn = INT_MAX, cnt = 0;
+        for (auto node : scc)
+        {
+            if (a[node] < mn)
+            {
+                mn = a[node];
+                cnt = 1;
+            }
+            else if (mn == a[node])
+                cnt++;
+        }
+        cost += mn;
+        ans *= cnt;
+        ans %= mod;
+    }
+    prsp(cost);
+    prln(ans);
     return;
 }
 
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

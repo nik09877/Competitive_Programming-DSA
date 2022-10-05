@@ -306,8 +306,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -331,24 +329,84 @@ dp patterns
 
 // #define int long long int
 const int mod = 1000000007;
+const int N = 3e5 + 5;
 
+// assign every node to it's nearest police station (multi source bfs)
+//  then do dfs and every different colour pair edge we get that is our answer
+
+vi g[N], police_nodes;
+int col[N];
+int n, k, d;
+set<int> ans;
+map<pii, int> mp;
+
+void dfs(int node, int par)
+{
+    for (auto child : g[node])
+    {
+        if (child == par)
+            continue;
+        if (col[node] != col[child])
+        {
+            ans.insert(mp[{min(node, child), max(node, child)}]);
+        }
+        dfs(child, node);
+    }
+}
+void bfs()
+{
+    vi dist(n + 1, INT_MAX - 1);
+    queue<int> q;
+    for (auto node : police_nodes)
+    {
+        dist[node] = 0;
+        q.push(node);
+    }
+    while (q.size())
+    {
+        int node = q.front();
+        q.pop();
+        for (auto child : g[node])
+        {
+            if (dist[node] + 1 < dist[child])
+            {
+                dist[child] = dist[node] + 1;
+                col[child] = col[node];
+                q.push(child);
+            }
+        }
+    }
+    dfs(1, -1);
+}
 void solve()
 {
-    int n;
-    cin >> n;
-
+    cin >> n >> k >> d;
+    fo(i, 1, k)
+    {
+        int police_node;
+        cin >> police_node;
+        police_nodes.pb(police_node);
+        col[police_node] = i;
+    }
+    rep(i, n - 1)
+    {
+        int a, b;
+        cin >> a >> b;
+        g[a].pb(b);
+        g[b].pb(a);
+        mp[{min(a, b), max(a, b)}] = i + 1;
+    }
+    bfs();
+    prln(sz(ans));
+    for (auto x : ans)
+        prsp(x);
     return;
 }
 
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
+    solve();
 
     // #ifndef ONLINE_JUDGE
     //     TIME;

@@ -306,8 +306,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -335,8 +333,92 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
-    cin >> n;
+    string s;
+    cin >> s;
+    n = s.length();
+    if (s[0] == ')' or s.back() == '(' or n & 1)
+    {
+        no;
+        return;
+    }
+    if (s[0] == '?')
+        s[0] = '(';
+    if (s.back() == '?')
+        s.back() = ')';
 
+    int left[n + 1] = {0}, right[n + 1] = {0}, question_mark[n + 1] = {0};
+    rrep(i, n - 1, 0)
+    {
+        left[i] += left[i + 1];
+        right[i] += right[i + 1];
+        question_mark[i] += question_mark[i + 1];
+        if (s[i] == '(')
+            left[i]++;
+        else if (s[i] == ')')
+            right[i]++;
+        else
+            question_mark[i]++;
+    }
+    int left_cnt = 0, right_cnt = 0;
+    bool good = false;
+    rep(i, n)
+    {
+        if (right_cnt > left_cnt)
+        {
+            no;
+            return;
+        }
+        if (s[i] == '(')
+            left_cnt++;
+        else if (s[i] == ')')
+            right_cnt++;
+        else
+        {
+            int good_cnt1 = 0, good_cnt2 = 0;
+
+            // try to make it '('
+            int tot_left = left_cnt + left[i + 1] + 1;
+            int tot_right = right_cnt + right[i + 1];
+            int tot_q = question_mark[i + 1];
+            int diff_cnt = abs(tot_left - tot_right);
+            int rem_q = tot_q - diff_cnt;
+            if (rem_q >= 0 and rem_q % 2 == 0)
+            {
+                good_cnt1++;
+            }
+
+            // try to make it ')'
+            tot_left = left_cnt + left[i + 1];
+            tot_right = right_cnt + right[i + 1] + 1;
+            tot_q = question_mark[i + 1];
+            diff_cnt = abs(tot_left - tot_right);
+            int rem = tot_q - diff_cnt;
+            if (rem_q >= 0 and rem_q % 2 == 0)
+            {
+                good_cnt2++;
+            }
+
+            if (good_cnt1 and good_cnt2)
+            {
+                good = true;
+                break;
+            }
+            else if (good_cnt1)
+            {
+                left_cnt++;
+                s[i] = '(';
+            }
+            else
+            {
+                right_cnt++;
+                s[i] = ')';
+            }
+        }
+    }
+    if (right_cnt == left_cnt and good)
+        yes;
+    else
+        no;
     return;
 }
 

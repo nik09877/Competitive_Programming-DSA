@@ -306,8 +306,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -329,14 +327,71 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+
+struct grp
+{
+    char col;
+    int start;
+    int end;
+};
 
 void solve()
 {
     int n;
-    cin >> n;
+    string s, t;
+    cin >> n >> s >> t;
+    vector<grp> a, b;
 
+    auto compress = [&](string &S, vector<grp> &g)
+    {
+        char c = S[0];
+        int cnt = 1;
+        int l = 0;
+        fo(i, 1, n - 1)
+        {
+            if (S[i] == S[i - 1])
+                cnt++;
+            else
+            {
+                g.pb({c, l, l + cnt - 1});
+                cnt = 1, l = i;
+                c = S[i];
+            }
+        }
+        g.pb({c, l, l + cnt - 1});
+        return;
+    };
+
+    compress(s, a);
+    compress(t, b);
+
+    // only the block size should be different in a and b, but colours should be alligned with each other
+    if (sz(a) != sz(b))
+    {
+        prln(-1);
+        return;
+    }
+    n = sz(a);
+    rep(i, n)
+    {
+        if (a[i].col != b[i].col)
+        {
+            prln(-1);
+            return;
+        }
+    }
+    int ans = 0;
+
+    // allign the 1's with each other 0's will be alligned automatically
+    rep(i, n)
+    {
+        if (a[i].col == '0')
+            continue;
+        ans += abs(b[i].end - a[i].end) + abs(b[i].start - a[i].start);
+    }
+    prln(ans);
     return;
 }
 

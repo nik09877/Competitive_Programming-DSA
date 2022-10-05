@@ -163,7 +163,7 @@ const int N = 1e5 + 5;
 vi adj[N], tr[N], order, scc;
 int n, m;
 bool vis[N];
-vvi scc_matrix; //stores all the scc's
+vvi scc_matrix; // stores all the scc's
 
 void dfs(int node)
 {
@@ -173,7 +173,7 @@ void dfs(int node)
         if (not vis[child])
             dfs(child);
     }
-    order.pb(node); //store nodes in increasing order of out time
+    order.pb(node); // store nodes in increasing order of out time
 }
 
 void dfs1(int node)

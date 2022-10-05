@@ -306,8 +306,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -329,28 +327,63 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+vi g[200005];
+int n, m;
 
+int bfs()
+{
+    vi dist(n + 1, INT_MAX - 1), no_of_ways_to_reach(n + 1, 0);
+    no_of_ways_to_reach[1] = 1;
+    dist[1] = 0;
+    queue<int> q;
+    q.push(1);
+    while (q.size())
+    {
+        int node = q.front();
+        q.pop();
+
+        for (auto child : g[node])
+        {
+            if (dist[node] + 1 < dist[child])
+            {
+                dist[child] = dist[node] + 1;
+
+                no_of_ways_to_reach[child] = no_of_ways_to_reach[node];
+                no_of_ways_to_reach[child] %= mod;
+
+                q.push(child);
+            }
+            else if (dist[node] + 1 == dist[child])
+            {
+                no_of_ways_to_reach[child] += no_of_ways_to_reach[node];
+                no_of_ways_to_reach[child] %= mod;
+
+                // as we are doing level order traversal no need to push the visited child
+                // as it is already in the queue
+                //  q.push(child);
+            }
+        }
+    }
+    return no_of_ways_to_reach[n];
+}
 void solve()
 {
-    int n;
-    cin >> n;
-
+    cin >> n >> m;
+    rep(i, m)
+    {
+        int a, b;
+        cin >> a >> b;
+        g[a].pb(b);
+        g[b].pb(a);
+    }
+    cout << bfs();
     return;
 }
 
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

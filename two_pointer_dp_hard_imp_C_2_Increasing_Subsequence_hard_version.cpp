@@ -306,8 +306,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -336,20 +334,79 @@ void solve()
 {
     int n;
     cin >> n;
+    vi a(n);
+    re(a, n);
+    if (n == 1)
+    {
+        prln(1);
+        prln('L');
+        return;
+    }
+    vi left, right;
+    left.pb(a[0]);
+    fo(i, 1, n - 1)
+    {
+        if (a[i] > a[i - 1])
+            left.pb(a[i]);
+        else
+            break;
+    }
 
+    right.pb(a.back());
+    rrep(i, n - 2, 0)
+    {
+        if (a[i] > a[i + 1])
+            right.pb(a[i]);
+        else
+            break;
+    }
+    // debug(left);
+    // debug(right);
+
+    vector<char> ans;
+    int i = 0, j = 0, m = sz(right);
+    n = sz(left);
+    bool do_it = true;
+    while (i < n and j < m)
+    {
+        if (left[i] == right[j])
+        {
+            if (n - i > m - j)
+            {
+                while (i < n)
+                    ans.pb('L'), i++;
+            }
+            else
+            {
+                while (j < m)
+                    ans.pb('R'), j++;
+            }
+            do_it = false;
+            break;
+        }
+        if (left[i] < right[j])
+            ans.pb('L'), i++;
+        else
+            ans.pb('R'), j++;
+    }
+    if (do_it)
+    {
+        while (i < n)
+            ans.pb('L'), i++;
+        while (j < m)
+            ans.pb('R'), j++;
+    }
+
+    prln(sz(ans));
+    for (auto c : ans)
+        pr(c);
     return;
 }
 
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
+    solve();
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

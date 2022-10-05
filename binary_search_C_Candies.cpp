@@ -306,8 +306,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -329,27 +327,46 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
 
+bool good(int k, int n)
+{
+    int need = n, have = 0;
+    while (n > 0)
+    {
+        int take = min(n, k);
+        have += take;
+        n -= take;
+        n -= (n / 10);
+    }
+    have += n;
+    return have * 2 >= need;
+}
 void solve()
 {
     int n;
     cin >> n;
-
+    int l = 1, r = n, ans = LLONG_MAX;
+    while (l <= r)
+    {
+        int m = (l + r) >> 1;
+        if (good(m, n))
+        {
+            ans = m;
+            r = m - 1;
+        }
+        else
+            l = m + 1;
+    }
+    prln(ans);
     return;
 }
 
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
+    solve();
     // #ifndef ONLINE_JUDGE
     //     TIME;
     // #endif

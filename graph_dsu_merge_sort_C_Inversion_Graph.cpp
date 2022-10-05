@@ -263,11 +263,11 @@ int mod_div(int a, int b, int m)
 // int YY[] = {-1, 0, 1, -1, 1, -1, 0, 1};
 
 //  -----------POLICY BASED DATA STRUCTURES------------------------ ///
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template <class T>
-// using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+template <class T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 // template <class K, class V>
 // using ordered_map = tree<K, V, less<K>, rb_tree_tag, tree_order_statistics_node_update>;
 
@@ -306,8 +306,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -332,11 +330,107 @@ dp patterns
 // #define int long long int
 const int mod = 1000000007;
 
+class Dsu
+{
+public:
+    int par[100005];
+    int sz[100005];
+    Dsu(int n)
+    {
+        for (int i = 1; i <= n; i++)
+        {
+            par[i] = i;
+            sz[i] = 1;
+        }
+    }
+
+    int find(int a)
+    {
+        if (a == par[a])
+            return a;
+        return par[a] = find(par[a]);
+    }
+
+    void merge(int a, int b)
+    {
+        a = find(a);
+        b = find(b);
+
+        if (a == b) // They belong to the same connected component
+            return;
+
+        if (a != b)
+        {
+            // The larger sized component eats up the smaller component
+            if (sz[a] < sz[b])
+                swap(a, b);
+            par[b] = a;
+            sz[a] += sz[b];
+        }
+    }
+};
+
+void merge(int l, int m, int r, vi &a, Dsu &ds)
+{
+    vi temp;
+    int cnt = 0, i = l, j = m + 1;
+
+    // count answer
+    for (; i <= m; i++)
+    {
+        if (cnt and i - 1 >= 0)
+            ds.merge(a[i], a[i - 1]);
+        while (j <= r and a[i] > a[j])
+        {
+            ds.merge(a[i], a[j]);
+            j++, cnt++;
+        }
+    }
+
+    i = l, j = m + 1;
+
+    while (i <= m and j <= r)
+    {
+        if (a[i] <= a[j])
+        {
+            temp.push_back(a[i]);
+            i++;
+        }
+        else
+        {
+            temp.push_back(a[j]);
+            j++;
+        }
+    }
+    while (i <= m)
+        temp.push_back(a[i++]);
+    while (j <= r)
+        temp.push_back(a[j++]);
+    for (int idx = l; idx <= r; idx++)
+        a[idx] = temp[idx - l];
+    return;
+}
+void mergeSort(int l, int r, vi &a, Dsu &ds)
+{
+    if (l < r)
+    {
+        int m = (l + r) / 2;
+        mergeSort(l, m, a, ds);
+        mergeSort(m + 1, r, a, ds);
+        merge(l, m, r, a, ds);
+    }
+}
 void solve()
 {
     int n;
     cin >> n;
-
+    Dsu ds(n);
+    vi a(n);
+    re(a, n);
+    mergeSort(0, n - 1, a, ds);
+    int ans = 0;
+    fo(i, 1, n) if (ds.par[i] == i) ans++;
+    prln(ans);
     return;
 }
 

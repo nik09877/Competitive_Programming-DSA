@@ -306,8 +306,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -332,23 +330,128 @@ dp patterns
 // #define int long long int
 const int mod = 1000000007;
 
+class Dsu
+{
+public:
+    int par[100005];
+    int sz[100005];
+    int n;
+    Dsu(int _n)
+    {
+        n = _n;
+        // 1 to n represents the friend leaders
+        // and n+1 to 2n represents the enemy leaders
+        for (int i = 1; i <= 2 * n; i++)
+        {
+            par[i] = i;
+        }
+    }
+
+    int find(int a)
+    {
+        if (a == par[a])
+            return a;
+        return par[a] = find(par[a]);
+    }
+
+    bool are_friends(int u, int v)
+    {
+        return find(u) == find(v);
+    }
+    bool are_enemies(int u, int v)
+    {
+        // Find(u) gives the friend leader of u
+        // Find(u + n) gives the enemy leader of u
+        int friend_par_u = find(u);
+        int friend_par_v = find(v);
+        int enemy_par_u = find(u + n);
+        int enemy_par_v = find(v + n);
+
+        return friend_par_u == enemy_par_v || enemy_par_u == friend_par_v;
+    }
+
+    void merge_them_as_friends(int u, int v)
+    {
+        int friend_par_u = find(u);
+        int friend_par_v = find(v);
+        int enemy_par_u = find(u + n);
+        int enemy_par_v = find(v + n);
+
+        par[friend_par_v] = friend_par_u;
+        par[enemy_par_v] = enemy_par_u;
+    }
+    void merge_them_as_enemies(int u, int v)
+    {
+        int friend_par_u = find(u);
+        int friend_par_v = find(v);
+        int enemy_par_u = find(u + n);
+        int enemy_par_v = find(v + n);
+
+        par[friend_par_v] = enemy_par_u;
+        par[enemy_par_v] = friend_par_u;
+    }
+};
+
 void solve()
 {
-    int n;
-    cin >> n;
-
+    int n, m, q;
+    cin >> n >> m >> q;
+    map<string, int> id;
+    Dsu ds(n);
+    rep(i, n)
+    {
+        string s;
+        cin >> s;
+        id[s] = i + 1;
+    }
+    rep(i, m)
+    {
+        int type;
+        string a, b;
+        cin >> type >> a >> b;
+        int u = id[a], v = id[b];
+        if (type == 1)
+        {
+            // merge them as friends
+            if (!ds.are_enemies(u, v))
+            {
+                yes;
+                ds.merge_them_as_friends(u, v);
+            }
+            else
+                no;
+        }
+        else
+        {
+            // merge them as enemies
+            if (!ds.are_friends(u, v))
+            {
+                yes;
+                ds.merge_them_as_enemies(u, v);
+            }
+            else
+                no;
+        }
+    }
+    while (q--)
+    {
+        string a, b;
+        cin >> a >> b;
+        int u = id[a], v = id[b];
+        if (ds.are_friends(u, v))
+            prln(1);
+        else if (ds.are_enemies(u, v))
+            prln(2);
+        else
+            prln(3);
+    }
     return;
 }
 
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
+    solve();
 
     // #ifndef ONLINE_JUDGE
     //     TIME;

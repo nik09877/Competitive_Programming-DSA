@@ -306,8 +306,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -331,26 +329,94 @@ dp patterns
 
 // #define int long long int
 const int mod = 1000000007;
+const int N = 3e5 + 5;
+
+/*
+dp[i][j] denotes max freq of char j in a path ending at node i
+
+we need to extend answer from all parents of node i
+
+*/
+string s;
+vi g[N];
+int in[N], dp[N][26];
+bool vis[N], on_stack[N];
+
+bool has_cycle(int node)
+{
+    vis[node] = true;
+    on_stack[node] = true;
+    for (auto child : g[node])
+    {
+        if (!vis[child] and has_cycle(child))
+            return true;
+        else if (on_stack[child])
+            return true;
+    }
+    on_stack[node] = false;
+    return false;
+}
 
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, m;
+    cin >> n >> m >> s;
+    rep(i, m)
+    {
+        int x, y;
+        cin >> x >> y;
+        x--, y--;
+        g[x].push_back(y);
+        in[y]++;
+    }
+    rep(i, n)
+    {
+        if (vis[i])
+            continue;
+        if (has_cycle(i))
+        {
+            prln(-1);
+            return;
+        }
+    }
 
+    // do topo sort dp
+    queue<int> q;
+    rep(i, n) if (in[i] == 0)
+    {
+        q.push(i);
+        dp[i][s[i] - 'a']++;
+    }
+
+    while (q.size())
+    {
+        int node = q.front();
+        q.pop();
+        for (auto child : g[node])
+        {
+            in[child]--;
+            if (in[child] == 0)
+                q.push(child);
+
+            rep(i, 26)
+            {
+                if (i == s[child] - 'a')
+                    dp[child][i] = max(dp[child][i], 1 + dp[node][i]);
+                else
+                    dp[child][i] = max(dp[child][i], dp[node][i]);
+            }
+        }
+    }
+    int ans = 0;
+    rep(i, n)
+        rep(j, 26) ans = max(ans, dp[i][j]);
+
+    prln(ans);
     return;
 }
 
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

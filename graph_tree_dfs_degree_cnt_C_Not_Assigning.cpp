@@ -306,8 +306,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -331,12 +329,67 @@ dp patterns
 
 // #define int long long int
 const int mod = 1000000007;
+const int N = 1e5 + 5;
+vi g[N];
+map<pii, int> mp;
+int ans[N], deg[N];
 
+void dfs(int node, int par, int prime_used)
+{
+    for (auto child : g[node])
+    {
+        if (child == par)
+            continue;
+        ans[mp[{node, child}]] = 5 - prime_used;
+        dfs(child, node, 5 - prime_used);
+    }
+}
 void solve()
 {
     int n;
     cin >> n;
+    fo(i, 1, n) g[i].clear(), deg[i] = 0;
+    rep(i, n - 1)
+    {
+        int a, b;
+        cin >> a >> b;
+        deg[a]++, deg[b]++;
+        g[a].pb(b);
+        g[b].pb(a);
+        mp[{a, b}] = i;
+        mp[{b, a}] = i;
+    }
+    int root = 1, cnt = 0;
+    fo(i, 1, n)
+    {
+        if (deg[i] == 2)
+            cnt++, root = i;
+        if (deg[i] > 2)
+        {
+            cnt = -1;
+            break;
+        }
+    }
+    if (cnt == -1)
+    {
+        prln(-1);
+        return;
+    }
 
+    // traverse
+    //  primes used = 2,3
+    // if root has one child
+    ans[mp[{root, g[root][0]}]] = 2;
+    dfs(g[root][0], root, 2);
+    // if root has 2 children
+    if (cnt)
+    {
+        ans[mp[{root, g[root][1]}]] = 3;
+        dfs(g[root][1], root, 3);
+    }
+
+    rep(i, n - 1) prsp(ans[i]);
+    cout << endl;
     return;
 }
 

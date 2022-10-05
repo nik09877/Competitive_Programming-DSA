@@ -305,9 +305,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     1-> use merge sort
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
-12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -329,14 +326,66 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+
+// left right concept
 
 void solve()
 {
+    int cost = 0;
     int n;
     cin >> n;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++)
+        cin >> a[i];
+    if (n & 1)
+    {
+        for (int i = 1; i < n; i += 2)
+        {
+            if (a[i] > a[i - 1] and a[i] > a[i + 1])
+                continue;
+            cost += max(a[i - 1], a[i + 1]) - a[i] + 1;
+        }
+    }
+    else
+    {
+        vector<int> c1, c2;
+        for (int i = 1; i + 1 < n; i += 2)
+        {
+            if (a[i] > a[i - 1] and a[i] > a[i + 1])
+                c1.push_back(0);
+            else
+                c1.push_back(max(a[i - 1], a[i + 1]) - a[i] + 1);
+        }
+        for (int i = 2; i + 1 < n; i += 2)
+        {
 
+            if (a[i] > a[i - 1] and a[i] > a[i + 1])
+                c2.push_back(0);
+            else
+                c2.push_back(max(a[i - 1], a[i + 1]) - a[i] + 1);
+        }
+        for (int i = 0; i < sz(c1); i++)
+        {
+            if (i)
+                c1[i] += c1[i - 1];
+        }
+        for (int i = sz(c1) - 1; i >= 0; i--)
+        {
+            if (i + 1 < sz(c1))
+                c2[i] += c2[i + 1];
+        }
+        cost = c2[0];
+        for (int i = 0; i < sz(c1); i++)
+        {
+            int temp_cost = c1[i];
+            if (i + 1 < sz(c1))
+                temp_cost += c2[i + 1];
+            cost = min(cost, temp_cost);
+        }
+    }
+    prln(cost);
     return;
 }
 

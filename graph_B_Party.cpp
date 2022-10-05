@@ -306,8 +306,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
 12-In an array of 0's and 1's you can group them as blocks of different colours.
-13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
-   0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -334,9 +332,37 @@ const int mod = 1000000007;
 
 void solve()
 {
-    int n;
-    cin >> n;
-
+    int n, m;
+    cin >> n >> m;
+    vi g[n + 1], a(n + 1);
+    rep1(i, n) cin >> a[i];
+    rep(i, m)
+    {
+        int a, b;
+        cin >> a >> b;
+        g[a].pb(b);
+        g[b].pb(a);
+    }
+    if (m % 2 == 0)
+    {
+        prln(0);
+        return;
+    }
+    int ans = INT_MAX;
+    fo(i, 1, n)
+    {
+        if ((int)g[i].size() % 2)
+            ans = min(ans, a[i]);
+        else
+        {
+            for (auto child : g[i])
+            {
+                if (sz(g[child]) % 2 == 0)
+                    ans = min(ans, a[i] + a[child]);
+            }
+        }
+    }
+    prln(ans);
     return;
 }
 
