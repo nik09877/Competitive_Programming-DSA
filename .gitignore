@@ -2,3 +2,8 @@
 **/*.exe
 **/*.pdf
 **/*.txt
+**/*.articles
+**/*.cph
+**/*.temp
+**/*.catalyst
+**/*.gitignore
