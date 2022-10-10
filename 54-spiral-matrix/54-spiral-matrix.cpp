@@ -50,8 +50,7 @@ public:
                 pointer_to_fst_col++;
             }
         }
-        while(ans.size()>n*m)
-            ans.pop_back();
+        
         return ans;
     }
 };
