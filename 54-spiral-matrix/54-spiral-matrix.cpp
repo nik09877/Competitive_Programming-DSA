@@ -23,41 +23,32 @@ public:
              and
              pointer_to_fst_col<=pointer_to_lst_col){
             
-            for(int dir=0;dir<4;dir++){
-                
-                if(dir==0){
-                    // GO RIGHT
-                    for(int i=pointer_to_fst_col;i<=pointer_to_lst_col;i++)
-                        ans.push_back(a[pointer_to_fst_row][i]);
-                    pointer_to_fst_row++;
-                }
-                
+            // GO RIGHT
+            for(int i=pointer_to_fst_col;i<=pointer_to_lst_col;i++)
+                ans.push_back(a[pointer_to_fst_row][i]);
+            pointer_to_fst_row++;
 
-                if(dir==1){
-                    // GO DOWN
-                    for(int i=pointer_to_fst_row;i<=pointer_to_lst_row;i++)
-                        ans.push_back(a[i][pointer_to_lst_col]);
-                    pointer_to_lst_col--;
-                }
-                
 
-                if(dir==2){
-                    // GO lEFT
-                    for(int i=pointer_to_lst_col;i>=pointer_to_fst_col;i--)
-                        ans.push_back(a[pointer_to_lst_row][i]);
-                    pointer_to_lst_row--;
-                }
-                
+            // GO DOWN
+            for(int i=pointer_to_fst_row;i<=pointer_to_lst_row;i++)
+                ans.push_back(a[i][pointer_to_lst_col]);
+            pointer_to_lst_col--;
 
-                if(dir==3){
-                    // GO UP
-                    for(int i=pointer_to_lst_row;i>=pointer_to_fst_row;i--)
-                        ans.push_back(a[i][pointer_to_fst_col]);
-                    pointer_to_fst_col++;
-                }
-                
+            if(pointer_to_fst_row<=pointer_to_lst_row)
+            {
+                // GO lEFT
+                for(int i=pointer_to_lst_col;i>=pointer_to_fst_col;i--)
+                    ans.push_back(a[pointer_to_lst_row][i]);
+                pointer_to_lst_row--;
             }
 
+            if(pointer_to_fst_col<=pointer_to_lst_col)
+            {
+                // GO UP
+                for(int i=pointer_to_lst_row;i>=pointer_to_fst_row;i--)
+                    ans.push_back(a[i][pointer_to_fst_col]);
+                pointer_to_fst_col++;
+            }
         }
         while(ans.size()>n*m)
             ans.pop_back();
