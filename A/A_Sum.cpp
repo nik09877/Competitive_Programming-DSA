@@ -334,9 +334,12 @@ const int mod = 1000000007;
 
 void solve()
 {
-    int n;
-    cin >> n;
-
+    int a, b, c;
+    cin >> a >> b >> c;
+    if (a == (b + c) or b == (a + c) or c == (a + b))
+        yes;
+    else
+        no;
     return;
 }
 

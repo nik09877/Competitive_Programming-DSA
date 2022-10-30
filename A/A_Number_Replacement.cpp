@@ -336,7 +336,30 @@ void solve()
 {
     int n;
     cin >> n;
-
+    vi a(n);
+    re(a, n);
+    string s;
+    cin >> s;
+    map<int, char> mp;
+    rep(i, n)
+    {
+        char ch = s[i];
+        int x = a[i];
+        if (mp.find(x) == mp.end())
+        {
+            mp[x] = ch;
+            continue;
+        }
+        else
+        {
+            if (mp[x] != ch)
+            {
+                no;
+                return;
+            }
+        }
+    }
+    yes;
     return;
 }
 

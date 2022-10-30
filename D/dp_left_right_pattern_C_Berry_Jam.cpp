@@ -336,7 +336,60 @@ void solve()
 {
     int n;
     cin >> n;
+    vi left(n), right(n);
+    re(left, n);
+    re(right, n);
+    map<int, int> r_pos, l_pos;
+    int ans = 0;
+    int sum = 0;
+    rrep(i, n - 1, 0)
+    {
+        if (right[i] == 1)
+            sum++;
+        else
+            sum--;
+        r_pos[sum] = i;
+    }
+    // take all from right
+    if (sum == 0)
+        ans = max(ans, n);
 
+    sum = 0;
+
+    // take only from left
+    for (int i = 0; i < n; i++)
+    {
+        if (left[i] == 1)
+            sum++;
+        else
+            sum--;
+        int take = i + 1;
+        int key = sum * -1;
+        if (r_pos.find(key) != r_pos.end())
+            take += n - r_pos[key];
+        else if (sum == 0)
+            take *= 1;
+        else
+            take = 0;
+        ans = max(ans, take);
+    }
+
+    // try to take all from left
+    if (sum == 0)
+        ans = max(ans, n);
+
+    // take only from right
+    sum = 0;
+    rrep(i, n - 1, 0)
+    {
+        if (right[i] == 1)
+            sum++;
+        else
+            sum--;
+        if (sum == 0)
+            ans = max(ans, n - i);
+    }
+    prln(2 * n - ans);
     return;
 }
 

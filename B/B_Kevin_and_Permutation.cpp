@@ -337,6 +337,23 @@ void solve()
     int n;
     cin >> n;
 
+    if (n % 2 == 1)
+    {
+        for (int i = 1; i <= n / 2; i++)
+        {
+            cout << i << ' ' << i + (n + 1) / 2 << ' ';
+        }
+        if (n % 2 == 1)
+            cout << (n + 1) / 2 << ' ';
+    }
+    else
+    {
+        for (int i = 1; i <= n / 2; i++)
+        {
+            cout << i + (n + 1) / 2 << ' ' << i << ' ';
+        }
+    }
+    cout << endl;
     return;
 }
 

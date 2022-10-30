@@ -336,7 +336,19 @@ void solve()
 {
     int n;
     cin >> n;
-
+    vi a(n);
+    int g = 0;
+    re(a, n);
+    rep(i, n)
+        g = __gcd(g, a[i]);
+    if (g == 1)
+        prln(0);
+    else if (__gcd(g, n) == 1)
+        prln(1);
+    else if (__gcd(g, n - 1) == 1)
+        prln(2);
+    else
+        prln(3);
     return;
 }
 

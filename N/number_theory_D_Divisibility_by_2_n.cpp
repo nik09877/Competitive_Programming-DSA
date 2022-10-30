@@ -18,7 +18,6 @@
 #define vpii vector<pair<int, int>>
 #define MAXLL 1e18
 #define endl '\n'
-#define sp ' '
 #define dsort(v) sort(v.rbegin(), v.rend())
 #define asort(v) sort(v.begin(), v.end())
 #define uniq(v) v.erase(unique(v.begin(), v.end()), v.end())
@@ -329,14 +328,65 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+const int maxN = 2e5 + 5;
 
 void solve()
 {
     int n;
     cin >> n;
+    vi a(n);
+    re(a, n);
+    int cnt_2_have = 0;
 
+    for (auto v : a)
+    {
+        int x = v;
+        while (x % 2 == 0)
+        {
+            cnt_2_have++;
+            x /= 2;
+        }
+    }
+
+    vector<int> arr;
+    fo(i, 1, n)
+    {
+        int cnt = 0;
+        int x = i;
+        while (x % 2 == 0)
+        {
+            cnt++;
+            x /= 2;
+        }
+        if (cnt)
+            arr.pb(cnt);
+    }
+    dsort(arr);
+    // debug(cnt_2_have);
+    // debug(arr);
+    if (n <= cnt_2_have)
+    {
+        prln(0);
+        return;
+    }
+    int req = n - cnt_2_have;
+    int cnt = 0;
+    for (auto x : arr)
+    {
+        // debug(req);
+        if (req <= 0)
+            break;
+        cnt++;
+        req -= x;
+    }
+    if (req > 0)
+    {
+        prln(-1);
+        return;
+    }
+    prln(cnt);
     return;
 }
 

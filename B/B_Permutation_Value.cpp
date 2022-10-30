@@ -336,7 +336,21 @@ void solve()
 {
     int n;
     cin >> n;
-
+    int l = 1, r = n;
+    rep(i, n)
+    {
+        if (i % 2 == 0)
+        {
+            prsp(l);
+            l++;
+        }
+        else
+        {
+            prsp(r);
+            r--;
+        }
+    }
+    cout << endl;
     return;
 }
 

@@ -26,8 +26,8 @@
 #define umap unordered_map
 #define uset unordered_set
 #define sz(x) ((int)(x).size())
-#define yes cout << "YES\n"
-#define no cout << "NO\n"
+#define yes cout << "Yes\n"
+#define no cout << "No\n"
 #define pr(x) cout << x
 #define prsp(x) cout << x << sp
 #define prln(x) cout << x << endl
@@ -335,8 +335,45 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
-    cin >> n;
-
+    string s;
+    cin >> n >> s;
+    // int sum = 0;
+    // rep(i, n)
+    // {
+    //     if (s[i] == 'Q')
+    //         sum++;
+    //     else
+    //     {
+    //         if (sum == 0)
+    //         {
+    //             no;
+    //             return;
+    //         }
+    //     }
+    // }
+    vector<bool> used(n, false);
+    rep(i, n)
+    {
+        if (s[i] == 'Q')
+        {
+            bool good = false;
+            fo(j, i, n - 1)
+            {
+                if (s[j] == 'A' and used[j] == false)
+                {
+                    used[j] = true;
+                    good = true;
+                    break;
+                }
+            }
+            if (!good)
+            {
+                no;
+                return;
+            }
+        }
+    }
+    yes;
     return;
 }
 

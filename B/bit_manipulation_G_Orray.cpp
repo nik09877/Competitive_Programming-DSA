@@ -336,7 +336,36 @@ void solve()
 {
     int n;
     cin >> n;
+    vi a(n);
+    re(a, n);
+    vector<bool> used(n, false);
+    int cur_or = 0;
+    vi ans;
+    rep(iter, min(32, n + 1))
+    {
+        int temp_or = cur_or;
+        int idx = -1;
+        rep(i, n)
+        {
+            if (used[i])
+                continue;
+            if ((temp_or | a[i]) >= cur_or)
+            {
+                idx = i;
+                cur_or = temp_or | a[i];
+            }
+        }
+        if (idx != -1)
+        {
 
+            used[idx] = true;
+            ans.pb(a[idx]);
+        }
+    }
+    rep(i, n) if (used[i] == false) ans.pb(a[i]);
+    for (auto x : ans)
+        prsp(x);
+    cout << endl;
     return;
 }
 

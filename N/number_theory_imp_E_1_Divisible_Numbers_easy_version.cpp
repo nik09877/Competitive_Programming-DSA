@@ -18,7 +18,6 @@
 #define vpii vector<pair<int, int>>
 #define MAXLL 1e18
 #define endl '\n'
-#define sp ' '
 #define dsort(v) sort(v.rbegin(), v.rend())
 #define asort(v) sort(v.begin(), v.end())
 #define uniq(v) v.erase(unique(v.begin(), v.end()), v.end())
@@ -143,99 +142,6 @@ void _print(map<T, V> v)
 //          a[i] = mpp[a[i]];
 //      }
 //  }
-///---------------Functions---------------------///
-template <class T>
-T gcd(T a, T b)
-{
-    if (b == 0)
-        return a;
-    return gcd(b, a % b);
-}
-template <class T>
-T lcm(T a, T b) { return (a * b) / __gcd(a, b); }
-template <class T>
-T ceil(T numerator, T denominator) { return (numerator + denominator - 1) / denominator; }
-template <class T>
-bool isPrime(T N)
-{
-    for (T i = 2; i * i <= N; ++i)
-    {
-        if (N % i == 0)
-            return false;
-    }
-    return true;
-}
-template <class T>
-T cbrt(T x)
-{
-    T lo = 1, hi = min(2000000ll, x);
-    while (hi - lo > 1)
-    {
-        T mid = (lo + hi) / 2;
-        if (mid * mid * mid < x)
-        {
-            lo = mid;
-        }
-        else
-            hi = mid;
-    }
-    if (hi * hi * hi <= x)
-        return hi;
-    else
-        return lo;
-}
-template <class T>
-T sqrt(T target)
-{
-    T l = 1, r = target;
-    while (r > l + 1)
-    {
-        T m = (l + r) / 2;
-        if (m * m <= target)
-            l = m;
-        else
-            r = m;
-    }
-    return l;
-}
-template <class T>
-T bin_power(T a, T b, T mod)
-{
-    T res = 1;
-    while (b > 0)
-    {
-        if (b & 1)
-            res = ((res % mod) * (a % mod)) % mod;
-        a = ((a % mod) * (a % mod)) % mod;
-        b = b >> 1;
-    }
-    return res;
-}
-int mod_inv(int a, int b) { return bin_power(a, b - 2, b); }
-int mod_add(int a, int b, int m)
-{
-    a = a % m;
-    b = b % m;
-    return (((a + b) % m) + m) % m;
-}
-int mod_mul(int a, int b, int m)
-{
-    a = a % m;
-    b = b % m;
-    return (((a * b) % m) + m) % m;
-}
-int mod_sub(int a, int b, int m)
-{
-    a = a % m;
-    b = b % m;
-    return (((a - b) % m) + m) % m;
-}
-int mod_div(int a, int b, int m)
-{
-    a = a % m;
-    b = b % m;
-    return (mod_mul(a, mod_inv(b, m), m) + m) % m;
-}
 ///---------------custom_hash---------------------///
 // class chash
 // {
@@ -329,28 +235,136 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+const int MAX = 1e5 + 5;
+
+bool v[MAX];
+int len, sp[MAX];
+
+void Sieve()
+{
+    for (int i = 2; i < MAX; i += 2)
+        sp[i] = 2; // even numbers have smallest prime factor 2
+    for (int i = 3; i < MAX; i += 2)
+    {
+        if (!v[i])
+        {
+            sp[i] = i;
+            for (int j = i; (j * i) < MAX; j += 2)
+            {
+                if (!v[j * i])
+                    v[j * i] = true, sp[j * i] = i;
+            }
+        }
+    }
+}
+
+int factorize(int n, map<ii> &mp)
+{
+    int cnt = 0;
+    while (n > 1)
+    {
+        mp[sp[n]]++;
+        cnt++;
+        n /= sp[n];
+    }
+    return cnt;
+}
+
+int factorize2(int n, map<ii> &mp)
+{
+    for (int i = 2; i * i <= n; i++)
+    {
+        if (n % i == 0)
+        {
+            while (n % i == 0)
+            {
+                mp[i]++;
+                n /= i;
+            }
+        }
+    }
+    if (n > 1)
+        mp[n]++;
+
+    return 0;
+}
+
+int binPower(int a, int n)
+{
+    int res = 1;
+    while (n > 0)
+    {
+        if (n & 1)
+        {
+            res = (res * a) % mod;
+        }
+        n >>= 1;
+        a = (a * a) % mod;
+    }
+    return res;
+}
 
 void solve()
 {
-    int n;
-    cin >> n;
+    int a, b, c, d;
+    cin >> a >> b >> c >> d;
+    int divisor = a * b;
+    map<ii> mp;
+    factorize2(divisor, mp);
 
+    // DEBUG
+    // debug(mp);
+
+    map<ii> mp2;
+    fo(x, a + 1, c)
+    {
+        mp2.clear();
+        factorize(x, mp2);
+        // debug(x);
+        // debug
+        // for (auto x : mp2)
+        //     cerr << x.ff << ' ' << x.ss << endl;
+
+        int y = 1;
+        bool good = true;
+        for (auto it : mp)
+        {
+            int p = it.ff;
+            int f = it.ss;
+            if (f > mp2[p])
+            {
+                // debug(p);
+                int need = f - mp2[p];
+                // debug(need);
+                y *= binPower(p, need);
+            }
+        }
+        if (y > d)
+            continue;
+        int t = (b / y) * y;
+        while (t <= b)
+            t += y;
+        y = t;
+
+        // debug(y);
+        if (y > b and y <= d and ((x * y) % (a * b) == 0))
+        {
+            cout << x << " " << y << endl;
+            return;
+        }
+    }
+    cout << -1 << " " << -1 << endl;
     return;
 }
 
 int32_t main()
 {
     fastio;
+    Sieve();
     int t = 1;
     cin >> t;
     while (t--)
-    {
         solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
 }

@@ -332,22 +332,37 @@ dp patterns
 // #define int long long int
 const int mod = 1000000007;
 
-void solve()
+void solve(map<vector<char>, bool> &mp)
 {
     int n;
-    cin >> n;
-
+    string s;
+    cin >> n >> s;
+    vector<char> a;
+    for (auto c : s)
+        a.pb(c);
+    if (mp[a] == true)
+        yes;
+    else
+        no;
     return;
 }
 
 int32_t main()
 {
     fastio;
+    vector<char> s = {'T', 'i', 'm', 'u', 'r'};
+    sort(all(s));
+    map<vector<char>, bool> mp;
+    do
+    {
+        mp[s] = true;
+    } while (next_permutation(all(s)));
+
     int t = 1;
     cin >> t;
     while (t--)
     {
-        solve();
+        solve(mp);
     }
 
     // #ifndef ONLINE_JUDGE

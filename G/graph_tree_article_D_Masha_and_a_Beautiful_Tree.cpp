@@ -329,14 +329,42 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
     int n;
     cin >> n;
-
+    vpii a(n);
+    rep(i, n)
+    {
+        cin >> a[i].ff;
+        a[i].ss = a[i].ff;
+    }
+    int ans = 0;
+    while (sz(a) > 1)
+    {
+        vpii new_a;
+        n = sz(a);
+        for (int i = 0; i < n; i += 2)
+        {
+            if (a[i].ss < a[i + 1].ff)
+                new_a.pb({a[i].ff, a[i + 1].ss});
+            else if (a[i + 1].ss < a[i].ff)
+            {
+                ans++;
+                new_a.pb({a[i + 1].ff, a[i].ss});
+            }
+            else
+            {
+                prln(-1);
+                return;
+            }
+        }
+        a = new_a;
+    }
+    prln(ans);
     return;
 }
 

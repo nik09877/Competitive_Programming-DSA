@@ -334,8 +334,16 @@ const int mod = 1000000007;
 
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, m;
+    cin >> n >> m;
+    int a[n + 1][m + 1];
+    memset(a, 0, sizeof(a));
+    rep(i, n)
+    {
+        int x, y;
+        cin >> x >> y;
+        a[x][y] = 1;
+    }
 
     return;
 }

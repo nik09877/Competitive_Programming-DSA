@@ -332,11 +332,50 @@ dp patterns
 // #define int long long int
 const int mod = 1000000007;
 
+int go(int i, string s, vi &a)
+{
+    if (i == 4)
+    {
+        map<char, int> mp;
+        for (char c : s)
+            mp[c]++;
+        if (mp.size() != 2)
+            return 0;
+        for (auto it : mp)
+        {
+            if (it.ss != 2)
+                return 0;
+        }
+        return 1;
+    }
+    int ans = 0;
+    for (auto x : a)
+    {
+        char ch = x + '0';
+        ans += go(i + 1, s + ch, a);
+    }
+    return ans;
+}
 void solve()
 {
     int n;
     cin >> n;
-
+    uset<int> s;
+    rep(i, n)
+    {
+        int x;
+        cin >> x;
+        s.insert(x);
+    }
+    vi a;
+    rep(i, 10)
+    {
+        if (s.count(i) == 0)
+            a.pb(i);
+    }
+    string temp = "";
+    int ans = go(0, temp, a);
+    prln(ans);
     return;
 }
 

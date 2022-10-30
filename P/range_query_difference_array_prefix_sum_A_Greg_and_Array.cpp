@@ -329,28 +329,53 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+struct Data
+{
+    int l;
+    int r;
+    int v;
+};
 
 void solve()
 {
-    int n;
-    cin >> n;
-
+    int n, m, k;
+    cin >> n >> m >> k;
+    vi arr(n);
+    re(arr, n);
+    vector<Data> a(m);
+    vi pre(m + 1, 0);
+    rep(i, m)
+            cin >>
+        a[i].l >> a[i].r >> a[i].v;
+    while (k--)
+    {
+        int l, r;
+        cin >> l >> r;
+        l--, r--;
+        pre[l] += 1;
+        pre[r + 1] -= 1;
+    }
+    fo(i, 1, m - 1) pre[i] += pre[i - 1];
+    vi pre_arr(n + 1, 0);
+    rep(i, m)
+    {
+        int l = a[i].l;
+        int r = a[i].r;
+        int v = a[i].v;
+        l--, r--;
+        pre_arr[l] += (pre[i] * v);
+        pre_arr[r + 1] -= (pre[i] * v);
+    }
+    fo(i, 1, n - 1) pre_arr[i] += pre_arr[i - 1];
+    rep(i, n)
+        prsp(arr[i] + pre_arr[i]);
     return;
 }
 
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
-
-    // #ifndef ONLINE_JUDGE
-    //     TIME;
-    // #endif
+    solve();
 }

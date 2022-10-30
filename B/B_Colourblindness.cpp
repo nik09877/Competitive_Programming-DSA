@@ -336,7 +336,18 @@ void solve()
 {
     int n;
     cin >> n;
-
+    string a, b;
+    cin >> a >> b;
+    for (char &c : a)
+        if (c == 'B')
+            c = 'G';
+    for (char &c : b)
+        if (c == 'B')
+            c = 'G';
+    if (a == b)
+        yes;
+    else
+        no;
     return;
 }
 

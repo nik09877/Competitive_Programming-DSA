@@ -335,7 +335,28 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
-    cin >> n;
+    string st;
+    cin >> st;
+    n = st.length();
+    char s[n + 1];
+    int left[n + 1] = {0};
+    int right[n + 2] = {0};
+    vi pos;
+    fo(i, 1, n) s[i] = st[i - 1];
+    fo(i, 1, n)
+    {
+        if (s[i] == '1')
+            left[i]++;
+        left[i] += left[i - 1];
+        if (s[i] == '0')
+            pos.pb(i);
+    }
+    rrep(i, n, 1)
+    {
+        right[i] += right[i + 1];
+        if (s[i] == '1')
+            right[i]++;
+    }
 
     return;
 }

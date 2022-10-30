@@ -336,7 +336,41 @@ void solve()
 {
     int n;
     cin >> n;
-
+    vi a(n), b(n);
+    re(a, n);
+    re(b, n);
+    int ans = 0;
+    int cnt_a = count(all(a), 0);
+    int cnt_b = count(all(b), 0);
+    ans += abs(cnt_a - cnt_b);
+    if (cnt_a < cnt_b)
+    {
+        int rem = cnt_b - cnt_a;
+        rep(i, n)
+        {
+            if (a[i] == b[i])
+                continue;
+            if (a[i] == 1 and rem)
+                rem--, a[i] = 0;
+        }
+    }
+    else
+    {
+        int rem = cnt_b - cnt_a;
+        rep(i, n)
+        {
+            if (a[i] == b[i])
+                continue;
+            if (a[i] == 0 and rem)
+                rem--, a[i] = 1;
+        }
+    }
+    rep(i, n) if (a[i] != b[i])
+    {
+        ans++;
+        break;
+    }
+    prln(ans);
     return;
 }
 

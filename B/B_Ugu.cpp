@@ -335,8 +335,17 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
-    cin >> n;
-
+    string s;
+    cin >> n >> s;
+    uniq(s);
+    int ans;
+    if (s[0] == '0')
+        ans = max(0, sz(s) - 2);
+    else
+    {
+        ans = max(0, sz(s) - 1);
+    }
+    prln(ans);
     return;
 }
 

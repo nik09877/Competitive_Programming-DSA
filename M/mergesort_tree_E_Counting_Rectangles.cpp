@@ -329,14 +329,152 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+const int N = 1e5 + 4;
+
+vpii a;
+
+int upperBound(int l, int r, int target, vpii &a)
+{
+    int ans = -1;
+    while (l <= r)
+    {
+        int m = (l + r) >> 1;
+        if (a[m].ff > target)
+        {
+            ans = m;
+            r = m - 1;
+        }
+        else
+            l = m + 1;
+    }
+    return ans;
+}
+int lowerBound(int l, int r, int target, vpii &a)
+{
+    int ans = -1;
+    while (l <= r)
+    {
+        int m = (l + r) >> 1;
+        if (a[m].ff < target)
+        {
+            ans = m;
+            l = m + 1;
+        }
+        else
+            r = m - 1;
+    }
+    return ans;
+}
+
+struct node
+{
+    vpii arr; // stores the width in asc order
+    vi pre;   // stores prefix sum in asc order
+};
+struct segtree
+{
+    int size;
+    vector<node> st;
+
+    void init(int n)
+    {
+        st.resize(4 * n);
+    }
+
+    void build(int i, int l, int r)
+    {
+        if (l == r)
+        {
+            st[i].arr.pb({a[l].ss, a[l].ff * a[l].ss});
+            st[i].pre.pb(a[l].ff * a[l].ss);
+            return;
+        }
+        int mid = (l + r) / 2;
+        build(2 * i, l, mid);
+        build(2 * i + 1, mid + 1, r);
+
+        int left = 2 * i;
+        int right = 2 * i + 1;
+
+        int I = 0, J = 0;
+        int left_sz = st[left].arr.size();
+        int right_sz = st[right].arr.size();
+
+        while (I < left_sz and J < right_sz)
+        {
+            if (st[left].arr[I].ff <= st[right].arr[J].ff)
+                st[i].arr.pb(st[left].arr[I]), I++;
+            else
+                st[i].arr.pb(st[right].arr[J]), J++;
+        }
+        while (I < left_sz)
+            st[i].arr.pb(st[left].arr[I]), I++;
+        while (J < right_sz)
+            st[i].arr.pb(st[right].arr[J]), J++;
+
+        for (auto x : st[i].arr)
+        {
+            int pre_back = st[i].pre.empty() ? 0 : st[i].pre.back();
+            int cur_area = x.ss;
+            int cur_pre = cur_area + pre_back;
+            st[i].pre.pb(cur_pre);
+        }
+    }
+
+    int query(int i, int l, int r, int qs, int qe, int v1, int v2)
+    {
+        if (qs > r or qe < l)
+            return 0;
+        if (qs <= l and r <= qe)
+        {
+            int Size = st[i].arr.size();
+            int res = 0;
+            int idx1 = upperBound(0, Size - 1, v1, st[i].arr);
+            int idx2 = lowerBound(0, Size - 1, v2, st[i].arr);
+
+            if (idx1 >= 0 and idx1 < Size and idx2 >= 0 and idx2 < Size)
+            {
+                res = st[i].pre[idx2];
+                if (idx1 > 0)
+                    res -= st[i].pre[idx1 - 1];
+            }
+            return res;
+        }
+        int mid = (l + r) / 2;
+        int left = query(2 * i, l, mid, qs, qe, v1, v2);
+        int right = query(2 * i + 1, mid + 1, r, qs, qe, v1, v2);
+        return left + right;
+    }
+};
 
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, q;
+    cin >> n >> q;
+    a.resize(n + 1);
+    rep1(i, n) cin >> a[i].ff >> a[i].ss;
 
+    sort(a.begin() + 1, a.end());
+
+    segtree st;
+    st.init(n);
+    st.build(1, 1, n);
+
+    while (q--)
+    {
+        int h1, w1, h2, w2;
+        cin >> h1 >> w1 >> h2 >> w2;
+        int qs = upperBound(1, n, h1, a);
+        int qe = lowerBound(1, n, h2, a);
+
+        int res = 0;
+        if (qs >= 1 and qs <= n and qe >= 1 and qe <= n)
+            res = st.query(1, 1, n, qs, qe, w1, w2);
+
+        prln(res);
+    }
     return;
 }
 

@@ -336,7 +336,18 @@ void solve()
 {
     int n;
     cin >> n;
-
+    vi a(n);
+    re(a, n);
+    asort(a);
+    fo(i, 1, n - 1)
+    {
+        if (a[i] <= a[i - 1])
+        {
+            no;
+            return;
+        }
+    }
+    yes;
     return;
 }
 

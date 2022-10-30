@@ -335,8 +335,36 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
-    cin >> n;
+    string s[8];
+    rep(i, 8) cin >> s[i];
 
+    int r_cnt = 0, b_cnt = 0;
+    rep(i, 8)
+    {
+        int cnt = 0;
+        if (s[i][0] == 'R')
+        {
+            for (auto c : s[i])
+                cnt += (c == 'R');
+            if (cnt == 8)
+                r_cnt++;
+        }
+    }
+    rep(i, 8)
+    {
+        int cnt = 0;
+        if (s[0][i] == 'B')
+        {
+            rep(j, 8)
+                cnt += (s[j][i] == 'B');
+            if (cnt == 8)
+                b_cnt++;
+        }
+    }
+    if (r_cnt > b_cnt)
+        prln("R");
+    else
+        prln("B");
     return;
 }
 

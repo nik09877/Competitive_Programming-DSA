@@ -335,8 +335,33 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
-    cin >> n;
-
+    string s;
+    cin >> s;
+    n = sz(s);
+    int z_cnt = 0, ans = 0;
+    rep(i, n)
+    {
+        if (s[i] == '0')
+            z_cnt++;
+        else
+        {
+            for (int len = 1; ((i + len - 1 < n) && len <= 18); len++)
+            {
+                string temp = s.substr(i, len);
+                reverse(all(temp));
+                int val = 0;
+                rep(j, sz(temp))
+                {
+                    if (temp[j] == '1')
+                        val += (1 << j);
+                }
+                if (len + z_cnt >= val)
+                    ans++;
+            }
+            z_cnt = 0;
+        }
+    }
+    prln(ans);
     return;
 }
 

@@ -335,8 +335,118 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
-    cin >> n;
+    char ch;
+    string s;
+    cin >> n >> ch;
+    cin >> s;
+    if (ch == 'g')
+    {
+        prln(0);
+        return;
+    }
 
+    vector<int> left(n, -1), right(n, -1);
+    rep(i, n)
+    {
+        if (s[i] == 'g')
+        {
+            if (i == 0)
+                left[i] = i;
+            else if (left[i - 1] == -1)
+                left[i] = i;
+            else
+                left[i] = left[i - 1];
+        }
+        else
+        {
+            if (i - 1 >= 0)
+                left[i] = left[i - 1];
+        }
+        // if (i)
+        // left[i] = left[i - 1];
+        // if (s[i] == 'g')
+        // left[i] = max(left[i], i);
+    }
+    rrep(i, n - 1, 0)
+    {
+        if (s[i] == 'g')
+            right[i] = i;
+        else
+        {
+            if (i + 1 < n)
+                right[i] = right[i + 1];
+        }
+        // if (i + 1 < n)
+        //     right[i] = right[i + 1];
+        // if (s[i] == 'g')
+        //     right[i] = max(right[i], i);
+    }
+    int mx = 0;
+    rep(i, n)
+    {
+        if (s[i] == ch)
+        {
+            if (right[i] != -1)
+            {
+                // int temp = i + 1 + (n - right[i] - 1);
+                // mx = max(mx, temp);
+                // mx = max(mx, right[i] - i);
+                mx = max(mx, right[i] - i);
+            }
+
+            else if (left[i] != -1)
+            {
+                // int temp = left[i] + (n - i - 1) + 1;
+                // mx = max(mx, temp);
+                // mx = max(mx, i - left[i]);
+                mx = max(mx, n - i - 1 + left[i] + 1);
+            }
+        }
+    }
+
+    prln(mx);
+
+    // int mx = 0;
+    // int near_g = -1, far_g = -1;
+    // for (int i = 0; i < n; i++)
+    // {
+    //     if (s[i] == 'g')
+    //     {
+    //         near_g = i;
+    //         if (far_g == -1)
+    //             far_g = i;
+    //     }
+    //     else if (s[i] == ch)
+    //     {
+    //         int t1 = 0, t2 = 0;
+    //         if (near_g != -1)
+    //             t1 = (n - i - 1) + near_g + 1;
+    //         if (far_g != -1)
+    //             t2 = i - far_g;
+    //         mx = max({mx, t1, t2});
+    //     }
+    // }
+
+    // near_g = -1, far_g = -1;
+    // for (int i = n - 1; i >= 0; i--)
+    // {
+    //     if (s[i] == 'g')
+    //     {
+    //         near_g = i;
+    //         if (far_g == -1)
+    //             far_g = i;
+    //     }
+    //     if (s[i] == ch)
+    //     {
+    //         int t1 = 0, t2 = 0;
+    //         if (near_g != -1)
+    //             t1 = (n - near_g - 1) + i + 1;
+    //         if (far_g != -1)
+    //             t2 = far_g - i;
+    //         mx = max({mx, t1, t2});
+    //     }
+    // }
+    // prln(mx);
     return;
 }
 

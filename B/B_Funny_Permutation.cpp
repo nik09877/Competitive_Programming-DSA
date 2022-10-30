@@ -336,6 +336,21 @@ void solve()
 {
     int n;
     cin >> n;
+    vi a(n);
+    rep(i, n)
+        a[i] = n - i;
+    if (2 < n)
+        reverse(a.begin() + 2, a.end());
+    rep(i, n)
+    {
+        if (a[i] == i + 1)
+        {
+            prln(-1);
+            return;
+        }
+    }
+    rep(i, n) prsp(a[i]);
+    cout << endl;
 
     return;
 }

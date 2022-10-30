@@ -329,14 +329,69 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
-    int n;
-    cin >> n;
+    int q;
+    cin >> q;
+    vi cnt_s(26, 0), cnt_t(26, 0);
+    cnt_s[0] = cnt_t[0] = 1;
+    int s_len = 1, t_len = 1;
+    while (q--)
+    {
+        int type, freq;
+        string s;
+        cin >> type >> freq >> s;
+        for (char ch : s)
+        {
+            if (type == 1)
+                cnt_s[ch - 'a'] += freq, s_len += freq;
+            else
+                cnt_t[ch - 'a'] += freq, t_len += freq;
+        }
 
+        // debug
+        // debug(s_len);
+        // debug(t_len);
+        // cerr << endl;
+
+        int ch1, ch2;
+        rep(i, 26) if (cnt_s[i])
+        {
+            ch1 = i;
+            break;
+        }
+        rrep(i, 25, 0) if (cnt_t[i])
+        {
+            ch2 = i;
+            break;
+        }
+        if (ch1 < ch2)
+            yes;
+        else if (ch1 > ch2)
+            no;
+        else
+        {
+            if (cnt_s[ch1] < cnt_t[ch2])
+            {
+                if (s_len - cnt_s[ch1] == 0)
+                    yes;
+                else
+                    no;
+            }
+            else if (cnt_s[ch1] == cnt_t[ch2])
+            {
+                if ((s_len - cnt_s[ch1] == 0) and (t_len - cnt_t[ch2] != 0))
+                    yes;
+                else
+                    no;
+            }
+            else
+                no;
+        }
+    }
     return;
 }
 

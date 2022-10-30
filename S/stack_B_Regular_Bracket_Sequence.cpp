@@ -335,8 +335,29 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
-    cin >> n;
+    string s;
+    cin >> s;
+    int len = 0;
+    stack<char> st;
+    for (auto ch : s)
+    {
+        if (ch == '(')
+            st.push('(');
+        else
+        {
+            while (st.size() and st.top() == ')')
+                st.pop();
+            if (st.empty())
+                continue;
+            if (st.top() == '(')
+            {
+                len += 2;
+                st.pop();
+            }
+        }
+    }
 
+    prln(len);
     return;
 }
 
@@ -344,7 +365,7 @@ int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
+
     while (t--)
     {
         solve();

@@ -332,11 +332,36 @@ dp patterns
 // #define int long long int
 const int mod = 1000000007;
 
+bool good(int k, vi &a, int &n)
+{
+
+    int cnt = 0;
+    for (auto x : a)
+        cnt += (x <= k);
+    return (cnt >= (2 * k - 1));
+}
 void solve()
 {
     int n;
     cin >> n;
-
+    vi a(n);
+    re(a, n);
+    asort(a);
+    // cnt elements less equal to k >= 2 * k - 1;
+    int ans = 0;
+    int l = 0, r = 1e9;
+    while (l <= r)
+    {
+        int m = (l + r) >> 1;
+        if (good(m, a, n))
+        {
+            ans = m;
+            l = m + 1;
+        }
+        else
+            r = m - 1;
+    }
+    prln(ans);
     return;
 }
 

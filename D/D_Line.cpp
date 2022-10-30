@@ -329,14 +329,47 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
+    vi a;
     int n;
-    cin >> n;
+    string s;
+    cin >> n >> s;
+    int ans = 0;
 
+    rep(i, n)
+    {
+        if (s[i] == 'L')
+            ans += i;
+        else
+            ans += n - i - 1;
+    }
+    int sum;
+    rep(i, n)
+    {
+        if (s[i] == 'L')
+            sum = n - i - 1 - i, a.pb(sum);
+        else
+            sum = i - n + i + 1, a.pb(sum);
+    }
+    sort(all(a));
+    rep(i, n)
+    {
+        if (a.empty())
+        {
+            prsp(ans);
+            continue;
+        }
+        if (ans + a.back() > ans)
+            ans += a.back();
+        a.pop_back();
+        prsp(ans);
+    }
+
+    cout << endl;
     return;
 }
 

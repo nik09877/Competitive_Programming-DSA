@@ -331,12 +331,68 @@ dp patterns
 
 // #define int long long int
 const int mod = 1000000007;
+const int N = 1e5 + 5;
+
+// dp[node] denotes xor of all nodes present in current node's subtree
+int dp[N], a[N], n, k;
+vi g[N];
+
+void dfs(int node, int par = -1)
+{
+    dp[node] = a[node];
+    for (auto child : g[node])
+    {
+        if (child == par)
+            continue;
+        dfs(child, node);
+        dp[node] ^= dp[child];
+    }
+}
+
+int dfs2(int node, int par, int &x, int &cnt)
+{
+    int cur_xor = a[node];
+    for (auto child : g[node])
+    {
+        if (child == par)
+            continue;
+        cur_xor ^= dfs2(child, node, x, cnt);
+    }
+    // if cur subtree xor is x
+    if (cur_xor == x)
+    {
+        // break the edge from par->node
+        cnt++;
+        return 0;
+    }
+    return cur_xor;
+}
 
 void solve()
 {
-    int n;
-    cin >> n;
-
+    cin >> n >> k;
+    k--;
+    fo(i, 1, n) dp[i] = 0, cin >> a[i], g[i].clear();
+    rep(i, n - 1)
+    {
+        int a, b;
+        cin >> a >> b;
+        g[a].pb(b);
+        g[b].pb(a);
+    }
+    dfs(1);
+    if (dp[1] == 0)
+    {
+        yes;
+        return;
+    }
+    int x = dp[1];
+    int cnt = 0;
+    dfs2(1, -1, x, cnt);
+    if (cnt >= 2 and 2 <= k)
+        yes;
+    else
+        no;
     return;
 }
 

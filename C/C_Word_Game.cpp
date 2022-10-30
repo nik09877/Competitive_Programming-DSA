@@ -336,10 +336,36 @@ void solve()
 {
     int n;
     cin >> n;
-
+    umap<string, uset<int>> mp;
+    vi ans(3);
+    rep(k, 3)
+    {
+        rep(i, n)
+        {
+            string s;
+            cin >> s;
+            mp[s].insert(k);
+        }
+    }
+    for (auto it : mp)
+    {
+        int sz = it.ss.size();
+        if (sz == 1)
+        {
+            for (auto x : it.ss)
+                ans[x] += 3;
+        }
+        else if (sz == 2)
+        {
+            for (auto x : it.ss)
+                ans[x] += 1;
+        }
+    }
+    for (auto x : ans)
+        prsp(x);
+    cout << endl;
     return;
 }
-
 int32_t main()
 {
     fastio;

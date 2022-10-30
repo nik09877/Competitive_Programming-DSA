@@ -335,8 +335,58 @@ const int mod = 1000000007;
 void solve()
 {
     int n;
-    cin >> n;
-
+    string a, b;
+    cin >> a >> b;
+    if (a.back() == b.back())
+    {
+        char A = a.back();
+        char B = b.back();
+        int c = 0, d = 0;
+        rep(i, sz(a) - 1)
+        {
+            if (A == 'S')
+                c--;
+            else
+                c++;
+        }
+        rep(i, sz(b) - 1)
+        {
+            if (B == 'S')
+                d--;
+            else
+                d++;
+        }
+        if (c == d)
+            prln('=');
+        else if (c > d)
+            prln('>');
+        else
+            prln('<');
+    }
+    else
+    {
+        char A = a.back();
+        char B = b.back();
+        int c = 0, d = 0;
+        if (A == 'S')
+            c = 0;
+        else if (A == 'M')
+            c = 1;
+        else
+            c = 2;
+        if (B == 'S')
+            d = 0;
+        else if (B == 'M')
+            d = 1;
+        else
+            d = 2;
+        if (c == d)
+            prln('=');
+        else if (c > d)
+            prln('>');
+        else
+            prln('<');
+    }
     return;
 }
 

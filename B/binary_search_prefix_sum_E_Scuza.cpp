@@ -329,14 +329,43 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, q;
+    cin >> n >> q;
+    map<int, pii> mp;
+    vi a(n);
+    re(a, n);
+    vi pre(n);
+    vi pre_mx(n);
+    rep(i, n)
+    {
+        pre[i] += a[i];
+        pre_mx[i] = a[i];
+        if (i)
+            pre[i] += pre[i - 1], pre_mx[i] = max(pre_mx[i - 1], pre_mx[i]);
+    }
 
+    while (q--)
+    {
+        int x;
+        cin >> x;
+        auto it = upper_bound(all(pre_mx), x);
+        if (it == pre_mx.begin())
+        {
+            cout << 0 << sp;
+        }
+        else
+        {
+            it--;
+            int i = it - pre_mx.begin();
+            cout << pre[i] << sp;
+        }
+    }
+    cout << endl;
     return;
 }
 

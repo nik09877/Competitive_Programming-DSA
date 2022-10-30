@@ -342,7 +342,7 @@ Both d[j] and c[j] can be found with following algorithm, which uses stack.
     Stack is not empty - we will have position of the corresponding open bracket on the top of the stack - let's put it to d[j] and remove this position from the stack. Now it is obvious, that c[j] is equal at least to d[j]. But probably, there is a better value for c[j]. To find this out, we just need to look at the position d[j] - 1. If there is a closing bracket at this position, and c[d[j] - 1] is not -1, than we have 2 regular bracket sequences s(c[d[j] - 1], d[j] - 1) and s(d[j], j), which can be concatenated into one larger regular bracket sequence. So we put c[j] to be c[d[j] - 1] for this case.
 
     ANOTHER IDEA
-    My solution uses DP. The main idea is as follows: I construct a array longest[], for any longest[i], it stores the longest length of valid parentheses which is end at i.
+    My solution uses DP. The main idea is as follows: I construct an array longest[], for any longest[i], it stores the longest length of valid parentheses which is end at i.
 
     And the DP idea is :
 
@@ -362,57 +362,110 @@ Both d[j] and c[j] can be found with following algorithm, which uses stack.
 
 void solve()
 {
-    int n, mx = 0, cnt = 0;
+    int n;
     string s;
     cin >> s;
     n = sz(s);
-
-    vi dp(n);
-    stack<int> st;
-    st.push(0);
-    dp[0] = 0;
-    fo(i, 1, n - 1)
+    vi dp(n, 0);
+    rep1(i, n - 1)
     {
         if (s[i] == '(')
+            continue;
+        // current character is )
+        if (s[i - 1] == '(')
         {
-            st.push(i);
-            dp[i] = 0;
+            dp[i] = 2;
+            if (i - 2 >= 0)
+                dp[i] += dp[i - 2];
         }
         else
         {
-            if (not st.empty())
+            int len = dp[i - 1];
+            int j = i - 1 - len;
+            if (s[j] == '(')
             {
-                if (s[st.top()] != '(')
-                {
-                    st.push(i);
-                    dp[i] = 0;
-                    continue;
-                }
-
-                int l = st.top();
-                st.pop();
-                int r = i;
-                int len = r - l + 1;
-
-                if (l - 1 >= 0 and s[l - 1] == ')' and dp[l - 1])
-                    len += dp[l - 1];
-
-                dp[i] = len;
-                mx = max(mx, dp[i]);
+                dp[i] = 2 + dp[i - 1];
+                if (j - 1 >= 0)
+                    dp[i] += dp[j - 1];
             }
         }
     }
+    int mx = *max_element(all(dp));
     if (mx == 0)
     {
         prsp(0);
         prln(1);
         return;
     }
-    cnt = count(all(dp), mx);
+    int cnt = count(all(dp), mx);
+
     prsp(mx);
     prln(cnt);
     return;
 }
+int32_t main()
+{
+    fastio;
+    int t = 1;
+    while (t--)
+    {
+        solve();
+    }
+}
+
+// void solve()
+// {
+//     int n, mx = 0, cnt = 0;
+//     string s;
+//     cin >> s;
+//     n = sz(s);
+
+//     vi dp(n);
+//     stack<int> st;
+//     st.push(0);
+//     dp[0] = 0;
+//     fo(i, 1, n - 1)
+//     {
+//         if (s[i] == '(')
+//         {
+//             st.push(i);
+//             dp[i] = 0;
+//         }
+//         else
+//         {
+//             if (not st.empty())
+//             {
+//                 if (s[st.top()] != '(')
+//                 {
+//                     st.push(i);
+//                     dp[i] = 0;
+//                     continue;
+//                 }
+
+//                 int l = st.top();
+//                 st.pop();
+//                 int r = i;
+//                 int len = r - l + 1;
+
+//                 if (l - 1 >= 0 and s[l - 1] == ')' and dp[l - 1])
+//                     len += dp[l - 1];
+
+//                 dp[i] = len;
+//                 mx = max(mx, dp[i]);
+//             }
+//         }
+//     }
+//     if (mx == 0)
+//     {
+//         prsp(0);
+//         prln(1);
+//         return;
+//     }
+//     cnt = count(all(dp), mx);
+//     prsp(mx);
+//     prln(cnt);
+//     return;
+// }
 
 // void solve()
 // {
@@ -454,12 +507,3 @@ void solve()
 //     cout << mx << sp << F[mx] << endl;
 //     return;
 // }
-int32_t main()
-{
-    fastio;
-    int t = 1;
-    while (t--)
-    {
-        solve();
-    }
-}

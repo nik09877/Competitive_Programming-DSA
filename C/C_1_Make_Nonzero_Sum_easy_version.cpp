@@ -336,7 +336,36 @@ void solve()
 {
     int n;
     cin >> n;
-
+    vi a(n);
+    re(a, n);
+    int sum = 0;
+    for (auto x : a)
+        sum += x;
+    if (sum & 1)
+    {
+        cout << -1 << endl;
+        return;
+    }
+    vpii ans;
+    rep(i, n - 1)
+    {
+        if (a[i] == a[i + 1])
+        {
+            ans.pb({i, i + 1});
+        }
+        else
+        {
+            ans.pb({i, i});
+            ans.pb({i + 1, i + 1});
+        }
+        i++;
+    }
+    prln(sz(ans));
+    for (auto x : ans)
+    {
+        prsp(x.ff + 1);
+        prln(x.ss + 1);
+    }
     return;
 }
 

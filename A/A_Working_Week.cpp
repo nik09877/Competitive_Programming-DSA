@@ -336,7 +336,7 @@ void solve()
 {
     int n;
     cin >> n;
-
+    cout << n / 3 - 2 << endl;
     return;
 }
 

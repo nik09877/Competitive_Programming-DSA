@@ -329,14 +329,50 @@ dp patterns
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+const int N = 2e5 + 5;
+
+string s;
+vi a;
+int n, dp[N][2];
+
+int go(int i, int has_lid)
+{
+    if (i == n)
+        return 0;
+
+    int &ans = dp[i][has_lid];
+
+    if (ans != -1)
+        return ans;
+
+    ans = 0;
+    if (s[i] == '0')
+        ans = go(i + 1, 0);
+    else
+    {
+        ans = a[i] + go(i + 1, 1);
+        if (has_lid == 0)
+            ans = max(ans, a[i - 1] + go(i + 1, 0));
+    }
+    return ans;
+}
 
 void solve()
 {
-    int n;
-    cin >> n;
+    cin >> n >> s;
+    a.resize(n);
+    re(a, n);
+    for (int i = 0; i <= n + 1; i++)
+        dp[i][0] = dp[i][1] = -1;
 
+    int ans = 0;
+    if (s[0] == '0')
+        ans = go(1, 0);
+    else
+        ans = a[0] + go(1, 1);
+    prln(ans);
     return;
 }
 

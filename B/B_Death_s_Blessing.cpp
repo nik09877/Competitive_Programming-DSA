@@ -328,15 +328,52 @@ dp patterns
 12- you can use map as dp table example -: vector<vector<map<ii>>>dp;
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
 */
+#define int long long int
+#define tuple pair<int, pair<int, int>>
 
-// #define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
     int n;
     cin >> n;
+    vector<tuple> a(n); //{spell,{health,idx}}
+    map<int, int> h;
+    set<int> s;
+    rep(i, n) s.insert(i);
 
+    rep(i, n)
+    {
+        cin >> a[i].ss.ff;
+        h[i] = a[i].ss.ff;
+        a[i].ss.ss = i;
+    }
+    rep(i, n)
+    {
+        cin >> a[i].ff;
+    }
+    sort(all(a));
+    int time = 0;
+    rep(i, n)
+    {
+        int spell = a[i].ff;
+        int idx = a[i].ss.ss;
+        int health = h[idx];
+        h[idx] = 0;
+        time += health;
+
+        auto it = s.upper_bound(idx);
+        if (it != s.end())
+            h[(*it)] += spell;
+        it = s.lower_bound(idx);
+        if (it != s.begin())
+        {
+            it--;
+            h[(*it)] += spell;
+        }
+        s.erase(idx);
+    }
+    prln(time);
     return;
 }
 
