@@ -263,9 +263,11 @@ void solve()
 {
     int t;
     cin >> t;
-    for (int i = 1; i <= 4e4; i++)
+    for (int i = 1; i <= 1e5; i++)
     {
         string a = to_string(i);
+        if (count(all(a), '1') != 0)
+            continue;
         string b = a;
         reverse(all(b));
         if (a == b)
@@ -274,6 +276,7 @@ void solve()
         }
     }
     int m = sz(p);
+    cerr << m;
     vector<vector<ll>> dp(4e4 + 1, vector<ll>(m, -1));
     while (t--)
     {

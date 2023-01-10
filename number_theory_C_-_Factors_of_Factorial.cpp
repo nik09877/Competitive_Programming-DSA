@@ -308,6 +308,7 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 12-In an array of 0's and 1's you can group them as blocks of different colours.
 13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
    0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
+14-If given find valid sequence of length 3 or 4 consider each element as the middle element and check how many valid pairs are possible then
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -332,31 +333,45 @@ dp patterns
 // #define int long long int
 const int mod = 1000000007;
 
+void factorize(int n, unordered_map<int, int> &prime_cnt)
+{
+    for (int i = 2; i * i <= n; i++)
+    {
+        if (n % i == 0)
+        {
+            while (n % i == 0)
+            {
+                prime_cnt[i]++;
+                n /= i;
+            }
+        }
+    }
+    if (n > 1)
+        prime_cnt[n]++;
+}
 void solve()
 {
-    int n, m;
-    cin >> n >> m;
-    int a[n + 1][m + 1];
-    memset(a, 0, sizeof(a));
-    rep(i, n)
+    int n;
+    cin >> n;
+    unordered_map<int, int> prime_cnt;
+    for (int i = 2; i <= n; i++)
     {
-        int x, y;
-        cin >> x >> y;
-        a[x][y] = 1;
+        factorize(i, prime_cnt);
     }
-
+    int ans = 1;
+    for (auto x : prime_cnt)
+    {
+        int cnt = x.second;
+        ans = (ans * 1ll * (cnt + 1)) % mod;
+    }
+    cout << ans << endl;
     return;
 }
 
 int32_t main()
 {
     fastio;
-    int t = 1;
-    cin >> t;
-    while (t--)
-    {
-        solve();
-    }
+    solve();
 
     // #ifndef ONLINE_JUDGE
     //     TIME;
