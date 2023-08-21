@@ -296,7 +296,7 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
 5-calculate contribution of each element towards our answer
-6-graph = tree + back edges (edges that connect to current node's ancestors)
+6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
 8-in multi source bfs think in reverse direction
 9-bigger length can be divided into length of 2 and 3
@@ -305,7 +305,7 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     1-> use merge sort
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
-12-In an array of (0's and 1's) or (+ve / -ve) you can group them as blocks of different colours.
+12-In an array of 0's and 1's you can group them as blocks of different colours.
 13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
    0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 14-If given find valid sequence of length 3 or 4 consider each element as the middle element and check how many valid pairs are possible then
@@ -315,23 +315,9 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 18- cnt of subarrays with sum = x => atmost(x) - atmost(x-1)
 19- convert map[{row,col}] to an unique id ie. map[row + col*total_row_cnt]
 20- sometimes visualizing the array values as points in a 2D graph helps in solving the problem
-21- In tree problems think (top down or bottm up dp) or (re rooting dp) or
-    ( consider path from each u to v via root or LCA) or (Euler tour + range query)
-22- Whenever you see an equation try to rearrange it for your own benefit
-23- max overlapping segments - store {startTime,+1} and {endTime,-1} in array
-    and sort it and get maximum sum while looping the array or update [l,r] with +1 using dynamic lazy segTree
-24- max non overlapping segments - sort by finish time
-25- When you think here segTree can be used but array size crosses Memory Limit ,
-    think segtree+coordinate compression or dynamic lazy segTree
-26- If the queries are already given, you can sort the queries acc to your liking
-    and store their answers in an order
-27- While finding shortest path using bfs,we keep a set of unvisited nodes,we iterate on the set,
-    after going to an unvisited node, remove it from the unvisited set.
-28- If you want to find something for each distinct value of an array then store it in map<int,vector<int>> index array and find answer for each value.
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
-   (store prev dp values in segtree + coordinate compression and get max prev dp)
 2- dp[i][j] -> using first i elements if current weight is j what is the answer
    here u can include ith element or not
 3- unbounded knapsack,can include current element again or move to next element
@@ -341,22 +327,74 @@ dp patterns
 7- dp[i][j] denotes the maximum answer such that the 1st substring ends at i
    and 2nd substring ends at j. dp[i][j] = max(dp[i-1][j],dp[i][j-1])-1 or if
    s[i-1] == t[j-1] dp[i][j] = dp[i-1][j-1]+2
-8- state optimization for even odd indices dp[n][m] -> dp[2][m] , do this, if you only need previous row of dp
+8- state optimization for even odd indices dp[n][m] -> dp[2][m] , do this, if    you only need previous row of dp
 9- lets say u have parameter x in dp and its value can vary between [x-300,x+300]
    then use OFFSET technique where we need only dp[n][2*300] because we can calculate dp[i][original_x] as dp[i][original_x - OFFSET] where OFFSET = x-300
 10- check if [continuous range from prev state is required],so [prefix sum] can be used for transition optimization,along with transition do prefix sum,take care of the order of execution.
-11- If you see n<=500 it is dp on contiguous segment (compress them to groups variation also).
+11- If you see n<=500 it is dp on contiguous segment.
 12- you can use map as dp table example -: vector<vector<map<ii>>>dp;
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
-14- Sometimes if constraints are large your dp state can have ans as a parameter,
-    check if dp[n][ans] is possible or not, for ans in range [1,max_possible_ans]
-    such that it satisfies certain condition.
-15- sometimes in dp on trees problems when storing max or min in dp[node] you should store 2 max or min values (i.e dp[node][2]) so that even if you have to remove the max/min path , you can get the next best max/min along a path.
-
 */
 
 // #define int long long int
 const int mod = 1000000007;
+
+#define F first
+#define S second
+
+class Solution
+{
+
+    vector<vector<pair<int, char>>> g;
+    unordered_map<int, int> frq;
+
+    void dfs(int node, int path)
+    {
+        frq[path]++;
+
+        for (auto edge : g[node])
+        {
+            int ch = edge.S - 'a';
+
+            path ^= (1 << ch);
+            dfs(edge.F, path);
+            path ^= (1 << ch);
+        }
+    }
+
+public:
+    long long countPalindromePaths(vector<int> &parent, string s)
+    {
+        g.clear(), frq.clear();
+
+        int nodes = parent.size();
+        g.resize(nodes);
+        for (int j = 1; j < nodes; j++)
+        {
+            g[parent[j]].push_back({j, s[j]});
+        }
+
+        dfs(0, 0);
+
+        ll result = 0;
+        for (auto i : frq)
+        {
+            ll val = i.F, cnt = i.S;
+
+            for (int j = 0; j < 26; j++)
+            {
+                ll other = val ^ (1 << j);
+
+                if (frq.find(other) == frq.end())
+                    continue;
+                result += (cnt * frq[other]);
+            }
+            result += cnt * (cnt - 1);
+        }
+
+        return result / 2;
+    }
+};
 
 void solve()
 {

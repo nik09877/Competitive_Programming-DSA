@@ -358,6 +358,47 @@ dp patterns
 // #define int long long int
 const int mod = 1000000007;
 
+class Solution
+{
+public:
+    // you can always use segtree to count max freq in a range
+
+    int longestEqualSubarray(vector<int> &a, int k)
+    {
+        int l = 0, n = a.size(), mx_freq = 0, ans = 1;
+        vector<int> freq(n + 1, 0), freq_of_freq(n + 1, 0);
+
+        freq[a[0]] = 1;
+        mx_freq = 1;
+        freq_of_freq[1] = 1;
+        freq_of_freq[0] = n;
+        for (int r = 1; r < n; r++)
+        {
+            // add to window
+            int pre_freq = freq[a[r]];
+            freq[a[r]]++;
+            int cur_freq = freq[a[r]];
+            mx_freq = max(mx_freq, cur_freq);
+            freq_of_freq[pre_freq]--;
+            freq_of_freq[cur_freq]++;
+
+            while (r - l + 1 - mx_freq > k)
+            {
+                // remove from window
+                int freq_to_remove = freq[a[l]]--;
+                freq_of_freq[freq_to_remove]--;
+                int freq_to_add = freq[a[l]];
+                freq_of_freq[freq_to_add]++;
+                l++;
+                while (mx_freq >= 0 and freq_of_freq[mx_freq] == 0)
+                    mx_freq--;
+            }
+            ans = max(ans, mx_freq);
+        }
+        return ans;
+    }
+};
+
 void solve()
 {
 

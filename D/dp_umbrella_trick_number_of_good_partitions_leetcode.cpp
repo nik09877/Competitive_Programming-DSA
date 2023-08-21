@@ -327,7 +327,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     and store their answers in an order
 27- While finding shortest path using bfs,we keep a set of unvisited nodes,we iterate on the set,
     after going to an unvisited node, remove it from the unvisited set.
-28- If you want to find something for each distinct value of an array then store it in map<int,vector<int>> index array and find answer for each value.
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -357,6 +356,58 @@ dp patterns
 
 // #define int long long int
 const int mod = 1000000007;
+
+class Solution
+{
+public:
+    int dp[1007][1007][2];
+    string S;
+    int m;
+    int n;
+    const int mod = 1e9 + 7;
+    // active means if the current subarray is active or under construction
+    // we can stop construction or keep moving ahead
+    int solve(int idx, int k, int active)
+    {
+        if (k < 0)
+            return 0;
+        if (idx == n && k == 0)
+            return 1;
+        if (idx >= n)
+            return 0;
+        if (k == 0)
+            return 0;
+        int &x = dp[idx][k][active];
+        if (x != -1)
+            return x;
+
+        long long ans = 0;
+
+        if (active)
+        {
+            if (S[idx] == '1' || S[idx] == '4' || S[idx] == '6' || S[idx] == '8' || S[idx] == '9')
+                (ans += solve(idx + 1, k - 1, active ^ 1)) %= mod;
+            (ans += solve(idx + 1, k, active)) %= mod;
+        }
+        else
+        {
+            if (S[idx] == '1' || S[idx] == '4' || S[idx] == '6' || S[idx] == '8' || S[idx] == '9')
+                return x = 0;
+
+            (ans += solve((idx + m) - 1, k, active ^ 1)) %= mod;
+        }
+        return x = ans;
+    }
+
+    int beautifulPartitions(string s, int k, int minLength)
+    {
+        memset(dp, -1, sizeof(dp));
+        S = s;
+        m = minLength;
+        n = s.size();
+        return solve(0, k, 0);
+    }
+};
 
 void solve()
 {

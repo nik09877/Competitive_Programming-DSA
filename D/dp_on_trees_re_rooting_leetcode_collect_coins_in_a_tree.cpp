@@ -327,7 +327,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     and store their answers in an order
 27- While finding shortest path using bfs,we keep a set of unvisited nodes,we iterate on the set,
     after going to an unvisited node, remove it from the unvisited set.
-28- If you want to find something for each distinct value of an array then store it in map<int,vector<int>> index array and find answer for each value.
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -351,16 +350,77 @@ dp patterns
 14- Sometimes if constraints are large your dp state can have ans as a parameter,
     check if dp[n][ans] is possible or not, for ans in range [1,max_possible_ans]
     such that it satisfies certain condition.
-15- sometimes in dp on trees problems when storing max or min in dp[node] you should store 2 max or min values (i.e dp[node][2]) so that even if you have to remove the max/min path , you can get the next best max/min along a path.
-
 */
 
 // #define int long long int
 const int mod = 1000000007;
 
+class Solution
+{
+public:
+    static const int N = 3e4 + 5;
+    vector<int> g[N];
+    // cs[node][0] -> coin sum of children
+    // cs[node][1] -> coin sum of grand children
+    int cs[N][2];
+    // dp[node] -> minimum edges visited to collect all coins
+    int dp[N], n;
+    vector<int> coins;
+    void dfs1(int node, int par)
+    {
+        for (auto child : g[node])
+        {
+            if (child == par)
+                continue;
+            cs[node][0] += coins[child];
+            dfs1(child, node);
+            cs[node][1] += cs[child][0];
+            if (dp[child] == 0)
+            {
+                if (cs[child][1] > 0)
+                    dp[node] += 2;
+            }
+            else
+            {
+                dp[node] += 2 + dp[child];
+            }
+        }
+    }
+
+    void dfs2(int node, int par)
+    {
+        for (auto child : g[node])
+        {
+            if (child == par)
+                continue;
+
+            int cur_subtree_contri = dp[child];
+            int par_contri = (dp[node] - dp[child] - (dp[child] > 0 ? 2 : (cs[child][1] > 0 ? 2 : 0)));
+            int going_to_par_cost = (par_contri > 0 ? 2 : (cs[node][1] - cs[child][0] > 0 ? 2 : 0));
+            dp[child] = cur_subtree_contri + par_contri + going_to_par_cost;
+            cs[child][0] += coins[node];
+            cs[child][1] = cs[child][1] + (cs[node][0] - coins[child]);
+
+            dfs2(child, node);
+        }
+    }
+    int collectTheCoins(vector<int> &Coins, vector<vector<int>> &edges)
+    {
+        for (auto e : edges)
+        {
+            g[e[0]].push_back(e[1]);
+            g[e[1]].push_back(e[0]);
+        }
+        n = Coins.size();
+        coins = Coins;
+        dfs1(0, -1);
+        dfs2(0, -1);
+        return *min_element(dp, dp + n);
+    }
+};
+
 void solve()
 {
-
     return;
 }
 

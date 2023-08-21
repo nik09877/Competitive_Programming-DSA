@@ -325,9 +325,6 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     think segtree+coordinate compression or dynamic lazy segTree
 26- If the queries are already given, you can sort the queries acc to your liking
     and store their answers in an order
-27- While finding shortest path using bfs,we keep a set of unvisited nodes,we iterate on the set,
-    after going to an unvisited node, remove it from the unvisited set.
-28- If you want to find something for each distinct value of an array then store it in map<int,vector<int>> index array and find answer for each value.
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -351,15 +348,55 @@ dp patterns
 14- Sometimes if constraints are large your dp state can have ans as a parameter,
     check if dp[n][ans] is possible or not, for ans in range [1,max_possible_ans]
     such that it satisfies certain condition.
-15- sometimes in dp on trees problems when storing max or min in dp[node] you should store 2 max or min values (i.e dp[node][2]) so that even if you have to remove the max/min path , you can get the next best max/min along a path.
-
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
 
 void solve()
 {
+    int n;
+    cin >> n;
+    vi a(n), b(n);
+    re(a, n);
+    re(b, n);
+    vi pre(n);
+    pre[0] = a[0] * b[0];
+    fo(i, 1, n - 1)
+        pre[i] = pre[i - 1] + a[i] * b[i];
+
+    int ans = pre[n - 1];
+
+    // dp[i][l] denotes cost of [i-l+1,i] subarray if it
+    // is reversed (MCM pattern)
+    // or dp[i][j] is the cost of [i,j] if it is reversed
+
+    int dp[n][n + 1];
+    memset(dp, 0, sizeof(dp));
+    for (int len = 1; len <= n; len++)
+    {
+        for (int i = 0; i + len <= n; i++)
+        {
+            int j = i + len - 1;
+            if (len == 1)
+                dp[i][j] = a[i] * b[i];
+            else if (len == 2)
+                dp[i][j] = a[i] * b[j] + a[j] * b[i];
+            else
+            {
+                dp[i][j] = a[i] * b[j] + a[j] * b[i] + dp[i + 1][j - 1];
+            }
+
+            int temp_ans = dp[i][j];
+            if (i)
+                temp_ans += pre[i - 1];
+            temp_ans += pre[n - 1];
+            temp_ans -= pre[j];
+            ans = max(ans, temp_ans);
+        }
+    }
+
+    prln(ans);
 
     return;
 }
@@ -368,7 +405,6 @@ int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
     while (t--)
         solve();
 

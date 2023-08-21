@@ -296,7 +296,7 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 3-dont get stuck on only one approach
 4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
 5-calculate contribution of each element towards our answer
-6-graph = tree + back edges (edges that connect to current node's ancestors)
+6-graph=tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
 8-in multi source bfs think in reverse direction
 9-bigger length can be divided into length of 2 and 3
@@ -305,33 +305,14 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     1-> use merge sort
     2-> use ordered_set
     3-> use coordinate compression + segment tree + point update + range sum query ( find number of elements in a given range)
-12-In an array of (0's and 1's) or (+ve / -ve) you can group them as blocks of different colours.
+12-In an array of 0's and 1's you can group them as blocks of different colours.
 13-If given you can add or subtract k from any element in the array any number of times to find mex,store them as val % k like
    0,1,2...,k-1,0,1,2...,k-1 which will form cycles and mex will be [cycle_length* min(freq[0..k-1]) + no of elements from 0 such that freq[i]>min_freq] -> [https://www.codingninjas.com/codestudio/contests/codestudio-weekend-contest-41/6285056/problems/22853]
 14-If given find valid sequence of length 3 or 4 consider each element as the middle element and check how many valid pairs are possible then
 15- In finding pairs case i < j means i != j , maybe sorting it doesn't affect the order and you can fix one index say j and find all appropriate i's for this j
-16- When you think about two pointer also think binary_search + sliding window/segment tree
-17- when dealing with strings or characters know that there can be at max 26 chars , so calculate ans for each char
-18- cnt of subarrays with sum = x => atmost(x) - atmost(x-1)
-19- convert map[{row,col}] to an unique id ie. map[row + col*total_row_cnt]
-20- sometimes visualizing the array values as points in a 2D graph helps in solving the problem
-21- In tree problems think (top down or bottm up dp) or (re rooting dp) or
-    ( consider path from each u to v via root or LCA) or (Euler tour + range query)
-22- Whenever you see an equation try to rearrange it for your own benefit
-23- max overlapping segments - store {startTime,+1} and {endTime,-1} in array
-    and sort it and get maximum sum while looping the array or update [l,r] with +1 using dynamic lazy segTree
-24- max non overlapping segments - sort by finish time
-25- When you think here segTree can be used but array size crosses Memory Limit ,
-    think segtree+coordinate compression or dynamic lazy segTree
-26- If the queries are already given, you can sort the queries acc to your liking
-    and store their answers in an order
-27- While finding shortest path using bfs,we keep a set of unvisited nodes,we iterate on the set,
-    after going to an unvisited node, remove it from the unvisited set.
-28- If you want to find something for each distinct value of an array then store it in map<int,vector<int>> index array and find answer for each value.
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
-   (store prev dp values in segtree + coordinate compression and get max prev dp)
 2- dp[i][j] -> using first i elements if current weight is j what is the answer
    here u can include ith element or not
 3- unbounded knapsack,can include current element again or move to next element
@@ -341,25 +322,111 @@ dp patterns
 7- dp[i][j] denotes the maximum answer such that the 1st substring ends at i
    and 2nd substring ends at j. dp[i][j] = max(dp[i-1][j],dp[i][j-1])-1 or if
    s[i-1] == t[j-1] dp[i][j] = dp[i-1][j-1]+2
-8- state optimization for even odd indices dp[n][m] -> dp[2][m] , do this, if you only need previous row of dp
+8- state optimization for even odd indices dp[n][m] -> dp[2][m] , do this, if    you only need previous row of dp
 9- lets say u have parameter x in dp and its value can vary between [x-300,x+300]
    then use OFFSET technique where we need only dp[n][2*300] because we can calculate dp[i][original_x] as dp[i][original_x - OFFSET] where OFFSET = x-300
-10- check if [continuous range from prev state is required],so [prefix sum] can be used for transition optimization,along with transition do prefix sum,take care of the order of execution.
-11- If you see n<=500 it is dp on contiguous segment (compress them to groups variation also).
+10- chceck if [continuous range from prev state is required],so [prefix sum] can be used for transition optimization,along with transition do prefix sum,take care of the order of execution.
+11- If you see n<=500 it is dp on contiguous segment.
 12- you can use map as dp table example -: vector<vector<map<ii>>>dp;
 13- If answer can be negative keep visited array to check if we have cached the answer already instead of using if(ans!=-1)return ans;
-14- Sometimes if constraints are large your dp state can have ans as a parameter,
-    check if dp[n][ans] is possible or not, for ans in range [1,max_possible_ans]
-    such that it satisfies certain condition.
-15- sometimes in dp on trees problems when storing max or min in dp[node] you should store 2 max or min values (i.e dp[node][2]) so that even if you have to remove the max/min path , you can get the next best max/min along a path.
-
 */
 
 // #define int long long int
 const int mod = 1000000007;
 
+/*
+RE ROOTING DP
+---------------
+root the tree at node 0
+calculate for node 0
+then for other nodes calculate ans = (contribution of subtree rooted at node
++ outside contribution)
+---------------
+If we root each node observe that only the direction of those edges change that goes
+upto the 0th node and other edges remains exactly as before when we took 0 as root
+
+top_down[node] stores {cnt of good_pairs_of_edges, cnt of good_reverse_pairs_of_edges } in the path from root to current node
+
+bottom_up[node] stores all the good_pairs of edges in its subtree
+
+dp[node] = (subtree_contribution) + (root_contribution - subtree_contribution
+- contribution_of_good_pair_edges_from_root_to_node + contribution_of_good_reverse_pair_edges_from_root_to_node)
+
+So dp[node] = bottom_up[node] +
+            (bottom_up[0] - bottom_up[node]
+            - top_down[node].first + top_down[node].second);
+*/
+class Solution
+{
+    vector<int> g[100001];
+    pair<int, int> top_down[100001] = {{0, 0}};
+    int bottom_up[100001] = {0};
+    int dp[100001] = {0};
+    map<vector<int>, bool> exists;
+
+    void calc_top_down_dfs(int node, int par = -1)
+    {
+        if (par != -1)
+        {
+            top_down[node] = top_down[par];
+            if (exists.count({par, node}))
+                top_down[node].first += 1;
+            if (exists.count({node, par}))
+                top_down[node].second += 1;
+        }
+        for (auto child : g[node])
+        {
+            if (child == par)
+                continue;
+            calc_top_down_dfs(child, node);
+        }
+    }
+    void calc_bottom_up_dfs(int node, int par = -1)
+    {
+        bottom_up[node] = 0;
+        for (auto child : g[node])
+        {
+            if (child == par)
+                continue;
+            calc_bottom_up_dfs(child, node);
+            bottom_up[node] += bottom_up[child];
+            if (exists.count({node, child}))
+                bottom_up[node] += 1;
+        }
+    }
+
+public:
+    int rootCount(vector<vector<int>> &edges, vector<vector<int>> &guesses, int k)
+    {
+        for (auto e : edges)
+        {
+            g[e[0]].push_back(e[1]);
+            g[e[1]].push_back(e[0]);
+        }
+        for (auto guess : guesses)
+        {
+            exists[guess] = true;
+        }
+
+        calc_top_down_dfs(0);
+        calc_bottom_up_dfs(0);
+        dp[0] = bottom_up[0];
+        for (int node = 1; node <= edges.size(); node++)
+        {
+            dp[node] = bottom_up[node] +
+                       (bottom_up[0] - bottom_up[node] - top_down[node].first + top_down[node].second);
+        }
+        int ans = 0;
+        for (int i = 0; i <= edges.size(); i++)
+            ans += (dp[i] >= k);
+        return ans;
+    }
+};
+
 void solve()
 {
+    int n;
+    cin >> n;
 
     return;
 }
@@ -370,7 +437,9 @@ int32_t main()
     int t = 1;
     cin >> t;
     while (t--)
+    {
         solve();
+    }
 
     // #ifndef ONLINE_JUDGE
     //     TIME;
