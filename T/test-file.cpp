@@ -328,6 +328,7 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 27- While finding shortest path using bfs,we keep a set of unvisited nodes,we iterate on the set,
     after going to an unvisited node, remove it from the unvisited set.
 28- If you want to find something for each distinct value of an array then store it in map<int,vector<int>> index array and find answer for each value.
+29- If you are dealing with circular/rotational array or string use arr+arr or str+str to use two pointer or string algorithms.
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
