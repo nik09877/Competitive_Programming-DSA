@@ -294,7 +294,7 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
 1-try going backward if given find A to B ,you find B to A
 2-try out small test cases or do brute force solutions to find pattern
 3-dont get stuck on only one approach
-4-if given find substring ,go for hashing , prefix sum ,bit mask techniques
+4-if given find substring ,go for hashing, prefix sum, bit mask techniques, consider this index center of string and expand in odd/even length
 5-calculate contribution of each element towards our answer
 6-graph = tree + back edges (edges that connect to current node's ancestors)
 7-insert duplicate values in set like pair<int,int> = <value, -index>
@@ -329,6 +329,15 @@ If you do not sacrifice for what you want, What you want becomes the sacrifice.
     after going to an unvisited node, remove it from the unvisited set.
 28- If you want to find something for each distinct value of an array then store it in map<int,vector<int>> index array and find answer for each value.
 29- If you are dealing with circular/rotational array or string use arr+arr or str+str to use two pointer or string algorithms.
+30- Think about using stack if your array needs to be reduced by some operation which can reduce multiple subarrays at a time or
+for each value at an index it can remove the top element of stack based on certain condition.
+31- Use Binary Lifting when (a node can have only one child/functional graph) or it is a tree i.e dp[i][j] denotes (2^j)th parent/child of current node and a distance d can be divided into binary lifts of powers of 2
+32- Use meet in the middle when the array can be split in 2 parts and for each subset in 1st part find how much you can take from 2nd part to optimize answer
+33- If you have to find max or min length subsequence for a given condition you can sort the array, but in case of permutation (if the order matters) you can't sort the array.
+34- While going through each subarray to calculate answer for each subarray , you can actually calculate answer on the go while moving the j pointer forward.
+35- Store freq of freq to keep track of max_freq in case of dynamic update in an array
+36- If given find A you find A' i.e max -> find min, at_most_k -> at_least_k+1, equal_to_k = at_most(k) - at_most(k-1)
+37- If you want to maximize the (product of (sum of nums equal to target)), then divide target in powers of 3 and 2.
 
 dp patterns
 1- dp[i] ->answer ending at i or using first i elements what is the answer
@@ -353,15 +362,114 @@ dp patterns
     check if dp[n][ans] is possible or not, for ans in range [1,max_possible_ans]
     such that it satisfies certain condition.
 15- sometimes in dp on trees problems when storing max or min in dp[node] you should store 2 max or min values (i.e dp[node][2]) so that even if you have to remove the max/min path , you can get the next best max/min along a path.
-
+16- dp[i][j] = cur_cost + dp[i+1][j-1]
+17- If you are standing at i and you have to find out cost[i] then cost[i] = cost to get to i-1 + cost to get to i from i-1 or cost[i] = cost to get to i+1 + cost to get to i from i+1
+18- cnt distinct subsequences -> dp[i]  = dp[i-1] * 2 - dp[last_pos[s[i]]];
 */
 
-// #define int long long int
+#define int long long int
 const int mod = 1000000007;
+
+const int N = 1e5 + 5;
+const int maxD = 18;
+int n;
+pii dist[N];
+int LCA[N][maxD + 1];
+vpii g[N];
+int lvl[N];
+void dfs(int node, int par, pii d, int level)
+{
+    dist[node] = d;
+    LCA[node][0] = par;
+    lvl[node] = level;
+    for (auto child : g[node])
+    {
+        if (child.ff == par)
+            continue;
+        pii new_d = d;
+        int cost = child.ss;
+        while (cost % 2 == 0)
+        {
+            new_d.ff += 1;
+            cost /= 2;
+        }
+        while (cost % 5 == 0)
+        {
+            new_d.ss += 1;
+            cost /= 5;
+        }
+        dfs(child.ff, node, new_d, level + 1);
+    }
+}
+
+void preprocess_LCA()
+{
+    dfs(1, -1, mkp(0, 0), 0);
+
+    for (int j = 1; j <= maxD; j++)
+    {
+        for (int i = 1; i <= n; i++)
+        {
+            if (LCA[i][j - 1] != -1)
+            {
+                int par = LCA[i][j - 1];
+                LCA[i][j] = LCA[par][j - 1];
+            }
+        }
+    }
+}
+
+int get_LCA(int a, int b)
+{
+    if (lvl[a] > lvl[b])
+        swap(a, b);
+
+    int d = lvl[b] - lvl[a];
+
+    while (d > 0)
+    {
+        int msb = log2(d);
+        b = LCA[b][msb];
+        d -= (1 << msb);
+    }
+    if (a == b)
+        return a;
+
+    for (int i = maxD; i >= 0; i--)
+    {
+        if (LCA[a][i] != -1 and LCA[a][i] != LCA[b][i])
+        {
+            a = LCA[a][i], b = LCA[b][i];
+        }
+    }
+    return LCA[a][0];
+}
+
+pii get_dist(int a, int b)
+{
+    int lca = get_LCA(a, b);
+    return mkp(dist[a].ff + dist[b].ff - 2 * dist[lca].ff, dist[a].ss + dist[b].ss - 2 * dist[lca].ss);
+}
 
 void solve()
 {
-
+    int q;
+    cin >> n >> q;
+    rep(i, n - 1)
+    {
+        int a, b, wt;
+        cin >> a >> b >> wt;
+        g[a].pb({b, wt});
+        g[b].pb({a, wt});
+    }
+    preprocess_LCA();
+    int u, v;
+    while (q--)
+    {
+        cin >> u >> v;
+        pii cost = get_dist(u, v);
+        prln(min(cost.ff, cost.ss));
+    }
     return;
 }
 
@@ -369,7 +477,7 @@ int32_t main()
 {
     fastio;
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--)
         solve();
 

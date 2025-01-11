@@ -1,0 +1,1 @@
+{"name":"Local: stack_B_Regular_Bracket_Sequence","url":"e:\\VS CODE\\competitive-programming\\stack_B_Regular_Bracket_Sequence.cpp","tests":[{"id":1666003476347,"input":"(()))(","output":"4"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\VS CODE\\competitive-programming\\stack_B_Regular_Bracket_Sequence.cpp","group":"local","local":true}

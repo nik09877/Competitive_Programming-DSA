@@ -1,0 +1,94 @@
+STEP-3 A (TWO POINTER)
+ll times = target / v[2 * n — 1];
+
+I used ceil function and later i subtracted it by 1 to get number of full cycles. and for the rest i used two pointers method as usual.
+
+Here is my code if u need some clearification..
+
+Spoiler
+...
+
+void solve(){ ll i,j,n,m,s=0; cin>>n>>m;
+
+vl v(2*n);
+
+for(i=0;i<n;i++)cin>>v[i], v[n+i]=v[i], s+=v[i];
+
+ll cycles=ceil(m/(ld)s);
+
+cycles=max(0LL, cycles-1);
+
+m-=cycles*s; ll ans=1e18;
+
+j=0; ll sum=0,start=0; for(i=0;i<2*n;i++){
+
+sum+=v[i];
+ while(j<n && sum-v[j] >=m){
+   sum-=v[j];
+   j++;
+ }
+
+ if(sum>=m){
+  if(ans> (i-j+1)){
+    ans=i-j+1;
+    start=j+1;
+  }
+ }
+}
+
+ans+=(cycles*n);
+
+print(start,ans);
+
+}
+
+
+
+//step-3 G(TWO POINTER)
+#include<bits/stdc++.h>
+#define endl "\n" 
+using namespace std;
+#define debug(x) cout<<"The value of "<<#x<<" is "<<x<<endl;
+typedef long long ll;
+typedef unsigned long long ull;
+ 
+int main()
+{
+    cin.sync_with_stdio(0); cin.tie(0); 
+    ll n,c;
+    cin>>n>>c;
+    string s;
+    cin>>s;
+    ll ans=-1e9,l=0;
+    ll aValues=0,bValues=0;
+    ll currentRudness=0;
+    for(ll r=0;r<n;r++){
+        if(s[r]=='a')aValues++;
+        else if(s[r]=='b'){
+            bValues++;
+            currentRudness+=aValues;
+        }
+        while(currentRudness>c){
+            // now move the left pointer to right as lond as rudeness is more than c
+            if(s[l]=='a')currentRudness-=bValues;
+            else if(s[l]=='b')bValues--;
+            l++;
+        }
+        //now rudeness is less than c, check with max value
+        ans=max(ans,r-l+1);
+    }
+    cout<<ans<<endl;
+}
+THIS IS MY SOLUTION FOR STEP 3 G "NOT VERY RUDE SUBSTRING"
+
+cant seem to figure out where im going wrong can anybody help me here
+
+thanks
+
+→ Reply
+»»
+
+vector9x
+5 weeks ago, # ^ | Add to favourites  Vote: I like it 0 Vote: I do not like it
+You are missing aValues--; ?
+
